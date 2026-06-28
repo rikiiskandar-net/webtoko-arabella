@@ -26,11 +26,7 @@
 html, body {
   max-width: 100vw;
   overflow-x: hidden;
-  /* Pola Titik (Dotted Grid) yang 100% dijamin muncul */
   background-color: var(--background);
-  background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
-  background-size: 24px 24px;
-  /* background-attachment: fixed; DIHAPUS KARENA BUG DI MOBILE CHROME/SAFARI */
   color: var(--foreground);
   font-family: var(--font-google), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
