@@ -6,7 +6,6 @@
   padding-bottom: 120px; /* Space for the floating cart */
   position: relative;
   text-align: center;
-  overflow: hidden; /* Fix horizontal glitch */
 }
 
 @media (min-width: 768px) {
@@ -30,15 +29,17 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   margin-bottom: 3rem;
 }
 
 @media (min-width: 640px) {
   .container {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
   }
 }
 
@@ -242,11 +243,11 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08); /* Lebih terang agar kontras di mobile */
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0.5rem;
   border-radius: var(--radius-md);
-  min-width: 65px;
+  min-width: 60px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
