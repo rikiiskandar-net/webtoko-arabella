@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProductBadge {
+  Promo
+  Bestseller
+  Baru
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  preparing
+  ready
+  completed
+  cancelled
+}
+
+enum AdminRole {
+  superadmin
+  admin
+}
+
+/// Setup storage bucket via migration hook
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  icon        String    // We'll store the Lucide icon name here
+  description String    @default("")
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([name])
+}
+
+model Admin {
+  id        String    @id @default(uuid())
+  username  String    @unique
+  password  String
+  name      String
+  role      AdminRole @default(admin)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model StoreConfig {
+  id             String   @id @default(uuid())
+  storeName      String   @default("Dapur Arabella")
+  waNumber       String   @default("")
+  description    String   @default("")
+  address        String   @default("")
+  hours          String   @default("Tutup pukul 21.00")
+  deliveryETA    String   @default("Antar mulai 15 menit")
+  instagram      String   @default("")
+  email          String   @default("")
+  paymentMethods String   @default("BCA, Mandiri, GoPay, OVO, ShopeePay")
+  updatedAt      DateTime @updatedAt
+}
+
+model HeroBanner {
+  id        String   @id @default(uuid())
+  image     String
+  badge     String   @default("")
+  title     String
+  subtitle  String   @default("")
+  ctaText   String   @default("Eksplor Menu Sekarang")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  customerName  String
+  customerPhone String      @default("")
+  address       String
+  notes         String      @default("")
+  items         Json        @default("[]")
+  totalPrice    Int
+  status        OrderStatus @default(pending)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([createdAt])
+  @@index([status])
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  price         Int
+  description   String
+  image         String
+  isPromo       Boolean  @default(false)
+  promoPrice    Int?
+  originalPrice Int?
+  badge         String?
+  rating        Float       @default(0)
+  sold          String      @default("0")
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([isPromo])
+  @@index([badge])
+}

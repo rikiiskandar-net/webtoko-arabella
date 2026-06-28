@@ -1,0 +1,353 @@
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addBtn:hover {
+  background-color: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+.tableContainer {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #F1F5F9;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th {
+  background-color: #F8FAFC;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: #64748B;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #E2E8F0;
+  color: #334155;
+  font-size: 0.95rem;
+  vertical-align: middle;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover {
+  background-color: #F8FAFC;
+}
+
+.categoryName {
+  font-weight: 600;
+  color: #0F172A;
+  font-size: 1.05rem;
+}
+
+.descriptionText {
+  color: #64748B;
+  font-size: 0.9rem;
+}
+
+.actionCell {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn.edit {
+  color: #3B82F6;
+}
+
+.iconBtn.edit:hover {
+  background-color: #DBEAFE;
+}
+
+.iconBtn.delete {
+  color: #EF4444;
+}
+
+.iconBtn.delete:hover {
+  background-color: #FEE2E2;
+}
+
+.emptyState {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #64748B;
+}
+
+.emptyIcon {
+  color: #CBD5E1;
+  margin-bottom: 1rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Modal CSS */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modalContent {
+  background-color: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modalHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+}
+
+.closeBtn:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+
+.formBody {
+  padding: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+.input, .textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  background-color: white;
+}
+
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.helpText {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748B;
+  margin-top: 0.25rem;
+}
+
+.iconPickerPreview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #F8FAFC;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  border: 1px solid #E2E8F0;
+  color: var(--primary);
+}
+
+.selectedIconName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  font-family: monospace;
+}
+
+.iconPickerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background: #F8FAFC;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.iconPickerItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: #64748B;
+}
+
+.iconPickerItem:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #EFF6FF;
+}
+
+.iconPickerItemActive {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+.iconPickerItemActive:hover {
+  background: var(--primary-hover);
+  color: white;
+}
+
+.formFooter {
+  padding: 1.5rem;
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 10;
+}
+
+.cancelBtn {
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background-color: #F8FAFC;
+}
+
+.saveBtn {
+  padding: 0.75rem 1.5rem;
+  background-color: #2563EB;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background-color: #1D4ED8;
+}
+
+.saveBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
