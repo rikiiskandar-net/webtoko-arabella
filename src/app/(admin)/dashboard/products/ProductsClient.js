@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, PackageSearch, X, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, PackageSearch, X, Loader2, ImagePlus } from "lucide-react";
 import styles from "./Products.module.css";
 import { useNotification } from "@/lib/useNotification";
+import ImageCropper from "@/components/ImageCropper";
 
 export default function ProductsClient() {
   const { notify, NotificationBar } = useNotification();
@@ -14,6 +15,7 @@ export default function ProductsClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [cropperSrc, setCropperSrc] = useState(null); // URL gambar yang akan di-crop
 
   useEffect(() => {
     async function fetchData() {
@@ -141,27 +143,50 @@ export default function ProductsClient() {
     }
   };
 
-  const handleImageUpload = async (e) => {
+  // Step 1: User pilih file → buka cropper
+  const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Buat URL preview untuk dibuka di cropper
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropperSrc(reader.result);
+    };
+    reader.readAsDataURL(file);
+    // Reset input agar bisa pilih file yang sama lagi
+    e.target.value = "";
+  };
+
+  // Step 2: Setelah di-crop, upload hasilnya
+  const handleCropComplete = async (croppedFile) => {
     setIsUploading(true);
+
     const uploadData = new FormData();
-    uploadData.append("file", file);
+    uploadData.append("file", croppedFile);
 
     try {
       const res = await fetch("/api/upload", {
         method: "POST",
         body: uploadData,
       });
-      if (!res.ok) throw new Error("Gagal mengunggah gambar");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Gagal mengunggah gambar");
+      }
       const data = await res.json();
       setFormData(prev => ({ ...prev, image: data.url }));
+      setCropperSrc(null); // Tutup cropper
+      notify("Gambar berhasil diunggah!");
     } catch (error) {
       notify("Error upload gambar: " + error.message, "error");
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const handleCropCancel = () => {
+    setCropperSrc(null);
   };
 
   const handleDelete = async (id) => {
@@ -292,24 +317,25 @@ export default function ProductsClient() {
                 <label className={styles.label}>Foto Produk</label>
                 
                 {formData.image && formData.image !== "/images/placeholder.jpg" && (
-                  <div style={{ marginBottom: '10px' }}>
-                    <img src={formData.image} alt="Preview" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
+                  <div style={{ marginBottom: '10px', position: 'relative', display: 'inline-block' }}>
+                    <img src={formData.image} alt="Preview" style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '8px', border: '2px solid #e5e7eb' }} />
+                    <span style={{ position: 'absolute', bottom: '4px', right: '4px', background: '#22C55E', color: 'white', fontSize: '0.6rem', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>4:3</span>
                   </div>
                 )}
                 
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className={styles.input} 
-                  onChange={handleImageUpload} 
-                  disabled={isUploading}
-                />
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', background: '#F8FAFC', border: '2px dashed #CBD5E1', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '0.9rem', fontWeight: 600, color: '#475569' }}>
+                  <ImagePlus size={20} style={{ color: '#3B82F6' }} />
+                  {formData.image !== "/images/placeholder.jpg" ? "Ganti Gambar" : "Pilih Gambar Produk"}
+                  <input 
+                    type="file" 
+                    accept="image/jpeg,image/png,image/webp,image/avif" 
+                    style={{ display: 'none' }}
+                    onChange={handleFileSelect} 
+                    disabled={isUploading}
+                  />
+                </label>
                 
-                {isUploading ? (
-                  <span className={styles.helpText} style={{ color: '#3b82f6', fontWeight: 500 }}>⏳ Sedang mengunggah gambar...</span>
-                ) : (
-                  <span className={styles.helpText}>File akan diunggah ke Supabase Storage. (URL saat ini: {formData.image})</span>
-                )}
+                <span className={styles.helpText}>Gambar akan otomatis di-crop (4:3) dan dikompres ke WebP sebelum diunggah.</span>
               </div>
 
               <div className={styles.formGroup}>
@@ -367,6 +393,16 @@ export default function ProductsClient() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Image Cropper Modal */}
+      {cropperSrc && (
+        <ImageCropper
+          imageSrc={cropperSrc}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+          isUploading={isUploading}
+        />
       )}
     </div>
     </>
