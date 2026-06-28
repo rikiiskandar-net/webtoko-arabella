@@ -8,6 +8,8 @@ import TrustBadges from "@/components/TrustBadges";
 import MenuHariIni from "@/components/MenuHariIni";
 import ProductCard from "@/components/ProductCard";
 import Testimonial from "@/components/Testimonial";
+import AboutUs from "@/components/AboutUs";
+import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
 import FloatingCart from "@/components/FloatingCart";
 import ProductModal from "@/components/ProductModal";
@@ -215,6 +217,8 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
               </section>
             )}
             
+            <AboutUs />
+            <Gallery />
             <Testimonial />
           </>
         )}
