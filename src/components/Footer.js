@@ -110,7 +110,7 @@ export default function Footer({ config = {} }) {
         </div>
 
         {paymentList.length > 0 && (
-          <div className={styles.section}>
+          <div className={`${styles.section} ${styles.paymentSection}`}>
             <h4 className={styles.subtitle}>Metode Pembayaran</h4>
             <div className={styles.paymentMethods}>
               {paymentList.map((method, i) => {
