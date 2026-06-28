@@ -1,22 +1,43 @@
 import styles from "./MenuHariIni.module.css";
-import { Flame, Clock3, Bike } from "lucide-react";
+import { Sparkles, ShieldCheck, BadgeCheck, Gift } from "lucide-react";
 
-export default function MenuHariIni({ hours, deliveryETA }) {
+export default function MenuHariIni() {
   return (
-    <div className={styles.card}>
-      <div className={styles.header}>
-        <Flame size={24} strokeWidth={2} color="#DC2626" />
-        <h3 className={styles.title}>Menu Hari Ini</h3>
+    <div className={styles.marqueeContainer}>
+      <div className={styles.marqueeContent}>
+        <span className={styles.promoItem}>
+          <Sparkles size={16} className={styles.icon} /> 100% Homemade
+        </span>
+        <span className={styles.separator}>•</span>
+        <span className={styles.promoItem}>
+          <ShieldCheck size={16} className={styles.icon} /> Tanpa Pengawet
+        </span>
+        <span className={styles.separator}>•</span>
+        <span className={styles.promoItem}>
+          <BadgeCheck size={16} className={styles.icon} /> Higienis & Halal
+        </span>
+        <span className={styles.separator}>•</span>
+        <span className={styles.promoItem}>
+          <Gift size={16} className={styles.iconHighlight} /> <strong>Promo Spesial:</strong> Beli 3 Pack Frozen Food, Gratis 1 Es Mambo!
+        </span>
       </div>
-      <div className={styles.infoList}>
-        <div className={styles.infoItem}>
-          <Clock3 size={18} strokeWidth={2} color="var(--accent)" />
-          <span>{hours || "Tutup pukul 21.00"}</span>
-        </div>
-        <div className={styles.infoItem}>
-          <Bike size={18} strokeWidth={2} color="var(--accent)" />
-          <span>{deliveryETA || "Antar mulai 15 menit"}</span>
-        </div>
+      {/* Duplikat konten untuk membuat efek animasi scroll yang mulus dan tidak terputus */}
+      <div className={styles.marqueeContent} aria-hidden="true">
+        <span className={styles.promoItem}>
+          <Sparkles size={16} className={styles.icon} /> 100% Homemade
+        </span>
+        <span className={styles.separator}>•</span>
+        <span className={styles.promoItem}>
+          <ShieldCheck size={16} className={styles.icon} /> Tanpa Pengawet
+        </span>
+        <span className={styles.separator}>•</span>
+        <span className={styles.promoItem}>
+          <BadgeCheck size={16} className={styles.icon} /> Higienis & Halal
+        </span>
+        <span className={styles.separator}>•</span>
+        <span className={styles.promoItem}>
+          <Gift size={16} className={styles.iconHighlight} /> <strong>Promo Spesial:</strong> Beli 3 Pack Frozen Food, Gratis 1 Es Mambo!
+        </span>
       </div>
     </div>
   );
