@@ -86,12 +86,18 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
 
   const handleCategoryClick = (categoryId) => {
     setActiveCategory(categoryId);
-    // Beri jeda sedikit agar React selesai merender perubahan DOM (misal hilangnya HeroBanner)
-    // sebelum kita menggulir layar, sehingga posisi gulir akurat.
+    // Beri jeda sedikit agar React selesai merender perubahan DOM
     setTimeout(() => {
-      const menuSection = document.getElementById("menu-section");
-      if (menuSection) {
-        menuSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      const anchor = document.getElementById("category-anchor");
+      if (anchor) {
+        // Hitung koordinat Y absolut dari elemen jangkar (anchor) di dalam dokumen
+        const absoluteY = anchor.getBoundingClientRect().top + window.scrollY;
+        
+        // Scroll ke koordinat Y tersebut, dikurangi 64px agar tidak tertutup header yang fixed
+        window.scrollTo({
+          top: absoluteY - 64, 
+          behavior: "smooth"
+        });
       }
     }, 50);
   };
@@ -157,6 +163,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
           </>
         )}
 
+        <div id="category-anchor"></div>
         <div id="menu-section" className={`${styles.categoryContainer} hide-scrollbar`}>
           <button 
             className={`${styles.categoryPill} ${activeCategory === "Semua" ? styles.activePill : ""}`}
