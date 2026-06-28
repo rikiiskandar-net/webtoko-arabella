@@ -84,6 +84,18 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
   };
 
+  const handleCategoryClick = (categoryId) => {
+    setActiveCategory(categoryId);
+    // Beri jeda sedikit agar React selesai merender perubahan DOM (misal hilangnya HeroBanner)
+    // sebelum kita menggulir layar, sehingga posisi gulir akurat.
+    setTimeout(() => {
+      const menuSection = document.getElementById("menu-section");
+      if (menuSection) {
+        menuSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
+  };
+
   const filteredProducts = initialProducts.filter(product => {
     const matchesCategory = activeCategory === "Semua" || product.categoryId === activeCategory;
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -148,7 +160,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
         <div id="menu-section" className={`${styles.categoryContainer} hide-scrollbar`}>
           <button 
             className={`${styles.categoryPill} ${activeCategory === "Semua" ? styles.activePill : ""}`}
-            onClick={() => setActiveCategory("Semua")}
+            onClick={() => handleCategoryClick("Semua")}
           >
             <span className={styles.categoryIcon}>🍽️</span>
             Semua Menu
@@ -157,7 +169,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
             <button 
               key={category.id}
               className={`${styles.categoryPill} ${activeCategory === category.id ? styles.activePill : ""}`}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => handleCategoryClick(category.id)}
             >
               <span className={styles.categoryIcon}>{category.icon}</span>
               {category.name}
