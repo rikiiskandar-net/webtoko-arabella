@@ -6,6 +6,9 @@
   padding-bottom: 120px; /* Space for the floating cart */
   position: relative;
   text-align: center;
+  /* GPU Acceleration to fix Chrome Mobile ghosting/glitch */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 @media (min-width: 768px) {
