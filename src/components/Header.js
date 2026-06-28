@@ -7,6 +7,7 @@ import styles from "./Header.module.css";
 export default function Header({ searchQuery, onSearchChange, cartItemCount, onCartClick }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
   const prevCount = useRef(cartItemCount);
 
@@ -76,15 +77,20 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
         </div>
 
         <div className={styles.right}>
-          <div className={styles.searchContainer}>
-            <Search size={18} className={styles.searchIcon} />
-            <input
-              type="text"
-              className={styles.searchInput}
-              placeholder="Cari produk lezat..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-            />
+          <div className={`${styles.searchContainer} ${isMobileSearchOpen ? styles.mobileSearchOpen : ""}`}>
+            <button className={styles.mobileSearchToggle} onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}>
+              <Search size={22} />
+            </button>
+            <div className={styles.searchInputWrapper}>
+              <Search size={18} className={styles.searchIcon} />
+              <input
+                type="text"
+                className={styles.searchInput}
+                placeholder="Cari produk lezat..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+              />
+            </div>
           </div>
 
           <button className={`${styles.cartBtn} ${cartBounce ? styles.cartBounce : ""}`} onClick={onCartClick}>

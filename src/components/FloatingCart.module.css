@@ -9,11 +9,24 @@
   padding: 0.5rem 1.5rem 0.5rem 0.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  width: max-content;
   box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5), 0 8px 10px -6px rgba(37, 99, 235, 0.3);
   border: none;
   cursor: pointer;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.leftContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rightContent {
+  display: none;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .floatingBtn:hover {
@@ -49,7 +62,14 @@
 
 @media (max-width: 768px) {
   .floatingBtn {
-    bottom: 1.5rem;
-    right: 1.5rem;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 0;
+    padding: 0.85rem 1.5rem;
+  }
+  .rightContent {
+    display: block;
   }
 }
