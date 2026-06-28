@@ -18,16 +18,23 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.25rem;
+  padding: 0.4rem 0.8rem;
   border-radius: var(--radius-pill);
   background-color: white;
   border: 1px solid var(--border-color);
   color: var(--foreground);
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
   transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .categoryPill {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.95rem;
+  }
 }
 
 .categoryPill:hover {
@@ -37,7 +44,13 @@
 }
 
 .categoryIcon {
-  font-size: 1.1rem;
+  font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+  .categoryIcon {
+    font-size: 1.1rem;
+  }
 }
 
 .activePill {
