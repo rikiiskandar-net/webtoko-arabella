@@ -15,7 +15,7 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const { id } = params;
+    const { id } = await params;
     const data = await request.json();
     
     // Validate required fields if they are being updated
@@ -52,7 +52,7 @@ export async function DELETE(request, { params }) {
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
     
     await prisma.product.delete({
       where: { id }

@@ -3,10 +3,14 @@ import prisma from "@/lib/prisma";
 
 export async function GET(request, { params }) {
   try {
+    const { id } = await params;
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
-      include: { category: true },
+      where: { id: id },
+      include: {
+        category: true,
+      }
     });
+
     if (!product) {
       return NextResponse.json({ error: "Produk tidak ditemukan" }, { status: 404 });
     }

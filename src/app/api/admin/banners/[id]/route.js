@@ -15,7 +15,7 @@ export async function PUT(request, { params }) {
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
     const data = await request.json();
 
     const existing = await prisma.heroBanner.findUnique({ where: { id } });
@@ -41,7 +41,7 @@ export async function DELETE(request, { params }) {
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const existing = await prisma.heroBanner.findUnique({ where: { id } });
     if (!existing) {

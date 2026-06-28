@@ -19,7 +19,7 @@ export async function PUT(request, { params }) {
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
     const data = await request.json();
 
     const existing = await prisma.admin.findUnique({ where: { id } });
@@ -56,7 +56,7 @@ export async function DELETE(request, { params }) {
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const admin = await prisma.admin.findUnique({ where: { id } });
     if (!admin) {

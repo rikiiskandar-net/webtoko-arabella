@@ -10,10 +10,10 @@ function getSession(request) {
 
 export async function PUT(request, { params }) {
   const session = getSession(request);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
+    const { id } = await params;
     const body = await request.json();
     const { status } = body;
 
@@ -22,26 +22,26 @@ export async function PUT(request, { params }) {
     }
 
     const order = await prisma.order.update({
-      where: { id: params.id },
+      where: { id: id },
       data: { status },
     });
-
     return NextResponse.json(order);
-  } catch {
-    return NextResponse.json({ error: "Gagal memperbarui pesanan" }, { status: 500 });
+  } catch (error) {
+    console.error("Order update error:", error);
+    return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
   }
 }
 
 export async function DELETE(request, { params }) {
   const session = getSession(request);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    await prisma.order.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await prisma.order.delete({ where: { id: id } });
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "Gagal menghapus pesanan" }, { status: 500 });
+  } catch (error) {
+    console.error("Order delete error:", error);
+    return NextResponse.json({ error: "Failed to delete order" }, { status: 500 });
   }
 }
