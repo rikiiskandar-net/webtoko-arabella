@@ -255,7 +255,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
         />
       </main>
       
-      <Footer />
+      <Footer config={storeConfig} />
     </>
   );
 }
