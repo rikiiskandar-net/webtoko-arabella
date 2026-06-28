@@ -54,6 +54,7 @@
   background-color: #CBD5E1;
   margin: 12px auto;
   display: block;
+  cursor: pointer;
 }
 
 @media (min-width: 768px) {
@@ -105,7 +106,7 @@
 .price {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--google-blue);
+  color: var(--primary);
   margin-bottom: 1.5rem;
 }
 
@@ -149,7 +150,7 @@
 
 .buyNowBtn {
   flex: 1;
-  background-color: var(--google-blue);
+  background-color: var(--primary);
   color: white;
   padding: 1rem;
   border-radius: var(--radius-pill);
@@ -162,7 +163,7 @@
 .cartBtn {
   flex: 1;
   background-color: white;
-  color: var(--google-blue);
+  color: var(--primary);
   border: 1px solid var(--border-color);
   padding: 1rem;
   border-radius: var(--radius-pill);
@@ -186,7 +187,7 @@
   height: 40px;
   border-radius: 50%;
   background-color: white;
-  color: var(--google-blue);
+  color: var(--primary);
   font-size: 1.5rem;
   font-weight: bold;
   box-shadow: var(--shadow-sm);
