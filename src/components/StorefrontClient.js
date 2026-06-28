@@ -30,7 +30,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
     if (selectedProduct || isCartOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
   }, [selectedProduct, isCartOpen]);
 
