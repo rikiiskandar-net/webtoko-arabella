@@ -186,7 +186,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
             {initialProducts.length > 0 && <h2 className={styles.subHeading}>Rekomendasi Pilihan</h2>}
             
             {promoProducts.length > 0 && (
-              <section className={styles.smallSection}>
+              <section id="promo-section" className={styles.smallSection}>
                 <h3 className={styles.smallSectionTitle}>
                   <Flame size={20} strokeWidth={2} color="#DC2626" style={{ marginRight: '6px', verticalAlign: 'text-bottom' }} />
                   Sedang Promo

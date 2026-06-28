@@ -41,7 +41,7 @@ export default function Footer({ config = {} }) {
     : [];
 
   return (
-    <footer className={styles.footer}>
+    <footer id="kontak" className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.section}>
           <div className={styles.logoWrap}>
