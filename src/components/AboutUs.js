@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { CheckCircle2 } from "lucide-react";
 import styles from "./AboutUs.module.css";
