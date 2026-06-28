@@ -65,17 +65,8 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
           </button>
 
           <div className={styles.logo} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-            <div className={styles.logoIcon}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" fill="url(#logoGrad)" />
-                <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="url(#logoGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <defs>
-                  <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#2563EB" />
-                    <stop offset="100%" stopColor="#F59E0B" />
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div className={styles.logoIconWrapper}>
+              <img src="/images/logo.png" alt="Logo Dapur Arabella" className={styles.customLogoImg} />
             </div>
             <h1 className={styles.title}>Dapur Arabella</h1>
           </div>

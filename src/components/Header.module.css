@@ -85,19 +85,22 @@
   flex-shrink: 0;
 }
 
-.logoIcon {
-  width: 38px;
-  height: 38px;
-  background: linear-gradient(135deg, #EFF6FF, #FFFBEB);
-  border-radius: var(--radius-md);
+.logoIconWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s;
 }
 
-.logo:hover .logoIcon {
-  transform: scale(1.05);
+.customLogoImg {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo:hover .customLogoImg {
+  transform: scale(1.08) rotate(-3deg);
 }
 
 .title {
