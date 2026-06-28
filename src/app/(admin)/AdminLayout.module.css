@@ -12,7 +12,61 @@
   flex-direction: column;
   flex-shrink: 0;
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 2000;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebarOverlay {
+  display: none;
+}
+
+.sidebarMobileHeader {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .sidebarOverlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1999;
+  }
+
+  .sidebarMobileHeader {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 1rem 0;
+  }
+
+  .closeSidebarBtn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
 }
 
 .sidebarHeader {
@@ -104,19 +158,65 @@
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
   height: 64px;
-  background-color: white;
-  border-bottom: 1px solid #E2E8F0;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 1rem;
+  z-index: 100;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+  .topbar {
+    padding: 0 2rem;
+  }
+}
+
+.topbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobileMenuBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #0F172A;
+  padding: 0.25rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.mobileMenuBtn:active {
+  background-color: #F1F5F9;
+}
+
+@media (max-width: 768px) {
+  .mobileMenuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .pageTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #0F172A;
+}
+
+@media (min-width: 768px) {
+  .pageTitle {
+    font-size: 1.25rem;
+  }
 }
 
 .userProfile {
@@ -138,7 +238,22 @@
 }
 
 .contentArea {
-  padding: 2rem;
+  padding: 1rem;
   flex-grow: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #F8FAFC;
+}
+
+@media (min-width: 768px) {
+  .contentArea {
+    padding: 2rem;
+  }
+}
+
+/* Helper untuk mencegah tabel bocor di mobile */
+.contentArea :global(.table-responsive),
+.contentArea :global([class*="tableContainer"]) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }

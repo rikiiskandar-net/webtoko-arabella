@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { useSession } from "@/lib/SessionContext";
 import styles from "./AdminLayout.module.css";
+import { useState, useEffect } from "react";
 
 function AdminSidebar({ pathname, router }) {
   const session = useSession();
@@ -68,14 +69,19 @@ function AdminSidebar({ pathname, router }) {
   );
 }
 
-function AdminContent({ children }) {
+function AdminContent({ children, onMenuClick }) {
   const session = useSession();
   const initial = session?.name?.charAt(0)?.toUpperCase() || "A";
 
   return (
     <div className={styles.mainContent}>
       <header className={styles.topbar}>
-        <h1 className={styles.pageTitle}>Kokpit Admin</h1>
+        <div className={styles.topbarLeft}>
+          <button className={styles.mobileMenuBtn} onClick={onMenuClick}>
+            <Menu size={24} />
+          </button>
+          <h1 className={styles.pageTitle}>Kokpit Admin</h1>
+        </div>
         <div className={styles.userProfile}>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.9rem", color: "#0F172A", fontWeight: 600 }}>{session?.name}</div>
@@ -94,14 +100,30 @@ function AdminContent({ children }) {
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Auto-close sidebar on route change on mobile
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
 
   return (
     <AuthGuard>
       <div className={styles.adminWrapper}>
-        <aside className={styles.sidebar}>
+        {isSidebarOpen && (
+          <div className={styles.sidebarOverlay} onClick={() => setIsSidebarOpen(false)} />
+        )}
+        <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ""}`}>
+          <div className={styles.sidebarMobileHeader}>
+            <button className={styles.closeSidebarBtn} onClick={() => setIsSidebarOpen(false)}>
+              <X size={24} />
+            </button>
+          </div>
           <AdminSidebar pathname={pathname} router={router} />
         </aside>
-        <AdminContent>{children}</AdminContent>
+        <AdminContent onMenuClick={() => setIsSidebarOpen(true)}>
+          {children}
+        </AdminContent>
       </div>
     </AuthGuard>
   );
