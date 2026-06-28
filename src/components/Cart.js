@@ -4,6 +4,7 @@ import { Send, Trash2, Plus, Minus, X } from "lucide-react";
 
 export default function Cart({ cartItems, products, onUpdateQuantity, onClearCart, onClose, waNumber }) {
   const [formData, setFormData] = useState({ name: "", phone: "", address: "", notes: "" });
+  const [isSaving, setIsSaving] = useState(false);
 
   if (Object.keys(cartItems).length === 0) {
     return (
@@ -37,8 +38,6 @@ export default function Cart({ cartItems, products, onUpdateQuantity, onClearCar
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
-  const [isSaving, setIsSaving] = useState(false);
 
   const handleCheckout = async (e) => {
     e.preventDefault();
