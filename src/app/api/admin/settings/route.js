@@ -50,6 +50,7 @@ export async function PUT(request) {
           hours: data.hours ?? config.hours,
           deliveryETA: data.deliveryETA ?? config.deliveryETA,
           instagram: data.instagram ?? config.instagram,
+          facebook: data.facebook ?? config.facebook,
           email: data.email ?? config.email,
           paymentMethods: data.paymentMethods ?? config.paymentMethods,
         }

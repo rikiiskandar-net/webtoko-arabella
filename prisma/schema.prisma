@@ -65,6 +65,7 @@ model StoreConfig {
   hours          String   @default("Tutup pukul 21.00")
   deliveryETA    String   @default("Antar mulai 15 menit")
   instagram      String   @default("")
+  facebook       String   @default("")
   email          String   @default("")
   paymentMethods String   @default("BCA, Mandiri, GoPay, OVO, ShopeePay")
   updatedAt      DateTime @updatedAt

@@ -15,6 +15,7 @@ export default function SettingsClient() {
     deliveryETA: "",
     instagram: "",
     email: "",
+    facebook: "",
     paymentMethods: "",
   });
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,7 @@ export default function SettingsClient() {
           deliveryETA: data.deliveryETA || "",
           instagram: data.instagram || "",
           email: data.email || "",
+          facebook: data.facebook || "",
           paymentMethods: data.paymentMethods || "",
         });
         setLoading(false);
@@ -117,6 +119,12 @@ export default function SettingsClient() {
             <label className={styles.label}>Instagram</label>
             <input className={styles.input} value={form.instagram} onChange={e => setForm({...form, instagram: e.target.value})} placeholder="@dapur.arabella" />
             <span className={styles.helpText}>Username Instagram tanpa URL lengkap.</span>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Facebook</label>
+            <input className={styles.input} value={form.facebook} onChange={e => setForm({...form, facebook: e.target.value})} placeholder="https://facebook.com/dapurarabella" />
+            <span className={styles.helpText}>URL Facebook lengkap.</span>
           </div>
 
           <div className={styles.formGroup}>

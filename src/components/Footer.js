@@ -1,22 +1,27 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
-import { BCAIcon, MandiriIcon, BIIcon, GoPayIcon, OVOIcon, DanaIcon, QRISIcon } from "./PaymentIcons";
+import { Phone, Instagram, Facebook, Mail, MapPin } from "lucide-react";
+import { BCAIcon, MandiriIcon, BIIcon, BRIIcon, GoPayIcon, OVOIcon, DanaIcon, QRISIcon, BankTransferIcon, CashIcon } from "./PaymentIcons";
 
 const PAYMENT_MAP = {
   bca: BCAIcon,
   mandiri: MandiriIcon,
   bni: BIIcon,
-  bri: BIIcon,
+  bri: BRIIcon,
   gopay: GoPayIcon,
   ovo: OVOIcon,
   dana: DanaIcon,
   qris: QRISIcon,
-  shopeepay: GoPayIcon,
+  shopeepay: GoPayIcon, // Fallback
+  banktransfer: BankTransferIcon,
+  transfer: BankTransferIcon,
+  cash: CashIcon,
+  tunai: CashIcon,
 };
 
 function getPaymentIcon(name) {
   const key = name.toLowerCase().replace(/[^a-z0-9]/g, "");
-  return PAYMENT_MAP[key];
+  return PAYMENT_MAP[key] || BankTransferIcon; // Fallback ke bank icon jika tidak ada
 }
 
 export default function Footer({ config = {} }) {
@@ -25,6 +30,7 @@ export default function Footer({ config = {} }) {
     description = "Menyediakan berbagai produk rumahan premium dengan bahan berkualitas tinggi. Dibuat dengan cinta setiap harinya.",
     waNumber = "",
     instagram = "",
+    facebook = "",
     email = "",
     address = "",
     paymentMethods = "",
@@ -48,7 +54,12 @@ export default function Footer({ config = {} }) {
             <h3 className={styles.title}>{storeName}</h3>
           </div>
           <p className={styles.text}>{description}</p>
-          {address && <p className={styles.text} style={{ marginTop: "0.75rem" }}>{address}</p>}
+          {address && (
+            <p className={styles.textAddress}>
+              <MapPin size={16} className={styles.addressIcon} />
+              {address}
+            </p>
+          )}
         </div>
 
         <div className={styles.section}>
@@ -62,23 +73,38 @@ export default function Footer({ config = {} }) {
 
         <div className={styles.section}>
           <h4 className={styles.subtitle}>Hubungi Kami</h4>
-          <ul className={styles.linkList}>
+          <ul className={styles.socialList}>
             {waNumber && (
               <li>
-                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer">
-                  WhatsApp: +{waNumber}
+                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                  <Phone size={18} />
+                  <span>+{waNumber}</span>
                 </a>
               </li>
             )}
             {instagram && (
               <li>
-                <a href={`https://instagram.com/${instagram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer">
-                  Instagram: @{instagram.replace(/^@/, "")}
+                <a href={`https://instagram.com/${instagram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                  <Instagram size={18} />
+                  <span>@{instagram.replace(/^@/, "")}</span>
+                </a>
+              </li>
+            )}
+            {facebook && (
+              <li>
+                <a href={facebook} target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                  <Facebook size={18} />
+                  <span>Facebook Kami</span>
                 </a>
               </li>
             )}
             {email && (
-              <li><a href={`mailto:${email}`}>Email: {email}</a></li>
+              <li>
+                <a href={`mailto:${email}`} className={styles.socialLink}>
+                  <Mail size={18} />
+                  <span>{email}</span>
+                </a>
+              </li>
             )}
           </ul>
         </div>
@@ -90,10 +116,10 @@ export default function Footer({ config = {} }) {
               {paymentList.map((method, i) => {
                 const Icon = getPaymentIcon(method);
                 return (
-                  <span key={i} className={styles.paymentChip}>
-                    {Icon ? <Icon size={20} /> : null}
-                    {method}
-                  </span>
+                  <div key={i} className={styles.paymentCard} title={method}>
+                    {Icon ? <Icon size={32} /> : null}
+                    <span className={styles.paymentName}>{method}</span>
+                  </div>
                 );
               })}
             </div>
