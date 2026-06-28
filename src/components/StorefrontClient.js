@@ -126,6 +126,13 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         cartItemCount={totalCartItems}
+        onCartClick={() => {
+          if (totalCartItems > 0) {
+            setIsCartOpen(true);
+          } else {
+            showToast("Keranjang masih kosong, yuk jajan dulu!");
+          }
+        }}
       />
       
       <main className={styles.main}>
@@ -238,8 +245,8 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
         />
         
         {isCartOpen && (
-          <div className={styles.cartOverlay} onClick={() => setIsCartOpen(false)}>
-             <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '500px', display: 'flex', justifyContent: 'center' }}>
+          <div className={styles.cartDrawerOverlay} onClick={() => setIsCartOpen(false)}>
+             <div className={styles.cartDrawerContainer} onClick={e => e.stopPropagation()}>
                 <Cart 
                   cartItems={cartItems} 
                   products={initialProducts} 
