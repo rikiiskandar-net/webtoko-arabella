@@ -1,4 +1,4 @@
-import Link from "next/link";
+"use client";
 
 export default function NotFound() {
   return (
@@ -14,12 +14,12 @@ export default function NotFound() {
       <p style={{ color: "#64748B", marginBottom: "2rem", maxWidth: "400px" }}>
         Halaman yang Anda cari tidak ada atau telah dipindahkan.
       </p>
-      <Link href="/" style={{
+      <a href="/" style={{
         padding: "0.75rem 1.5rem", borderRadius: "8px", border: "none",
-        background: "#F97316", color: "white", fontWeight: 600, cursor: "pointer", textDecoration: "none"
+        background: "#2563EB", color: "white", fontWeight: 600, cursor: "pointer", textDecoration: "none"
       }}>
         Kembali ke Beranda
-      </Link>
+      </a>
     </div>
   );
 }
