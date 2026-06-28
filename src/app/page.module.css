@@ -1,6 +1,6 @@
 .main {
   min-height: 100vh;
-  padding: 0 1rem;
+  padding: 80px 1rem 0;
   max-width: 1200px;
   margin: 0 auto;
   background-image: radial-gradient(#CBD5E1 1px, transparent 1px);

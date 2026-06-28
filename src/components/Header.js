@@ -10,12 +10,25 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
   const prevCount = useRef(cartItemCount);
+  const headerRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    const handleClickOutside = (event) => {
+      if (headerRef.current && !headerRef.current.contains(event.target)) {
+        setIsMobileMenuOpen(false);
+        setIsMobileSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
@@ -40,7 +53,7 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
   ];
 
   return (
-    <header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
+    <header ref={headerRef} className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <div className={styles.left}>
           <button
