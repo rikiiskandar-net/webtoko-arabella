@@ -3,7 +3,7 @@ import { Truck, BadgeCheck, ShieldCheck, Leaf } from "lucide-react";
 
 export default function TrustBadges() {
   const badges = [
-    { icon: <Truck size={22} strokeWidth={2} color="var(--primary)" />, title: "Dikirim Hari Ini", desc: "Via Gojek/Grab Instan" },
+    { icon: <Truck size={22} strokeWidth={2} color="var(--primary)" />, title: "Bisa Ambil Sendiri / COD", desc: "Bayar Langsung Saat Pesanan Sampai" },
     { icon: <BadgeCheck size={22} strokeWidth={2} color="var(--primary)" />, title: "100% Homemade", desc: "Tanpa Bahan Pengawet" },
     { icon: <ShieldCheck size={22} strokeWidth={2} color="var(--primary)" />, title: "Garansi Kualitas", desc: "Uang Kembali Jika Basi" },
     { icon: <Leaf size={22} strokeWidth={2} color="var(--primary)" />, title: "Selalu Fresh", desc: "Dibuat Baru Setiap Hari" },
