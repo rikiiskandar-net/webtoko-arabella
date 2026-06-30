@@ -54,7 +54,8 @@ export default function ProductsClient() {
     badge: "",
     rating: "",
     sold: "",
-    categoryId: ""
+    categoryId: "",
+    isWebDiscountable: true
   });
 
   const formatPrice = (price) => {
@@ -83,7 +84,8 @@ export default function ProductsClient() {
         badge: product.badge || "",
         rating: product.rating || "",
         sold: product.sold || "",
-        categoryId: product.categoryId || ""
+        categoryId: product.categoryId || "",
+        isWebDiscountable: product.isWebDiscountable !== undefined ? product.isWebDiscountable : true
       });
     } else {
       setEditingProduct(null);
@@ -98,7 +100,8 @@ export default function ProductsClient() {
         badge: "",
         rating: "",
         sold: "",
-        categoryId: categories.length > 0 ? categories[0].id : ""
+        categoryId: categories.length > 0 ? categories[0].id : "",
+        isWebDiscountable: true
       });
     }
     setIsModalOpen(true);
@@ -338,11 +341,21 @@ export default function ProductsClient() {
                 <span className={styles.helpText}>Gambar akan otomatis di-crop (4:3) dan dikompres ke WebP sebelum diunggah.</span>
               </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.checkboxLabel}>
-                  <input type="checkbox" checked={formData.isPromo} onChange={(e) => setFormData({...formData, isPromo: e.target.checked})} />
-                  Aktifkan Diskon Promo?
-                </label>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label className={styles.checkboxLabel}>
+                    <input type="checkbox" checked={formData.isPromo} onChange={(e) => setFormData({...formData, isPromo: e.target.checked})} />
+                    Aktifkan Promo Reguler
+                  </label>
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label className={styles.checkboxLabel} style={{ color: '#10B981' }}>
+                    <input type="checkbox" checked={formData.isWebDiscountable} onChange={(e) => setFormData({...formData, isWebDiscountable: e.target.checked})} />
+                    Aktifkan Diskon Web Spesial
+                  </label>
+                  <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block', marginTop: '4px' }}>Berhak dapat diskon Rp1.000 per kelipatan Rp10.000</span>
+                </div>
               </div>
 
               {formData.isPromo && (
