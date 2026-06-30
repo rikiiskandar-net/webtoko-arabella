@@ -244,7 +244,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
               </section>
             )}
             
-            <AboutUs />
+            <AboutUs config={storeConfig} />
             <Gallery />
             <Testimonial />
           </>

@@ -53,6 +53,12 @@ export async function PUT(request) {
           facebook: data.facebook ?? config.facebook,
           email: data.email ?? config.email,
           paymentMethods: data.paymentMethods ?? config.paymentMethods,
+          aboutTitle: data.aboutTitle ?? config.aboutTitle,
+          aboutDescription: data.aboutDescription ?? config.aboutDescription,
+          aboutPoints: data.aboutPoints ?? config.aboutPoints,
+          aboutBadgeNumber: data.aboutBadgeNumber ?? config.aboutBadgeNumber,
+          aboutBadgeText: data.aboutBadgeText ?? config.aboutBadgeText,
+          aboutImage: data.aboutImage ?? config.aboutImage,
         }
       });
     } else {
