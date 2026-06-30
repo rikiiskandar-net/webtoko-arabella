@@ -43,13 +43,25 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
   }, [cartItemCount]);
 
   const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 75; // Tinggi header + sedikit ruang
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+  
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
     setIsMobileMenuOpen(false);
   };
 
   const navLinks = [
-    { label: "Menu", target: "menu-section" },
     { label: "Promo", target: "promo-section" },
+    { label: "Menu", target: "menu-section" },
+    { label: "Tentang Kami", target: "tentang-kami" },
+    { label: "Ulasan", target: "testimoni" },
     { label: "Kontak", target: "kontak" },
   ];
 

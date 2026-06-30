@@ -8,7 +8,7 @@ const testimonials = [
 
 export default function Testimonial() {
   return (
-    <div className={styles.container}>
+    <div id="testimoni" className={styles.container}>
       <h3 className={styles.sectionTitle}>Apa Kata Pelanggan Kami?</h3>
       <div className={`${styles.scrollContainer} hide-scrollbar`}>
         {testimonials.map(t => (
