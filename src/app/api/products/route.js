@@ -55,7 +55,8 @@ export async function POST(request) {
         badge: data.badge || null,
         rating: data.rating ? parseFloat(data.rating) : 0,
         sold: data.sold || "0",
-        categoryId: data.categoryId
+        categoryId: data.categoryId,
+        isWebDiscountable: data.isWebDiscountable !== undefined ? data.isWebDiscountable : true
       }
     });
 

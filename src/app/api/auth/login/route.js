@@ -2,36 +2,9 @@ import { NextResponse } from "next/server";
 import { signToken, verifyPassword, seedFirstAdmin } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-const RATE_LIMIT = 10;
-const RATE_WINDOW = 60 * 1000;
-const attempts = new Map();
-
-// Cleanup expired entries every 5 menit
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of attempts) {
-    if (now - entry.start > RATE_WINDOW) attempts.delete(ip);
-  }
-}, 5 * 60 * 1000).unref();
-
-function isRateLimited(ip) {
-  const now = Date.now();
-  const entry = attempts.get(ip);
-  if (!entry || now - entry.start > RATE_WINDOW) {
-    attempts.set(ip, { count: 1, start: now });
-    return false;
-  }
-  entry.count++;
-  return entry.count > RATE_LIMIT;
-}
 
 export async function POST(request) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    if (isRateLimited(ip)) {
-      return NextResponse.json({ error: "Terlalu banyak percobaan. Coba lagi nanti." }, { status: 429 });
-    }
-
     const { username, password } = await request.json();
 
     if (!username || !password) {

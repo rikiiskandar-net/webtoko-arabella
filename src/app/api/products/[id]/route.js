@@ -31,6 +31,7 @@ export async function PUT(request, { params }) {
     if (data.rating !== undefined) updateData.rating = parseFloat(data.rating);
     if (data.sold !== undefined) updateData.sold = data.sold;
     if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
+    if (data.isWebDiscountable !== undefined) updateData.isWebDiscountable = data.isWebDiscountable;
 
     const product = await prisma.product.update({
       where: { id },
