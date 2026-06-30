@@ -16,6 +16,7 @@ import ProductModal from "@/components/ProductModal";
 import Cart from "@/components/Cart";
 import Toast from "@/components/Toast";
 import { Flame, Star, Sparkles } from "lucide-react";
+import { renderIcon } from "@/app/(admin)/dashboard/categories/iconOptions";
 
 export default function StorefrontClient({ initialProducts = [], initialCategories = [], storeConfig }) {
   const [cartItems, setCartItems] = useState({});
@@ -178,7 +179,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
               className={`${styles.categoryPill} ${activeCategory === category.id ? styles.activePill : ""}`}
               onClick={() => handleCategoryClick(category.id)}
             >
-              <span className={styles.categoryIcon}>{category.icon}</span>
+              <span className={styles.categoryIcon}>{renderIcon(category.icon, 18, true) || category.icon}</span>
               {category.name}
             </button>
           ))}

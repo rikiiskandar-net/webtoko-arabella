@@ -48,8 +48,20 @@ const ICON_MAP = {
   Sandwich, Martini, Shell,
 };
 
-export function renderIcon(name, size = 20) {
+export function renderIcon(name, size = 20, isFlat = false) {
   const Icon = ICON_MAP[name];
   if (!Icon) return null;
+  
+  if (isFlat) {
+    // Flat modern design style
+    return createElement(Icon, { 
+      size, 
+      strokeWidth: 2, 
+      color: "currentColor",
+      fill: "currentColor", 
+      opacity: 0.85 
+    });
+  }
+  
   return createElement(Icon, { size, strokeWidth: 1.5 });
 }
