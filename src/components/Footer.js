@@ -33,6 +33,7 @@ export default function Footer({ config = {} }) {
     facebook = "",
     email = "",
     address = "",
+    hours = "",
     paymentMethods = "",
   } = config;
 
