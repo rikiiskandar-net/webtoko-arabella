@@ -5,10 +5,10 @@ import styles from "./AboutUs.module.css";
 
 export default function AboutUs() {
   const points = [
-    "100% Tanpa Bahan Pengawet",
-    "Resep Rahasia Keluarga",
-    "Dibuat Segar Setiap Hari",
-    "Kebersihan Terjamin"
+    "Tanpa Bahan Pengawet",
+    "Bahan Bumbu Pilihan",
+    "Kebersihan Terjamin",
+    "Dibuat Terbatas (Fresh)"
   ];
 
   return (
@@ -17,16 +17,18 @@ export default function AboutUs() {
         <div className={styles.imageColumn}>
           <img src="/images/about_us.jpg" alt="Dapur Arabella Kitchen" className={styles.mainImage} />
           <div className={styles.floatingBadge}>
-            <span className={styles.badgeNumber}>10+</span>
-            <span className={styles.badgeText}>Tahun<br/>Pengalaman</span>
+            <span className={styles.badgeNumber}>100%</span>
+            <span className={styles.badgeText}>Buatan<br/>Tangan</span>
           </div>
         </div>
         
         <div className={styles.contentColumn}>
           <h2 className={styles.subtitle}>Tentang Kami</h2>
-          <h3 className={styles.title}>Menyajikan Kehangatan dari Dapur Rumah</h3>
+          <h3 className={styles.title}>Berawal dari Camilan Sehat untuk Anak</h3>
           <p className={styles.description}>
-            Berawal dari resep keluarga turun-temurun, Dapur Arabella berdedikasi untuk menghadirkan camilan lezat dan sehat. Kami percaya bahwa makanan terbaik lahir dari bahan-bahan pilihan yang segar, diolah dengan tangan penuh cinta, dan disajikan dengan standar kebersihan tertinggi.
+            Dapur Arabella memang baru seumur jagung, tapi kecintaan kami pada masakan rumahan sudah ada sejak lama. Semuanya berawal dari hobi memasak dan keisengan membuatkan camilan sore yang aman untuk anak-anak di rumah. Ternyata, saat tetangga ikut mencicipi, mereka sangat menyukainya dan mulai ikut memesan! 
+            <br/><br/>
+            Dari dorongan merekalah Dapur Arabella akhirnya lahir. Karena pada dasarnya masakan ini kami buat untuk keluarga sendiri, kami sangat cerewet soal kebersihan dan pantang menggunakan bahan pengawet.
           </p>
           <div className={styles.pointsGrid}>
             {points.map((point, index) => (
