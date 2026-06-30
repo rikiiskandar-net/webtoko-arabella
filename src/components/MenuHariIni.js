@@ -18,7 +18,7 @@ export default function MenuHariIni() {
         </span>
         <span className={styles.separator}>•</span>
         <span className={styles.promoItem}>
-          <Gift size={16} className={styles.iconHighlight} /> <strong>Promo Spesial:</strong> Beli 3 Pack Frozen Food, Gratis 1 Es Mambo!
+          <Gift size={16} className={styles.iconHighlight} /> <strong>PROMO EKSKLUSIF WEB:</strong> Tiap Belanja Rp 10.000, Langsung Diskon Rp 1.000 (Berlaku Kelipatan!) 💸
         </span>
       </div>
       {/* Duplikat konten untuk membuat efek animasi scroll yang mulus dan tidak terputus */}
@@ -36,7 +36,7 @@ export default function MenuHariIni() {
         </span>
         <span className={styles.separator}>•</span>
         <span className={styles.promoItem}>
-          <Gift size={16} className={styles.iconHighlight} /> <strong>Promo Spesial:</strong> Beli 3 Pack Frozen Food, Gratis 1 Es Mambo!
+          <Gift size={16} className={styles.iconHighlight} /> <strong>PROMO EKSKLUSIF WEB:</strong> Tiap Belanja Rp 10.000, Langsung Diskon Rp 1.000 (Berlaku Kelipatan!) 💸
         </span>
       </div>
     </div>
