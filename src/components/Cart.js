@@ -21,10 +21,22 @@ export default function Cart({ cartItems, products, onUpdateQuantity, onClearCar
 
   const getPrice = (p) => p.isPromo && p.promoPrice ? p.promoPrice : p.price;
 
-  const totalPrice = Object.entries(cartItems).reduce((total, [id, qty]) => {
+  let subtotal = 0;
+  let discountableTotal = 0;
+
+  Object.entries(cartItems).forEach(([id, qty]) => {
     const product = products.find(p => p.id === id);
-    return total + (product ? getPrice(product) * qty : 0);
-  }, 0);
+    if (product) {
+      const lineTotal = getPrice(product) * qty;
+      subtotal += lineTotal;
+      if (product.isWebDiscountable !== false) {
+        discountableTotal += lineTotal;
+      }
+    }
+  });
+
+  const discountAmount = Math.floor(discountableTotal / 10000) * 1000;
+  const totalPrice = subtotal - discountAmount;
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("id-ID", {
@@ -82,6 +94,10 @@ export default function Cart({ cartItems, products, onUpdateQuantity, onClearCar
     if (formData.notes) {
       message += `📝 *Catatan:* ${formData.notes}\n`;
     }
+    
+    const orderId = `WEB-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Date.now().toString().slice(-4)}`;
+    message += `🏷️ *Order ID:* ${orderId}\n`;
+
     message += `\n*Pesanan:*\n`;
     
     Object.entries(cartItems).forEach(([id, qty]) => {
@@ -90,6 +106,11 @@ export default function Cart({ cartItems, products, onUpdateQuantity, onClearCar
         message += `- ${qty}x ${product.name} (@ ${formatPrice(getPrice(product))})\n`;
       }
     });
+    
+    if (discountAmount > 0) {
+      message += `\nSubtotal: ${formatPrice(subtotal)}`;
+      message += `\n🎁 *Diskon Web: -${formatPrice(discountAmount)}*\n`;
+    }
     
     message += `\n*Total Belanja: ${formatPrice(totalPrice)}*\n\nMohon info total ongkirnya ya. Terima kasih!`;
     
@@ -136,9 +157,33 @@ export default function Cart({ cartItems, products, onUpdateQuantity, onClearCar
         })}
       </div>
 
+      {discountAmount > 0 ? (
+        <div className={styles.promoAlert}>
+          ✅ Yeay! Anda mendapat diskon <strong>{formatPrice(discountAmount)}</strong> khusus pemesanan via Web.
+        </div>
+      ) : (
+        <div className={styles.promoAlertInfo}>
+          💡 Info: Dapatkan diskon Rp 1.000 setiap kelipatan belanja Rp 10.000 khusus via Web!
+        </div>
+      )}
+
       <div className={styles.totalSection}>
-        <span>Total Harga</span>
-        <span className={styles.totalAmount}>{formatPrice(totalPrice)}</span>
+        {discountAmount > 0 && (
+          <div className={styles.discountRow}>
+            <span className={styles.subText}>Subtotal</span>
+            <span className={styles.subText}>{formatPrice(subtotal)}</span>
+          </div>
+        )}
+        {discountAmount > 0 && (
+          <div className={styles.discountRow}>
+            <span className={styles.discountLabel}>Diskon Spesial Web 🎉</span>
+            <span className={styles.discountValue}>-{formatPrice(discountAmount)}</span>
+          </div>
+        )}
+        <div className={styles.finalTotalRow}>
+          <span>Total Harga</span>
+          <span className={styles.totalAmount}>{formatPrice(totalPrice)}</span>
+        </div>
       </div>
 
       <form className={styles.checkoutForm} onSubmit={handleCheckout}>

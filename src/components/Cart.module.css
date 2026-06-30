@@ -139,16 +139,67 @@
   text-align: center;
 }
 
+.promoAlert {
+  background-color: #ECFDF5;
+  border: 1px solid #10B981;
+  color: #065F46;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: -0.5rem;
+}
+
+.promoAlertInfo {
+  background-color: #F0F9FF;
+  border: 1px solid #BAE6FD;
+  color: #0369A1;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: -0.5rem;
+}
+
 .totalSection {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 1rem 0;
   border-top: 1px dashed var(--border-color);
   border-bottom: 1px dashed var(--border-color);
+}
+
+.discountRow, .finalTotalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subText {
+  color: #64748B;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.discountLabel {
+  color: #10B981; /* Green */
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.discountValue {
+  color: #10B981;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.finalTotalRow {
+  margin-top: 0.5rem;
   font-weight: 600;
   color: #64748B;
 }
+
 .totalAmount {
   font-size: 1.25rem;
   color: var(--foreground);

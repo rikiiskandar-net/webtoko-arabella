@@ -109,6 +109,7 @@ model Product {
   description   String
   image         String
   isPromo       Boolean  @default(false)
+  isWebDiscountable Boolean @default(true)
   promoPrice    Int?
   originalPrice Int?
   badge         String?
