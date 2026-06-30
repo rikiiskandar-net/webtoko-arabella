@@ -27,7 +27,7 @@ function getPaymentIcon(name) {
 export default function Footer({ config = {} }) {
   const {
     storeName = "Dapur Arabella",
-    description = "Menyediakan berbagai produk rumahan premium dengan bahan berkualitas tinggi. Dibuat dengan cinta setiap harinya.",
+    description = "Dapur Arabella menyajikan aneka jajanan dan lauk rumahan 100% halal, higienis, dan bebas pengawet. Dari Cireng Salju hingga Es Mambo legendaris, kami menghadirkan kelezatan masakan ibu langsung ke meja makan Anda.",
     waNumber = "",
     instagram = "",
     facebook = "",
