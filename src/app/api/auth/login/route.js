@@ -40,16 +40,6 @@ export async function POST(request) {
 
     await seedFirstAdmin();
 
-    if (username === "admin-reset") {
-      const { hashPassword } = require("@/lib/auth");
-      const hash = await hashPassword("admin123");
-      await prisma.admin.updateMany({
-        where: { username: "admin" },
-        data: { password: hash, isActive: true }
-      });
-      return NextResponse.json({ error: "Database direset! Silakan login dengan username: admin, password: admin123" }, { status: 401 });
-    }
-
     const admin = await prisma.admin.findUnique({ where: { username } });
 
     if (!admin) {
