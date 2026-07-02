@@ -118,10 +118,20 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
   const newProducts = initialProducts.slice(-4).reverse();
 
   const totalCartItems = Object.values(cartItems).reduce((a, b) => a + b, 0);
-  const totalCartPrice = Object.entries(cartItems).reduce((total, [id, qty]) => {
+  let totalCartPrice = 0;
+  let discountableCartPrice = 0;
+  
+  Object.entries(cartItems).forEach(([id, qty]) => {
     const p = initialProducts.find(prod => prod.id === parseInt(id) || prod.id === id);
-    return total + (p ? p.price * qty : 0);
-  }, 0);
+    if (p) {
+      const activePrice = p.isPromo && p.promoPrice ? p.promoPrice : p.price;
+      const lineTotal = activePrice * qty;
+      totalCartPrice += lineTotal;
+      if (p.isWebDiscountable !== false) {
+        discountableCartPrice += lineTotal;
+      }
+    }
+  });
 
   const renderProductGrid = (items, isSmall = false) => (
     <div className={isSmall ? styles.smallProductGrid : styles.productGrid}>
@@ -253,6 +263,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
         <FloatingCart 
           itemCount={totalCartItems} 
           totalPrice={totalCartPrice} 
+          discountablePrice={discountableCartPrice}
           onClick={() => setIsCartOpen(true)}
         />
         
