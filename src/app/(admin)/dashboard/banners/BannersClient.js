@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, X, Loader2, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, Edit2, Trash2, X, Loader2, ArrowUp, ArrowDown, Crop } from "lucide-react";
 import styles from "./Banners.module.css";
 import { useNotification } from "@/lib/useNotification";
+import ImageCropper from "@/components/ImageCropper";
 
 export default function BannersClient() {
   const { notify, NotificationBar } = useNotification();
@@ -13,6 +14,8 @@ export default function BannersClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingBanner, setEditingBanner] = useState(null);
   const [preview, setPreview] = useState("");
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [isUploadingCrop, setIsUploadingCrop] = useState(false);
 
   const [formData, setFormData] = useState({
     image: "",
@@ -72,6 +75,35 @@ export default function BannersClient() {
     setIsModalOpen(false);
     setEditingBanner(null);
     setPreview("");
+    setIsCropperOpen(false);
+  };
+
+  const handleCropComplete = async (file) => {
+    setIsUploadingCrop(true);
+    const formPayload = new FormData();
+    formPayload.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formPayload,
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Gagal mengunggah");
+      }
+
+      const data = await res.json();
+      setFormData({ ...formData, image: data.url });
+      setPreview(data.url);
+      setIsCropperOpen(false);
+      notify("Gambar berhasil dipotong dan diunggah", "success");
+    } catch (err) {
+      notify(err.message, "error");
+    } finally {
+      setIsUploadingCrop(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -234,12 +266,33 @@ export default function BannersClient() {
             <form onSubmit={handleSubmit} className={styles.formBody}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>URL Gambar *</label>
-                <input
-                  required type="text" className={styles.input}
-                  value={formData.image}
-                  onChange={(e) => { setFormData({ ...formData, image: e.target.value }); setPreview(e.target.value); }}
-                  placeholder="/images/banner1.png atau https://..."
-                />
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <input
+                    required type="text" className={styles.input}
+                    value={formData.image}
+                    onChange={(e) => { setFormData({ ...formData, image: e.target.value }); setPreview(e.target.value); }}
+                    placeholder="/images/banner1.png atau https://..."
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setIsCropperOpen(true)}
+                    disabled={!formData.image}
+                    style={{ 
+                      padding: "0 1rem", 
+                      borderRadius: "8px", 
+                      border: "1px solid #CBD5E1", 
+                      background: formData.image ? "white" : "#F1F5F9",
+                      cursor: formData.image ? "pointer" : "not-allowed",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
+                      fontWeight: 500,
+                      color: "#334155"
+                    }}
+                  >
+                    <Crop size={16} /> Crop
+                  </button>
+                </div>
                 {preview && (
                   <div className={styles.previewWrap}>
                     <img src={preview} alt="preview" className={styles.previewImg} onError={(e) => { e.target.style.display = "none"; }} />
@@ -290,6 +343,20 @@ export default function BannersClient() {
             </form>
           </div>
         </div>
+      )}
+
+      {isCropperOpen && (
+        <ImageCropper
+          imageSrc={formData.image}
+          onCropComplete={handleCropComplete}
+          onCancel={() => setIsCropperOpen(false)}
+          isUploading={isUploadingCrop}
+          aspectRatio={21 / 9}
+          outputWidth={1920}
+          outputHeight={822}
+          title="✂️ Sesuaikan Ukuran Banner"
+          subtitle="Geser dan zoom untuk mengatur area banner (Rasio Lebar 21:9)"
+        />
       )}
     </div>
     </>

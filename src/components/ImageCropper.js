@@ -6,7 +6,6 @@ import styles from "./ImageCropper.module.css";
 
 /**
  * Mengambil area crop dari gambar dan menghasilkan Blob WebP yang di-resize.
- * Output: 800x600 piksel, format WebP, kualitas 0.85
  */
 async function getCroppedImg(imageSrc, pixelCrop, outputWidth = 800, outputHeight = 600) {
   const image = await createImage(imageSrc);
@@ -50,7 +49,17 @@ function createImage(url) {
   });
 }
 
-export default function ImageCropper({ imageSrc, onCropComplete, onCancel, isUploading }) {
+export default function ImageCropper({ 
+  imageSrc, 
+  onCropComplete, 
+  onCancel, 
+  isUploading,
+  aspectRatio = 4 / 3,
+  outputWidth = 800,
+  outputHeight = 600,
+  title = "✂️ Potong Gambar Produk",
+  subtitle = "Geser dan zoom untuk mengatur area gambar"
+}) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -71,10 +80,10 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel, isUpl
     if (!croppedAreaPixels) return;
 
     try {
-      const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
+      const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, outputWidth, outputHeight);
       
       // Buat File object dari Blob untuk dikirim ke API upload
-      const file = new File([croppedBlob], `product-${Date.now()}.webp`, {
+      const file = new File([croppedBlob], `image-${Date.now()}.webp`, {
         type: "image/webp",
       });
 
@@ -88,8 +97,8 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel, isUpl
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h3 className={styles.title}>✂️ Potong Gambar Produk</h3>
-          <p className={styles.subtitle}>Geser dan zoom untuk mengatur area gambar (rasio 4:3)</p>
+          <h3 className={styles.title}>{title}</h3>
+          <p className={styles.subtitle}>{subtitle}</p>
         </div>
 
         <div className={styles.cropContainer}>
@@ -97,7 +106,7 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel, isUpl
             image={imageSrc}
             crop={crop}
             zoom={zoom}
-            aspect={4 / 3}
+            aspect={aspectRatio}
             onCropChange={onCropChange}
             onCropComplete={onCropAreaComplete}
             onZoomChange={onZoomChange}
@@ -137,7 +146,7 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel, isUpl
 
         <div className={styles.info}>
           <span className={styles.infoText}>
-            📐 Output: 800×600px · WebP · Otomatis terkompresi
+            📐 Output: {outputWidth}×{outputHeight}px · WebP · Otomatis terkompresi
           </span>
         </div>
 
