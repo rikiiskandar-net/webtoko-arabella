@@ -45,7 +45,7 @@ export default async function ProductDetailPage({ params }) {
   const waLink = config?.waNumber ? `https://wa.me/${config.waNumber}?text=${encodeURIComponent(msg)}` : "#";
 
   // JSON-LD Schema
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const baseUrl = 'https://www.arabella.web.id';
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",

@@ -8,7 +8,7 @@ const googleFont = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  metadataBase: new URL(process.env.BASE_URL || "http://localhost:3000"),
+  metadataBase: new URL("https://www.arabella.web.id"),
   title: {
     default: "Dapur Arabella - Jajanan Rumahan Halal & Higienis (Bisa COD!)",
     template: "%s | Dapur Arabella",
@@ -46,7 +46,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const baseUrl = process.env.BASE_URL || "https://www.arabella.web.id";
+  const baseUrl = "https://www.arabella.web.id";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FoodEstablishment",

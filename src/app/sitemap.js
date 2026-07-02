@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 
 export default async function sitemap() {
-  const baseUrl = process.env.BASE_URL || 'https://www.arabella.web.id';
+  const baseUrl = 'https://www.arabella.web.id';
 
   // Fetch all active products
   const products = await prisma.product.findMany({
