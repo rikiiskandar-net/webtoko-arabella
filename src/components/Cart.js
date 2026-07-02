@@ -81,7 +81,6 @@ export default function Cart({ cartItems, products, onUpdateQuantity, onClearCar
           address: formData.address,
           notes: formData.notes,
           items: orderItems,
-          totalPrice,
         }),
       });
     } catch {
