@@ -1,79 +1,78 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Star, ShoppingCart, MessageCircle, AlertCircle } from "lucide-react";
-import Header from "@/components/Header";
+import { notFound } from "next/navigation";
+import { ArrowLeft, Star, ShoppingCart, MessageCircle } from "lucide-react";
+import ProductClientHeader from "./ProductClientHeader";
 import Footer from "@/components/Footer";
 import styles from "./ProductDetail.module.css";
+import prisma from "@/lib/prisma";
 
-export default function ProductDetailPage() {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [config, setConfig] = useState({ waNumber: "" });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+export async function generateMetadata({ params }) {
+  const product = await prisma.product.findUnique({
+    where: { id: parseInt(params.id) }
+  });
 
-  useEffect(() => {
-    Promise.all([
-      fetch("/api/config").then(r => r.json()).catch(() => ({ waNumber: "" })),
-      fetch(`/api/store/products/${id}`).then(r => {
-        if (!r.ok) throw new Error("Produk tidak ditemukan");
-        return r.json();
-      }),
-    ]).then(([cfg, prod]) => {
-      setConfig(cfg);
-      setProduct(prod);
-      setLoading(false);
-    }).catch(() => {
-      setError("Produk tidak ditemukan");
-      setLoading(false);
-    });
-  }, [id]);
+  if (!product) return { title: "Produk Tidak Ditemukan" };
 
+  return {
+    title: `${product.name} | Dapur Arabella`,
+    description: product.description,
+    openGraph: {
+      title: `${product.name} | Dapur Arabella`,
+      description: product.description,
+      images: [product.image],
+    }
+  };
+}
+
+export default async function ProductDetailPage({ params }) {
+  const product = await prisma.product.findUnique({
+    where: { id: parseInt(params.id) }
+  });
+
+  if (!product) {
+    notFound();
+  }
+
+  const config = await prisma.storeConfig.findFirst();
   const formatPrice = (price) =>
     new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(price);
-
-  const handleBuyWA = () => {
-    if (!product || !config.waNumber) return;
-    const buyPrice = product.isPromo && product.promoPrice ? product.promoPrice : product.price;
-    let msg = `Halo Dapur Arabella, saya mau pesan:\n\n- 1x ${product.name} (@ ${formatPrice(buyPrice)})\n\nTotal: ${formatPrice(buyPrice)}\n\nMohon info pembayaran dan pengiriman ya. Terima kasih!`;
-    window.open(`https://wa.me/${config.waNumber}?text=${encodeURIComponent(msg)}`, "_blank");
-  };
-
-  if (loading) {
-    return (
-      <>
-        <Header searchQuery="" onSearchChange={() => {}} cartItemCount={0} />
-        <main className={styles.main}>
-          <div className={styles.loading}>Memuat...</div>
-        </main>
-      </>
-    );
-  }
-
-  if (error || !product) {
-    return (
-      <>
-        <Header searchQuery="" onSearchChange={() => {}} cartItemCount={0} />
-        <main className={styles.main}>
-          <div className={styles.errorBox}>
-            <AlertCircle size={48} />
-            <h2>Produk tidak ditemukan</h2>
-            <Link href="/" className={styles.backLink}><ArrowLeft size={16} /> Kembali ke Menu</Link>
-          </div>
-        </main>
-      </>
-    );
-  }
 
   const displayPrice = product.isPromo && product.promoPrice ? product.promoPrice : product.price;
   const displayOriginal = product.isPromo && product.promoPrice ? product.price : null;
 
+  // WA Link Generation
+  let msg = `Halo Dapur Arabella, saya mau pesan:\n\n- 1x ${product.name} (@ ${formatPrice(displayPrice)})\n\nTotal: ${formatPrice(displayPrice)}\n\nMohon info pembayaran dan pengiriman ya. Terima kasih!`;
+  const waLink = config?.waNumber ? `https://wa.me/${config.waNumber}?text=${encodeURIComponent(msg)}` : "#";
+
+  // JSON-LD Schema
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.image.startsWith('http') ? product.image : `${baseUrl}${product.image}`,
+    "description": product.description,
+    "offers": {
+      "@type": "Offer",
+      "url": `${baseUrl}/product/${product.id}`,
+      "priceCurrency": "IDR",
+      "price": displayPrice,
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": product.rating || "5.0",
+      "reviewCount": product.sold || "1"
+    }
+  };
+
   return (
     <>
-      <Header searchQuery="" onSearchChange={() => {}} cartItemCount={0} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductClientHeader />
       <main className={styles.main}>
         <Link href="/" className={styles.backLink}><ArrowLeft size={16} /> Kembali ke Menu</Link>
 
@@ -105,10 +104,10 @@ export default function ProductDetailPage() {
             </div>
 
             <div className={styles.actions}>
-              {config.waNumber && (
-                <button className={styles.waBtn} onClick={handleBuyWA}>
+              {config?.waNumber && (
+                <a href={waLink} target="_blank" rel="noopener noreferrer" className={styles.waBtn}>
                   <MessageCircle size={20} /> Pesan Lewat WhatsApp
-                </button>
+                </a>
               )}
               <Link href="/#menu-section" className={styles.orderLink}>
                 <ShoppingCart size={20} /> Lihat Menu Lainnya

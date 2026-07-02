@@ -1,5 +1,19 @@
-export default function sitemap() {
+import prisma from "@/lib/prisma";
+
+export default async function sitemap() {
   const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
+  // Fetch all active products
+  const products = await prisma.product.findMany({
+    orderBy: { createdAt: 'desc' }
+  });
+
+  const productUrls = products.map((product) => ({
+    url: `${baseUrl}/product/${product.id}`,
+    lastModified: product.updatedAt || new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
 
   return [
     {
@@ -8,6 +22,6 @@ export default function sitemap() {
       changeFrequency: 'daily',
       priority: 1,
     },
-    // Add more URLs here if your app gets multiple pages (e.g. /products, /about)
+    ...productUrls,
   ];
 }

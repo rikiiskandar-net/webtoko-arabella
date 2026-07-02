@@ -46,9 +46,28 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const baseUrl = process.env.BASE_URL || "https://www.arabella.web.id";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FoodEstablishment",
+    "name": "Dapur Arabella",
+    "image": `${baseUrl}/images/banner1.png`,
+    "description": "Solusi ngemil lezat dan praktis untuk keluarga tercinta. Dibuat fresh setiap hari tanpa bahan pengawet.",
+    "url": baseUrl,
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "ID"
+    },
+    "servesCuisine": "Indonesian"
+  };
+
   return (
     <html lang="id">
       <body className={`${googleFont.variable}`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
       </body>
     </html>
