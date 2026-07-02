@@ -1,5 +1,5 @@
 export default function robots() {
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.BASE_URL || 'https://www.arabella.web.id';
 
   return {
     rules: {
