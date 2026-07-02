@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import styles from "./Login.module.css";
 
 function LoginForm() {
@@ -12,6 +13,11 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [clientId, setClientId] = useState("");
+
+  useEffect(() => {
+    setClientId(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,6 +46,28 @@ function LoginForm() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/google-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: credentialResponse.credential }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Login Google gagal");
+        return;
+      }
+      router.push(searchParams.get("redirect") || "/dashboard");
+    } catch {
+      setError("Terjadi kesalahan komunikasi dengan server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.card}>
@@ -57,6 +85,25 @@ function LoginForm() {
         <form className={styles.form} onSubmit={handleSubmit}>
           {error && <div className={styles.error}>{error}</div>}
 
+          {clientId && (
+            <div className={styles.googleBtnWrap}>
+              <GoogleOAuthProvider clientId={clientId}>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => setError("Autentikasi Google dibatalkan atau gagal.")}
+                  useOneTap
+                  theme="filled_blue"
+                  shape="rectangular"
+                  width="100%"
+                  text="signin_with"
+                />
+              </GoogleOAuthProvider>
+              <div className={styles.divider}>
+                <span>ATAU</span>
+              </div>
+            </div>
+          )}
+
           <div className={styles.field}>
             <label htmlFor="username">Username</label>
             <input
@@ -65,7 +112,7 @@ function LoginForm() {
               placeholder="Masukkan username"
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
-              required
+              required={!clientId}
               autoFocus
             />
           </div>
@@ -79,7 +126,7 @@ function LoginForm() {
                 placeholder="Masukkan password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                required
+                required={!clientId}
               />
               <button type="button" className={styles.togglePassword} onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -88,7 +135,7 @@ function LoginForm() {
           </div>
 
           <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? "Memproses..." : "Masuk"}
+            {loading ? "Memproses..." : "Masuk Manual"}
           </button>
         </form>
       </div>
