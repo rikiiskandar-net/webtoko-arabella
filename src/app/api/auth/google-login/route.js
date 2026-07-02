@@ -38,17 +38,13 @@ export async function POST(request) {
     // Pastikan akun superadmin pertama sudah ada
     await seedFirstAdmin();
 
-    // Dapatkan data admin utama untuk session kita
+    // Dapatkan data admin utama untuk session kita (ambil admin pertama)
     const admin = await prisma.admin.findFirst({
-      where: { role: "superadmin" }
+      where: { isActive: true }
     });
 
     if (!admin) {
       return NextResponse.json({ error: "Data admin tidak ditemukan di database" }, { status: 500 });
-    }
-    
-    if (!admin.isActive) {
-      return NextResponse.json({ error: "Akun admin ini telah dinonaktifkan" }, { status: 403 });
     }
 
     // Buat JWT token kustom kita sendiri (seamless authentication)
