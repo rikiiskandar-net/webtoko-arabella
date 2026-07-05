@@ -39,6 +39,7 @@
 .iconWrapper.blue { background-color: #F0F7FF; color: #2563EB; }
 .iconWrapper.green { background-color: #F0FDF4; color: #16A34A; }
 .iconWrapper.purple { background-color: #F5F3FF; color: #9333EA; }
+.iconWrapper.orange { background-color: #FFF7ED; color: #EA580C; }
 
 .statValue {
   font-size: 2rem;

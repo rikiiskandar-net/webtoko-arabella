@@ -1,4 +1,4 @@
-import { Package, Tags, Eye, Globe, Smartphone } from "lucide-react";
+import { Package, Tags, Eye, Globe, Smartphone, Users } from "lucide-react";
 import styles from "./Dashboard.module.css";
 import prisma from "@/lib/prisma";
 
@@ -9,6 +9,7 @@ export const metadata = {
 export default async function DashboardPage() {
   const totalProducts = await prisma.product.count();
   const totalCategories = await prisma.category.count();
+  const totalUsers = await prisma.user.count({ where: { isActive: true } });
   
   // Analytics queries
   const now = new Date();
@@ -68,6 +69,17 @@ export default async function DashboardPage() {
           </div>
           <div className={styles.statValue}>{totalViews}</div>
           <div className={styles.statDesc}>Dari seluruh sumber organik</div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statHeader}>
+            <span className={styles.statTitle}>Pengguna Terdaftar</span>
+            <div className={`${styles.iconWrapper} ${styles.orange}`}>
+              <Users size={20} />
+            </div>
+          </div>
+          <div className={styles.statValue}>{totalUsers}</div>
+          <div className={styles.statDesc}>Akun aktif pelanggan</div>
         </div>
       </div>
       

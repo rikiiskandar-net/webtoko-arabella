@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen } from "lucide-react";
+import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { useSession } from "@/lib/SessionContext";
 import styles from "./AdminLayout.module.css";
@@ -16,6 +16,7 @@ function AdminSidebar({ pathname, router }) {
     { name: "Pesanan", href: "/dashboard/orders", icon: ClipboardList },
     { name: "Produk Menu", href: "/dashboard/products", icon: Package },
     { name: "Kategori", href: "/dashboard/categories", icon: Tags },
+    { name: "Pengguna", href: "/dashboard/users", icon: Users },
     { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
     { name: "Tentang Kami", href: "/dashboard/about", icon: Info },
     { name: "Galeri Media", href: "/dashboard/media", icon: FolderOpen },

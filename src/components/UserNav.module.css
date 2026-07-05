@@ -1,0 +1,158 @@
+/* UserNav.module.css */
+.skeleton {
+  width: 80px;
+  height: 36px;
+  background: #F1F0EE;
+  border-radius: 8px;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Guest Nav */
+.guestNav { display: flex; align-items: center; gap: 0.5rem; }
+
+.cartLink {
+  position: relative;
+  font-size: 1.25rem;
+  text-decoration: none;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #EF4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.btnMasuk {
+  padding: 0.4rem 0.875rem;
+  border: 1px solid #D6D3D1;
+  border-radius: 8px;
+  color: #44403C;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  background: white;
+  transition: background 0.15s;
+}
+.btnMasuk:hover { background: #F5F5F4; }
+
+.btnDaftar {
+  padding: 0.4rem 0.875rem;
+  background: #F59E0B;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.btnDaftar:hover { background: #D97706; }
+
+/* User Nav */
+.userNav { position: relative; display: flex; align-items: center; gap: 0.5rem; }
+
+.avatarBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid #E7E5E4;
+  border-radius: 99px;
+  padding: 0.25rem 0.75rem 0.25rem 0.3rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.avatarBtn:hover { background: #F5F5F4; }
+
+.avatarImg { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+.avatarInitials {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #F59E0B;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.userName { font-size: 0.875rem; font-weight: 600; color: #1C1917; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chevron { font-size: 0.6rem; color: #78716C; }
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid #E7E5E4;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  min-width: 200px;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.dropdownHeader {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #F5F5F4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.dropdownHeader strong { font-size: 0.9rem; color: #1C1917; }
+.dropdownHeader span { font-size: 0.8rem; color: #78716C; }
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  text-decoration: none;
+  color: #44403C;
+  font-size: 0.9rem;
+  transition: background 0.1s;
+  gap: 0.5rem;
+}
+.dropdownItem:hover { background: #FAFAF9; }
+
+.itemBadge {
+  background: #EF4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 99px;
+  padding: 0.1rem 0.4rem;
+}
+
+.dropdownLogout {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: none;
+  border: none;
+  border-top: 1px solid #F5F5F4;
+  color: #DC2626;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  gap: 0.5rem;
+  transition: background 0.1s;
+}
+.dropdownLogout:hover { background: #FEF2F2; }

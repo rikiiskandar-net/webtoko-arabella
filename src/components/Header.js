@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, ShoppingCart, Search } from "lucide-react";
 import styles from "./Header.module.css";
+import UserNav from "./UserNav";
 
 export default function Header({ searchQuery, onSearchChange, cartItemCount, onCartClick }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -114,6 +115,9 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
             <ShoppingCart size={20} />
             {cartItemCount > 0 && <span className={styles.badge}>{cartItemCount}</span>}
           </button>
+
+          {/* UserNav: Tombol Login/Register atau Dropdown Profil */}
+          <UserNav cartLocalCount={cartItemCount} />
         </div>
       </div>
 
