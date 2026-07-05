@@ -49,7 +49,6 @@ export default function ProductsClient() {
     description: "",
     image: "/images/placeholder.jpg",
     isPromo: false,
-    promoPrice: "",
     originalPrice: "",
     badge: "",
     rating: "",
@@ -79,7 +78,6 @@ export default function ProductsClient() {
         description: product.description || "",
         image: product.image || "/images/placeholder.jpg",
         isPromo: product.isPromo,
-        promoPrice: product.promoPrice || "",
         originalPrice: product.originalPrice || "",
         badge: product.badge || "",
         rating: product.rating || "",
@@ -95,7 +93,6 @@ export default function ProductsClient() {
         description: "",
         image: "/images/placeholder.jpg",
         isPromo: false,
-        promoPrice: "",
         originalPrice: "",
         badge: "",
         rating: "",
@@ -257,11 +254,11 @@ export default function ProductsClient() {
                     </span>
                   </td>
                   <td>
-                    {product.isPromo ? (
+                    {product.originalPrice ? (
                       <div>
-                        <span className={styles.strike}>{formatPrice(product.price)}</span>
+                        <span className={styles.strike}>{formatPrice(product.originalPrice)}</span>
                         <br />
-                        <span className={styles.price}>{formatPrice(product.promoPrice)}</span>
+                        <span className={styles.price}>{formatPrice(product.price)}</span>
                       </div>
                     ) : (
                       <span className={styles.price}>{formatPrice(product.price)}</span>
@@ -301,7 +298,7 @@ export default function ProductsClient() {
               
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Harga Asli (Rp) *</label>
+                  <label className={styles.label}>Harga Jual (Rp) *</label>
                   <input required type="number" className={styles.input} value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} placeholder="Cth: 20000" />
                 </div>
                 
@@ -358,17 +355,10 @@ export default function ProductsClient() {
                 </div>
               </div>
 
-              {formData.isPromo && (
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Harga Promo (Rp) *</label>
-                  <input required={formData.isPromo} type="number" className={styles.input} value={formData.promoPrice} onChange={(e) => setFormData({...formData, promoPrice: e.target.value})} placeholder="Cth: 15000" />
-                </div>
-              )}
-
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Harga Asli (coret)</label>
-                  <input type="number" className={styles.input} value={formData.originalPrice} onChange={(e) => setFormData({...formData, originalPrice: e.target.value})} placeholder="Cth: 45000" />
+                  <label className={styles.label}>Harga Coret / Lama (Opsional)</label>
+                  <input type="number" className={styles.input} value={formData.originalPrice} onChange={(e) => setFormData({...formData, originalPrice: e.target.value})} placeholder="Cth: 25000" />
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.label}>Label Badge</label>

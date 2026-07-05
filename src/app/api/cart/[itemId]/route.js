@@ -25,7 +25,7 @@ export async function PATCH(request, { params }) {
     const updated = await prisma.cartItem.update({
       where: { id: itemId },
       data: { quantity },
-      include: { product: { select: { id: true, name: true, price: true, promoPrice: true, isPromo: true, image: true } } }
+      include: { product: { select: { id: true, name: true, price: true, isPromo: true, image: true } } }
     });
 
     return NextResponse.json(updated);

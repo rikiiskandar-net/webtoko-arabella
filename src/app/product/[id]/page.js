@@ -37,8 +37,8 @@ export default async function ProductDetailPage({ params }) {
   const formatPrice = (price) =>
     new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(price);
 
-  const displayPrice = product.isPromo && product.promoPrice ? product.promoPrice : product.price;
-  const displayOriginal = product.isPromo && product.promoPrice ? product.price : null;
+  const displayPrice = product.price;
+  const displayOriginal = product.originalPrice;
 
   // WA Link Generation
   let msg = `Halo Dapur Arabella, saya mau pesan:\n\n- 1x ${product.name} (@ ${formatPrice(displayPrice)})\n\nTotal: ${formatPrice(displayPrice)}\n\nMohon info pembayaran dan pengiriman ya. Terima kasih!`;

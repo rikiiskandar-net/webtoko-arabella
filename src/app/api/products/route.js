@@ -50,13 +50,13 @@ export async function POST(request) {
         description: data.description || "",
         image: data.image || "/images/placeholder.jpg",
         isPromo: data.isPromo || false,
-        promoPrice: data.promoPrice ? parseInt(data.promoPrice) : null,
+        isWebDiscountable: data.isWebDiscountable !== undefined ? data.isWebDiscountable : true,
+        promoPrice: null,
         originalPrice: data.originalPrice ? parseInt(data.originalPrice) : null,
         badge: data.badge || null,
         rating: data.rating ? parseFloat(data.rating) : 0,
         sold: data.sold || "0",
         categoryId: data.categoryId,
-        isWebDiscountable: data.isWebDiscountable !== undefined ? data.isWebDiscountable : true
       }
     });
 

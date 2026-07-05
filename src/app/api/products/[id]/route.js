@@ -25,13 +25,13 @@ export async function PUT(request, { params }) {
     if (data.description !== undefined) updateData.description = data.description;
     if (data.image !== undefined) updateData.image = data.image;
     if (data.isPromo !== undefined) updateData.isPromo = data.isPromo;
-    if (data.promoPrice !== undefined) updateData.promoPrice = data.promoPrice ? parseInt(data.promoPrice) : null;
+    if (data.isWebDiscountable !== undefined) updateData.isWebDiscountable = data.isWebDiscountable;
+    updateData.promoPrice = null;
     if (data.originalPrice !== undefined) updateData.originalPrice = data.originalPrice ? parseInt(data.originalPrice) : null;
     if (data.badge !== undefined) updateData.badge = data.badge || null;
     if (data.rating !== undefined) updateData.rating = parseFloat(data.rating);
     if (data.sold !== undefined) updateData.sold = data.sold;
     if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
-    if (data.isWebDiscountable !== undefined) updateData.isWebDiscountable = data.isWebDiscountable;
 
     const product = await prisma.product.update({
       where: { id },

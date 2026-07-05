@@ -56,7 +56,7 @@ export async function POST(request) {
       
       const dbProduct = dbProducts.find(p => p.id === item.id);
       if (dbProduct) {
-        const activePrice = dbProduct.isPromo && dbProduct.promoPrice ? dbProduct.promoPrice : dbProduct.price;
+        const activePrice = dbProduct.price;
         const lineTotal = activePrice * item.qty;
         
         subtotal += lineTotal;

@@ -14,7 +14,7 @@ export async function GET(request) {
         items: {
           include: {
             product: {
-              select: { id: true, name: true, price: true, promoPrice: true, isPromo: true, image: true, isWebDiscountable: true }
+              select: { id: true, name: true, price: true, isPromo: true, image: true, isWebDiscountable: true }
             }
           },
           orderBy: { createdAt: "asc" }
@@ -55,7 +55,7 @@ export async function POST(request) {
       where: { cartId_productId: { cartId: cart.id, productId } },
       update: { quantity: { increment: quantity } },
       create: { cartId: cart.id, productId, quantity },
-      include: { product: { select: { id: true, name: true, price: true, promoPrice: true, isPromo: true, image: true } } }
+      include: { product: { select: { id: true, name: true, price: true, isPromo: true, image: true } } }
     });
 
     return NextResponse.json(cartItem, { status: 201 });

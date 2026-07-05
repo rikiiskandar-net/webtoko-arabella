@@ -2,8 +2,8 @@ import styles from "./ProductCard.module.css";
 import { Star } from "lucide-react";
 
 export default function ProductCard({ product, cartQuantity, onUpdateQuantity, onBuyNow, onViewDetail, isSmall = false }) {
-  const displayPrice = product.isPromo && product.promoPrice ? product.promoPrice : product.price;
-  const displayOriginal = product.isPromo && product.promoPrice ? product.price : product.originalPrice;
+  const displayPrice = product.price;
+  const displayOriginal = product.originalPrice;
   const formatPrice = (price) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
