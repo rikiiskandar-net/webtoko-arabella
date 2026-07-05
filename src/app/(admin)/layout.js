@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users } from "lucide-react";
+import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { useSession } from "@/lib/SessionContext";
 import styles from "./AdminLayout.module.css";
 import { useState, useEffect } from "react";
 
-function AdminSidebar({ pathname, router }) {
+function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }) {
   const session = useSession();
 
   const menuGroups = [
@@ -59,6 +59,13 @@ function AdminSidebar({ pathname, router }) {
           </svg>
         </div>
         <span className={styles.brandName}>Dapur Arabella</span>
+        <button 
+          className={styles.collapseDesktopBtn} 
+          onClick={onToggleCollapse}
+          title={isSidebarCollapsed ? "Munculkan Sidebar" : "Lipat Sidebar"}
+        >
+          {isSidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </button>
       </div>
 
       <nav className={styles.navMenu}>
@@ -159,7 +166,12 @@ export default function AdminLayout({ children }) {
               <X size={24} />
             </button>
           </div>
-          <AdminSidebar pathname={pathname} router={router} />
+          <AdminSidebar 
+            pathname={pathname} 
+            router={router} 
+            isSidebarCollapsed={isSidebarCollapsed}
+            onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          />
         </aside>
         <AdminContent onToggleSidebar={handleToggleSidebar}>
           {children}

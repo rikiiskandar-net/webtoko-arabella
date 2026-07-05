@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+// Import dinamis next/headers untuk menghindari bug InvariantError Next.js
 import { createHmac } from "crypto";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
@@ -39,6 +39,7 @@ export function verifyToken(token) {
 }
 
 export async function setAuthCookie(payload) {
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const token = signToken(payload);
   cookieStore.set(COOKIE_NAME, token, {
@@ -51,11 +52,13 @@ export async function setAuthCookie(payload) {
 }
 
 export async function clearAuthCookie() {
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
 
 export async function getAuthSession() {
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
