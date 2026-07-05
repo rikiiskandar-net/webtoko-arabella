@@ -14,7 +14,6 @@
   flex-shrink: 0;
   border-right: 1px solid #E5E7EB; /* Subtle border */
   z-index: 2000;
-  overflow-x: hidden;
   position: relative;
   transition: width 0.3s ease;
 }
@@ -73,28 +72,36 @@
   gap: 0.75rem; 
   height: 56px; /* Match topbar */
   box-sizing: border-box;
+  position: relative;
 }
-.logoIcon { width: 32px; height: 32px; background-color: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logoIcon { width: 32px; height: 32px; background-color: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.3s ease; }
+.sidebar.collapsed .logoIcon { transform: scale(1.1); }
 .brandName { flex-grow: 1; font-size: 1.05rem; font-weight: 700; color: #0F172A; letter-spacing: -0.02em; white-space: nowrap; transition: opacity 0.3s ease, width 0.3s ease; overflow: hidden; }
 .sidebar.collapsed .brandName { opacity: 0; width: 0; }
 
 .collapseDesktopBtn {
-  background: #F1F5F9;
+  position: absolute;
+  right: -14px;
+  top: 14px;
+  background: #FFFFFF;
   border: 1px solid #E5E7EB;
   color: #64748B;
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease, transform 0.3s ease;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  z-index: 10;
 }
 .collapseDesktopBtn:hover {
-  background: #E2E8F0;
+  background: #F8FAFC;
   color: #0F172A;
+  transform: scale(1.1);
 }
 
 /* Sembunyikan tombol lipat di mobile karena sudah ada X */
@@ -136,20 +143,24 @@
   transition: all 0.3s ease;
   text-decoration: none;
   white-space: nowrap;
-  overflow: hidden;
   border-left: 3px solid transparent;
+}
+/* Prevent icons from squashing in flexbox when width changes */
+.navItem > svg {
+  flex-shrink: 0;
 }
 .navItem:hover { background-color: #F0F7FF; color: #0F172A; }
 .navItem.active { background-color: #F0F7FF; color: #2563EB; border-left-color: #2563EB; }
-.navText { transition: opacity 0.3s ease, width 0.3s ease; white-space: nowrap; overflow: hidden; opacity: 1; }
+.navText { transition: opacity 0.3s ease, width 0.3s ease; white-space: nowrap; overflow: hidden; opacity: 1; width: 100%; }
 .sidebar.collapsed .navText { opacity: 0; width: 0; }
-.sidebar.collapsed .navItem { justify-content: center; padding: 0.75rem; border-left-color: transparent; }
+.sidebar.collapsed .navItem { padding: 0.75rem; border-left-color: transparent; }
 .sidebar.collapsed .navItem.active { background-color: #DBEAFE; color: #1D4ED8; border-left-color: transparent; }
 
 .sidebarFooter { padding: 1.25rem 0.75rem; border-top: 1px solid #E5E7EB; }
-.logoutBtn { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.6rem 0.75rem; border-radius: 8px; color: #EF4444; background: transparent; border: none; font-weight: 500; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem; white-space: nowrap; overflow: hidden; }
+.logoutBtn { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.6rem 0.75rem; border-radius: 8px; color: #EF4444; background: transparent; border: none; font-weight: 500; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem; white-space: nowrap; }
+.logoutBtn > svg { flex-shrink: 0; }
 .logoutBtn:hover { background-color: rgba(239, 68, 68, 0.1); }
-.sidebar.collapsed .logoutBtn { justify-content: center; }
+.sidebar.collapsed .logoutBtn { padding: 0.75rem; }
 
 .mainContent { flex-grow: 1; display: flex; flex-direction: column; overflow-x: hidden; }
 
