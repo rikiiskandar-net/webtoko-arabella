@@ -1,24 +1,100 @@
-.dashboardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
-.statCard {
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  padding: 1.5rem;
-  border: 1px solid var(--border-color); /* subtle border */
+.topRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .topRow {
+    grid-template-columns: 8fr 4fr;
+  }
+}
+
+.heroCard {
+  background: linear-gradient(135deg, #7C3AED 0%, #3B82F6 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  color: white;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+}
+
+.heroTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: rgba(255,255,255,0.9);
+}
+
+.heroValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.heroChart {
+  margin-top: auto;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  margin-bottom: -1.5rem;
+}
+
+/* Decorative background elements for hero */
+.heroDecoration {
+  position: absolute;
+  right: -5%;
+  top: -10%;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.statsWrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 576px) {
+  .statsWrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.statCard {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .statHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .statTitle {
@@ -28,65 +104,57 @@
 }
 
 .iconWrapper {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.iconWrapper.blue { background-color: #F0F7FF; color: #2563EB; }
-.iconWrapper.green { background-color: #F0FDF4; color: #16A34A; }
-.iconWrapper.purple { background-color: #F5F3FF; color: #9333EA; }
-.iconWrapper.orange { background-color: #FFF7ED; color: #EA580C; }
+.iconWrapper.blue { background-color: rgba(37, 99, 235, 0.1); color: var(--primary); }
+.iconWrapper.green { background-color: rgba(22, 163, 74, 0.1); color: var(--green); }
+.iconWrapper.purple { background-color: rgba(147, 51, 234, 0.1); color: #9333EA; }
+.iconWrapper.orange { background-color: rgba(234, 88, 12, 0.1); color: #EA580C; }
 
 .statValue {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--foreground);
-  margin-bottom: 0.25rem;
 }
 
 .statDesc {
   font-size: 0.8rem;
   color: var(--text-muted);
+  margin-top: 0.25rem;
 }
 
-.sectionTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--foreground);
-  margin-bottom: 1rem;
-}
-
-.insightsWrapper {
+.bottomRow {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
-  margin-top: 2rem;
 }
 
-@media (min-width: 768px) {
-  .insightsWrapper {
+@media (min-width: 992px) {
+  .bottomRow {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .insightCard {
   background: var(--card-bg);
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .insightHeader {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
 }
 
 .insightIcon {
@@ -94,10 +162,17 @@
 }
 
 .insightTitle {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--foreground);
   margin: 0;
+}
+
+.insightBody {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .insightList {
@@ -106,28 +181,48 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 .insightItem {
   display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.insightItemHeader {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.95rem;
 }
 
 .itemName {
   color: var(--foreground);
   font-weight: 500;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .itemValue {
-  background: var(--hover-bg);
-  padding: 0.25rem 0.75rem;
-  border-radius: 99px;
   font-weight: 600;
   color: var(--foreground);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 6px;
+  background-color: var(--hover-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 3px;
 }
 
 .noData {
@@ -135,6 +230,6 @@
   font-size: 0.9rem;
   font-style: italic;
   text-align: center;
-  padding: 1rem 0;
+  padding: 2rem 0;
 }
 
