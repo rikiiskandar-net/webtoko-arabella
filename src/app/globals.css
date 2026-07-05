@@ -1,15 +1,11 @@
 :root {
-  --background: #F8FAFC; /* Slate/Biru muda lembut */
-  --foreground: #0F172A; /* Slate gelap */
-  --primary: #2563EB; /* Biru Elegan */
+  /* Common variables */
+  --primary: #2563EB;
   --primary-hover: #1D4ED8;
-  --accent: #F59E0B; /* Amber/Oranye Hangat */
+  --accent: #F59E0B;
   --accent-hover: #D97706;
-  --red: #EF4444; /* Untuk harga coret & promo */
-  --green: #16A34A; /* Success color sesuai instruksi SaaS */
-  
-  --card-bg: #FFFFFF;
-  --border-color: #E2E8F0; /* Slate 200 */
+  --red: #EF4444;
+  --green: #16A34A;
   
   --radius-xl: 20px;
   --radius-lg: 16px;
@@ -17,10 +13,38 @@
   --radius-sm: 8px;
   --radius-pill: 9999px;
   
+  /* Light Mode Variables */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card-bg: #FFFFFF;
+  --border-color: #E2E8F0;
+  --text-muted: #64748B;
+  --hover-bg: #F1F5F9;
+  
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
   --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
   --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] {
+  /* GitHub Dark Mode Variables */
+  --background: #0d1117;
+  --foreground: #c9d1d9;
+  --card-bg: #161b22;
+  --border-color: #30363d;
+  --text-muted: #8b949e;
+  --hover-bg: #21262d;
+  
+  --primary: #58a6ff;
+  --primary-hover: #3182ce;
+  --red: #f85149;
+  --green: #238636;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
 }
 
 html, body {

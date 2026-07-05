@@ -8,7 +8,7 @@
 .title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0F172A;
+  color: var(--foreground);
 }
 
 .list {
@@ -18,9 +18,9 @@
 }
 
 .card {
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
-  border: 1px solid #E5E7EB; /* subtle border */
+  border: 1px solid var(--border-color); /* subtle border */
   overflow: hidden;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .cardHeader:hover {
-  background-color: #F8FAFC;
+  background-color: var(--hover-bg);
 }
 
 .cardInfo {
@@ -47,12 +47,12 @@
 .customerName {
   font-weight: 600;
   font-size: 1rem;
-  color: #0F172A;
+  color: var(--foreground);
 }
 
 .orderDate {
   font-size: 0.8rem;
-  color: #64748B;
+  color: var(--text-muted);
 }
 
 .cardMeta {
@@ -64,7 +64,7 @@
 
 .totalPrice {
   font-weight: 700;
-  color: #2563EB;
+  color: var(--primary);
   font-size: 0.95rem;
 }
 
@@ -78,7 +78,7 @@
 
 .cardBody {
   padding: 0 1.25rem 1.25rem;
-  border-top: 1px solid #E5E7EB;
+  border-top: 1px solid var(--border-color);
   padding-top: 1rem;
 }
 
@@ -91,7 +91,7 @@
 
 .label {
   font-weight: 500;
-  color: #64748B;
+  color: var(--text-muted);
   min-width: 80px;
   flex-shrink: 0;
 }
@@ -103,7 +103,7 @@
 .itemsSection h4 {
   margin: 0 0 0.5rem;
   font-size: 0.9rem;
-  color: #64748B;
+  color: var(--text-muted);
 }
 
 .itemRow {
@@ -129,8 +129,9 @@
 .statusBtn {
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
-  border: 1px solid #E5E7EB;
-  background: white;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--foreground);
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -138,7 +139,7 @@
 }
 
 .statusBtn:hover:not(:disabled) {
-  background: #F8FAFC;
+  background: var(--hover-bg);
 }
 
 .statusBtn:disabled {
@@ -149,7 +150,8 @@
 .activeStatus {
   color: white;
   font-weight: 600;
-  background-color: #2563EB;
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
 .deleteBtn {
@@ -167,13 +169,13 @@
 }
 
 .deleteBtn:hover {
-  background: #FEF2F2;
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .emptyState {
   text-align: center;
   padding: 4rem 1rem;
-  color: #64748B;
+  color: var(--text-muted);
 }
 
 .emptyState h3 {
@@ -181,7 +183,7 @@
   font-size: 1.2rem;
 }
 
-.icon { color: #E5E7EB; }
+.icon { color: var(--border-color); }
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

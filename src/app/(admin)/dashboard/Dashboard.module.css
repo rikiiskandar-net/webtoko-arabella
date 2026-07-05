@@ -6,10 +6,10 @@
 }
 
 .statCard {
-  background-color: #FFFFFF;
+  background-color: var(--card-bg);
   border-radius: 8px;
   padding: 1.5rem;
-  border: 1px solid #E5E7EB; /* subtle border */
+  border: 1px solid var(--border-color); /* subtle border */
   display: flex;
   flex-direction: column;
 }
@@ -24,7 +24,7 @@
 .statTitle {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #64748B;
+  color: var(--text-muted);
 }
 
 .iconWrapper {
@@ -44,19 +44,19 @@
 .statValue {
   font-size: 2rem;
   font-weight: 700;
-  color: #0F172A;
+  color: var(--foreground);
   margin-bottom: 0.25rem;
 }
 
 .statDesc {
   font-size: 0.8rem;
-  color: #94A3B8;
+  color: var(--text-muted);
 }
 
 .sectionTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #0F172A;
+  color: var(--foreground);
   margin-bottom: 1rem;
 }
 
@@ -74,9 +74,9 @@
 }
 
 .insightCard {
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--border-color);
   padding: 1.5rem;
 }
 
@@ -86,17 +86,17 @@
   gap: 0.5rem;
   margin-bottom: 1.25rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .insightIcon {
-  color: #64748B;
+  color: var(--text-muted);
 }
 
 .insightTitle {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #0F172A;
+  color: var(--foreground);
   margin: 0;
 }
 
@@ -117,21 +117,21 @@
 }
 
 .itemName {
-  color: #334155;
+  color: var(--foreground);
   font-weight: 500;
 }
 
 .itemValue {
-  background: #F8FAFC;
+  background: var(--hover-bg);
   padding: 0.25rem 0.75rem;
   border-radius: 99px;
   font-weight: 600;
-  color: #0F172A;
+  color: var(--foreground);
   font-size: 0.85rem;
 }
 
 .noData {
-  color: #94A3B8;
+  color: var(--text-muted);
   font-size: 0.9rem;
   font-style: italic;
   text-align: center;

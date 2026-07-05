@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users, User, HelpCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users, User, HelpCircle, ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { useSession } from "@/lib/SessionContext";
+import { useTheme } from "@/components/ThemeProvider";
 import styles from "./AdminLayout.module.css";
 import { useState, useEffect, useRef } from "react";
 
@@ -97,6 +98,7 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
 
 function AdminContent({ children, onToggleSidebar, router }) {
   const session = useSession();
+  const { theme, toggleTheme } = useTheme();
   const initial = session?.name?.charAt(0)?.toUpperCase() || "A";
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -126,11 +128,21 @@ function AdminContent({ children, onToggleSidebar, router }) {
           </button>
           <h1 className={styles.pageTitle}>Kokpit Admin</h1>
         </div>
-        <div 
-          className={styles.userProfile} 
-          onClick={() => setIsProfileOpen(!isProfileOpen)}
-          ref={dropdownRef}
-        >
+        
+        <div className={styles.topbarRight}>
+          <button 
+            className={styles.themeToggleBtn} 
+            onClick={toggleTheme}
+            title="Toggle Dark Mode"
+          >
+            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          
+          <div 
+            className={styles.userProfile} 
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            ref={dropdownRef}
+          >
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.9rem", color: "#0F172A", fontWeight: 600 }}>{session?.name}</div>
             <div style={{ fontSize: "0.75rem", color: "#64748B" }}>
@@ -157,6 +169,7 @@ function AdminContent({ children, onToggleSidebar, router }) {
               </button>
             </div>
           )}
+        </div>
         </div>
       </header>
       <main className={styles.contentArea}>{children}</main>
