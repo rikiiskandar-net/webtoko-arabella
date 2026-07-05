@@ -19,7 +19,7 @@ export default async function UsersPage() {
     phone: u.phone,
     avatar: u.avatar,
     isActive: u.isActive,
-    createdAt: u.createdAt,
+    createdAt: u.createdAt.toISOString(),
     cartItemCount: u.cart && u.cart.items ? u.cart.items.reduce((a, i) => a + i.quantity, 0) : 0,
   }));
 
