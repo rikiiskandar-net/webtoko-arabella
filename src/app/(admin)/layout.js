@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users, User, HelpCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { useSession } from "@/lib/SessionContext";
 import styles from "./AdminLayout.module.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }) {
   const session = useSession();
@@ -43,11 +43,6 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
       ]
     }
   ];
-
-  const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-  };
 
   return (
     <>
@@ -96,20 +91,31 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
           );
         })}
       </nav>
-
-      <div className={styles.sidebarFooter}>
-        <button className={styles.logoutBtn} onClick={handleLogout}>
-          <LogOut size={20} />
-          <span className={styles.navText}>Keluar</span>
-        </button>
-      </div>
     </>
   );
 }
 
-function AdminContent({ children, onToggleSidebar }) {
+function AdminContent({ children, onToggleSidebar, router }) {
   const session = useSession();
   const initial = session?.name?.charAt(0)?.toUpperCase() || "A";
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async (e) => {
+    e.stopPropagation();
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  };
 
   return (
     <div className={styles.mainContent}>
@@ -120,7 +126,11 @@ function AdminContent({ children, onToggleSidebar }) {
           </button>
           <h1 className={styles.pageTitle}>Kokpit Admin</h1>
         </div>
-        <div className={styles.userProfile}>
+        <div 
+          className={styles.userProfile} 
+          onClick={() => setIsProfileOpen(!isProfileOpen)}
+          ref={dropdownRef}
+        >
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.9rem", color: "#0F172A", fontWeight: 600 }}>{session?.name}</div>
             <div style={{ fontSize: "0.75rem", color: "#64748B" }}>
@@ -128,6 +138,25 @@ function AdminContent({ children, onToggleSidebar }) {
             </div>
           </div>
           <div className={styles.avatar}>{initial}</div>
+
+          {isProfileOpen && (
+            <div className={styles.profileDropdown}>
+              <div className={styles.dropdownHeader}>
+                <div className={styles.dropdownHeaderName}>{session?.name}</div>
+                <div className={styles.dropdownHeaderRole}>{session?.email || "Admin Account"}</div>
+              </div>
+              <Link href="/dashboard/settings" className={styles.dropdownItem}>
+                <User size={18} /> Profil Saya
+              </Link>
+              <Link href="#" className={styles.dropdownItem}>
+                <HelpCircle size={18} /> Pusat Bantuan
+              </Link>
+              <div className={styles.dropdownDivider}></div>
+              <button className={`${styles.dropdownItem} ${styles.logout}`} onClick={handleLogout}>
+                <LogOut size={18} /> Keluar
+              </button>
+            </div>
+          )}
         </div>
       </header>
       <main className={styles.contentArea}>{children}</main>
@@ -173,7 +202,7 @@ export default function AdminLayout({ children }) {
             onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           />
         </aside>
-        <AdminContent onToggleSidebar={handleToggleSidebar}>
+        <AdminContent onToggleSidebar={handleToggleSidebar} router={router}>
           {children}
         </AdminContent>
       </div>
