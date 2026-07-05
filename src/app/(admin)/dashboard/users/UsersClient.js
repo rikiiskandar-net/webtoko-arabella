@@ -15,6 +15,7 @@ function formatDate(dateStr) {
 }
 
 export default function UsersClient({ initialUsers = [] }) {
+  console.log('UsersClient init', initialUsers);
   const [users, setUsers] = useState(initialUsers);
   const [search, setSearch] = useState("");
   const [toggling, setToggling] = useState({});
