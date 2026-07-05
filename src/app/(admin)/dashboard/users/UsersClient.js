@@ -49,7 +49,7 @@ export default function UsersClient({ initialUsers = [] }) {
 
   return (
     <div className={styles.wrapper}>
-      <NotificationBar />
+      {NotificationBar}
 
       <div className={styles.pageHeader}>
         <h2 className={styles.pageTitle}>Manajemen Pengguna</h2>
