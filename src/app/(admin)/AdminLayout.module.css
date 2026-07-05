@@ -59,7 +59,22 @@
 .logoIcon { width: 32px; height: 32px; background-color: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 .brandName { font-size: 1.1rem; font-weight: 700; color: #0F172A; letter-spacing: -0.02em; }
 
-.navMenu { padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
+.navMenu { padding: 1.5rem 1rem; display: flex; flex-direction: column; flex-grow: 1; }
+
+.menuGroup { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.menuGroup:last-child { margin-bottom: 0; }
+
+.groupLabel {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+}
+
 .navItem {
   display: flex;
   align-items: center;

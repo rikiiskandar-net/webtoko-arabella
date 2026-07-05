@@ -11,22 +11,38 @@ import { useState, useEffect } from "react";
 function AdminSidebar({ pathname, router }) {
   const session = useSession();
 
-  const allNavItems = [
-    { name: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Pesanan", href: "/dashboard/orders", icon: ClipboardList },
-    { name: "Produk Menu", href: "/dashboard/products", icon: Package },
-    { name: "Kategori", href: "/dashboard/categories", icon: Tags },
-    { name: "Pengguna", href: "/dashboard/users", icon: Users },
-    { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
-    { name: "Tentang Kami", href: "/dashboard/about", icon: Info },
-    { name: "Galeri Media", href: "/dashboard/media", icon: FolderOpen },
-    { name: "Banner", href: "/dashboard/banners", icon: ImageIcon },
-    { name: "Admin", href: "/dashboard/admins", icon: Shield, superadminOnly: true },
+  const menuGroups = [
+    {
+      label: "UTAMA",
+      items: [
+        { name: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
+        { name: "Pesanan", href: "/dashboard/orders", icon: ClipboardList },
+      ]
+    },
+    {
+      label: "KATALOG",
+      items: [
+        { name: "Produk Menu", href: "/dashboard/products", icon: Package },
+        { name: "Kategori", href: "/dashboard/categories", icon: Tags },
+      ]
+    },
+    {
+      label: "KONTEN WEB",
+      items: [
+        { name: "Banner", href: "/dashboard/banners", icon: ImageIcon },
+        { name: "Galeri Media", href: "/dashboard/media", icon: FolderOpen },
+        { name: "Tentang Kami", href: "/dashboard/about", icon: Info },
+      ]
+    },
+    {
+      label: "MANAJEMEN",
+      items: [
+        { name: "Pengguna", href: "/dashboard/users", icon: Users },
+        { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
+        { name: "Admin", href: "/dashboard/admins", icon: Shield, superadminOnly: true },
+      ]
+    }
   ];
-
-  const navItems = allNavItems.filter(
-    (item) => !item.superadminOnly || session?.role === "superadmin"
-  );
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -46,18 +62,30 @@ function AdminSidebar({ pathname, router }) {
       </div>
 
       <nav className={styles.navMenu}>
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href || pathname?.startsWith(item.href + "/");
+        {menuGroups.map((group, idx) => {
+          const visibleItems = group.items.filter(
+            (item) => !item.superadminOnly || session?.role === "superadmin"
+          );
+          if (visibleItems.length === 0) return null;
+
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`${styles.navItem} ${isActive ? styles.active : ""}`}
-            >
-              <Icon size={20} />
-              {item.name}
-            </Link>
+            <div key={idx} className={styles.menuGroup}>
+              <span className={styles.groupLabel}>{group.label}</span>
+              {visibleItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href || pathname?.startsWith(item.href + "/");
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`${styles.navItem} ${isActive ? styles.active : ""}`}
+                  >
+                    <Icon size={20} />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
           );
         })}
       </nav>
