@@ -8,7 +8,7 @@
 .title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0F172A;
+  color: var(--foreground);
 }
 
 .addBtn {
@@ -32,9 +32,9 @@
 }
 
 .tableContainer {
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
-  border: 1px solid #E5E7EB; /* subtle border instead of shadow */
+  border: 1px solid var(--border-color); /* subtle border instead of shadow */
   overflow: hidden;
 }
 
@@ -45,20 +45,20 @@
 }
 
 .table th {
-  background-color: #F8FAFC;
+  background-color: var(--hover-bg);
   padding: 1rem 1.5rem;
   font-weight: 600;
-  color: #64748B;
+  color: var(--text-muted);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .table td {
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #E2E8F0;
-  color: #334155;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--foreground);
   font-size: 0.95rem;
   vertical-align: middle;
 }
@@ -68,7 +68,7 @@
 }
 
 .table tr:hover {
-  background-color: #F8FAFC;
+  background-color: var(--hover-bg);
 }
 
 .productImage {
@@ -80,12 +80,12 @@
 
 .productName {
   font-weight: 600;
-  color: #0F172A;
+  color: var(--foreground);
 }
 
 .categoryBadge {
-  background-color: #F1F5F9;
-  color: #475569;
+  background-color: var(--hover-bg);
+  color: var(--foreground);
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -103,7 +103,7 @@
 
 .strike {
   text-decoration: line-through;
-  color: #94A3B8;
+  color: var(--text-muted);
   font-weight: 400;
   font-size: 0.85rem;
 }
@@ -144,11 +144,11 @@
 .emptyState {
   padding: 4rem 2rem;
   text-align: center;
-  color: #64748B;
+  color: var(--text-muted);
 }
 
 .emptyIcon {
-  color: #CBD5E1;
+  color: var(--border-color);
   margin-bottom: 1rem;
 }
 
@@ -178,38 +178,38 @@
 }
 
 .modalContent {
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  border: 1px solid #E5E7EB; /* replace shadow with border */
+  border: 1px solid var(--border-color); /* replace shadow with border */
 }
 
 .modalHeader {
   padding: 1.5rem;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
-  background: white;
+  background: var(--card-bg);
   z-index: 10;
 }
 
 .modalTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0F172A;
+  color: var(--foreground);
   margin: 0;
 }
 
 .closeBtn {
   background: transparent;
   border: none;
-  color: #94A3B8;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 8px;
@@ -218,8 +218,8 @@
 }
 
 .closeBtn:hover {
-  background-color: #F1F5F9;
-  color: #0F172A;
+  background-color: var(--hover-bg);
+  color: var(--foreground);
 }
 
 .formBody {
@@ -240,19 +240,20 @@
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--foreground);
   margin-bottom: 0.5rem;
 }
 
 .input, .textarea, .select {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid #CBD5E1;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
   transition: border-color 0.2s;
-  background-color: white;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .input:focus, .textarea:focus {
@@ -269,7 +270,7 @@
 .helpText {
   display: block;
   font-size: 0.8rem;
-  color: #64748B;
+  color: var(--text-muted);
   margin-top: 0.25rem;
 }
 
@@ -278,36 +279,36 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
-  color: #0F172A;
+  color: var(--foreground);
   cursor: pointer;
   user-select: none;
 }
 
 .formFooter {
   padding: 1.5rem;
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   position: sticky;
   bottom: 0;
-  background: white;
+  background: var(--card-bg);
   z-index: 10;
 }
 
 .cancelBtn {
   padding: 0.75rem 1.5rem;
-  background-color: white;
-  border: 1px solid #CBD5E1;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-weight: 500;
-  color: #475569;
+  color: var(--foreground);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .cancelBtn:hover {
-  background-color: #F8FAFC;
+  background-color: var(--hover-bg);
 }
 
 .saveBtn {

@@ -5,30 +5,30 @@
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0F172A;
+  color: var(--foreground);
   margin-bottom: 0.5rem;
 }
 
 .pageDesc {
-  color: #64748B;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin-bottom: 2rem;
 }
 
 .card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
-  border: 1px solid #E5E7EB; /* flat border instead of shadow */
+  border: 1px solid var(--border-color); /* flat border instead of shadow */
   padding: 2rem;
 }
 
 .sectionTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #0F172A;
+  color: var(--foreground);
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .formGroup {
@@ -39,19 +39,19 @@
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--foreground);
   margin-bottom: 0.4rem;
 }
 
 .input, .textarea {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid #CBD5E1;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
   transition: border-color 0.2s;
-  background: white;
+  background: var(--card-bg);
 }
 
 .input:focus, .textarea:focus {
@@ -68,7 +68,7 @@
 .helpText {
   display: block;
   font-size: 0.8rem;
-  color: #64748B;
+  color: var(--text-muted);
   margin-top: 0.25rem;
 }
 
@@ -78,22 +78,22 @@
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid var(--border-color);
 }
 
 .cancelBtn {
   padding: 0.75rem 1.5rem;
-  background: white;
-  border: 1px solid #CBD5E1;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-weight: 500;
-  color: #475569;
+  color: var(--foreground);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .cancelBtn:hover {
-  background: #F8FAFC;
+  background: var(--hover-bg);
 }
 
 .saveBtn {

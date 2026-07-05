@@ -12,13 +12,13 @@
 .pageTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0F172A;
+  color: var(--foreground);
   margin: 0;
 }
 
 .totalBadge {
-  background: #F1F5F9;
-  color: #64748B;
+  background: var(--hover-bg);
+  color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 500;
   padding: 0.25rem 0.75rem;
@@ -29,7 +29,7 @@
 
 .searchInput {
   padding: 0.6rem 1rem;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.9rem;
   width: 280px;
@@ -37,7 +37,7 @@
   outline: none;
   font-family: inherit;
 }
-.searchInput:focus { border-color: #94A3B8; }
+.searchInput:focus { border-color: var(--text-muted); }
 
 .emptyState {
   display: flex;
@@ -45,7 +45,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 3rem 1rem;
-  color: #94A3B8;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
@@ -62,14 +62,14 @@
 }
 
 .table thead {
-  background: #F8FAFC;
+  background: var(--hover-bg);
 }
 
 .table thead th {
   padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
-  color: #64748B;
+  color: var(--text-muted);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -86,7 +86,7 @@
 
 .table td {
   padding: 0.875rem 1rem;
-  color: #334155;
+  color: var(--foreground);
   vertical-align: middle;
 }
 
@@ -105,17 +105,17 @@
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.userName { font-weight: 600; color: #0F172A; }
-.emailCell { color: #64748B; font-size: 0.85rem; }
-.empty { color: #CBD5E1; }
+.userName { font-weight: 600; color: var(--foreground); }
+.emailCell { color: var(--text-muted); font-size: 0.85rem; }
+.empty { color: var(--border-color); }
 
 /* Cart Badge */
 .cartBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  background: #F1F5F9;
-  color: #475569;
+  background: var(--hover-bg);
+  color: var(--foreground);
   padding: 0.2rem 0.5rem;
   border-radius: 6px;
   font-weight: 600;
@@ -159,8 +159,8 @@
 
 .editBtn {
   width: 30px; height: 30px;
-  border-radius: 6px; border: 1px solid #E2E8F0;
-  background: white; color: #3B82F6;
+  border-radius: 6px; border: 1px solid var(--border-color);
+  background: var(--card-bg); color: #3B82F6;
   cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center;
   transition: all 0.2s;
@@ -192,7 +192,7 @@
 }
 
 .modal {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   width: 100%;
   max-width: 500px;
@@ -207,13 +207,13 @@
   justify-content: space-between;
   align-items: center;
 }
-.modalHeader h3 { margin: 0; font-size: 1.1rem; color: #0F172A; }
+.modalHeader h3 { margin: 0; font-size: 1.1rem; color: var(--foreground); }
 .closeBtn {
-  background: none; border: none; color: #94A3B8; cursor: pointer;
+  background: none; border: none; color: var(--text-muted); cursor: pointer;
   padding: 0.25rem; border-radius: 6px;
   display: flex; align-items: center;
 }
-.closeBtn:hover { background: #F1F5F9; color: #475569; }
+.closeBtn:hover { background: var(--hover-bg); color: var(--foreground); }
 
 .modalBody {
   padding: 1.5rem;
@@ -222,16 +222,16 @@
 }
 
 .formGroup { margin-bottom: 1.25rem; }
-.formGroup label { display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.4rem; }
+.formGroup label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--foreground); margin-bottom: 0.4rem; }
 .formInput {
   width: 100%; padding: 0.6rem 0.8rem;
-  border: 1px solid #CBD5E1; border-radius: 8px;
+  border: 1px solid var(--border-color); border-radius: 8px;
   font-size: 0.9rem; color: #1E293B; font-family: inherit;
   outline: none; transition: border-color 0.2s;
 }
 .formInput:focus { border-color: #3B82F6; }
 
-.passwordHelp { font-size: 0.75rem; color: #94A3B8; margin-top: 0.25rem; display: block; }
+.passwordHelp { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; display: block; }
 
 .formRow { display: flex; gap: 1rem; }
 .formRow .formGroup { flex: 1; }
@@ -240,16 +240,16 @@
   padding: 1.25rem 1.5rem;
   border-top: 1px solid #F1F5F9;
   display: flex; justify-content: flex-end; gap: 0.75rem;
-  background: #F8FAFC;
+  background: var(--hover-bg);
 }
 
 .cancelBtn {
   padding: 0.6rem 1.25rem; border-radius: 8px;
-  background: white; border: 1px solid #CBD5E1; color: #475569;
+  background: var(--card-bg); border: 1px solid var(--border-color); color: var(--foreground);
   font-weight: 600; font-size: 0.9rem; cursor: pointer;
   transition: all 0.2s;
 }
-.cancelBtn:hover { background: #F1F5F9; color: #0F172A; }
+.cancelBtn:hover { background: var(--hover-bg); color: var(--foreground); }
 
 .saveBtn {
   padding: 0.6rem 1.25rem; border-radius: 8px;
