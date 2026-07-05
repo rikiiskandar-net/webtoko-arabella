@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ShoppingCart } from "lucide-react";
 import styles from "./UserNav.module.css";
 
 // Helper inisial nama
@@ -80,7 +81,7 @@ export default function UserNav({ cartLocalCount = 0 }) {
     return (
       <div className={styles.guestNav}>
         <Link href="/keranjang" className={styles.cartLink}>
-          🛒
+          <ShoppingCart size={20} />
           {cartLocalCount > 0 && <span className={styles.badge}>{cartLocalCount}</span>}
         </Link>
         <Link href="/masuk" className={styles.btnMasuk}>Masuk</Link>
@@ -93,7 +94,7 @@ export default function UserNav({ cartLocalCount = 0 }) {
   return (
     <div className={styles.userNav} ref={dropdownRef}>
       <Link href="/keranjang" className={styles.cartLink}>
-        🛒
+        <ShoppingCart size={20} />
         {dbCartCount > 0 && <span className={styles.badge}>{dbCartCount}</span>}
       </Link>
 
@@ -117,7 +118,9 @@ export default function UserNav({ cartLocalCount = 0 }) {
             👤 Profil Saya
           </Link>
           <Link href="/keranjang" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
-            🛒 Keranjang Belanja
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <ShoppingCart size={16} /> Keranjang Belanja
+            </div>
             {dbCartCount > 0 && <span className={styles.itemBadge}>{dbCartCount}</span>}
           </Link>
           <button className={styles.dropdownLogout} onClick={handleLogout}>
