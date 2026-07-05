@@ -1,8 +1,9 @@
-import { Package, Tags, Eye, Globe, Smartphone, Users } from "lucide-react";
+import { Package, Tags, Eye, Globe, Smartphone, Users, ShoppingCart } from "lucide-react";
 import styles from "./Dashboard.module.css";
 import prisma from "@/lib/prisma";
 import { AreaChart, DonutChart } from "@/components/charts/DashboardCharts";
 import CalendarWidget from "@/components/calendar/CalendarWidget";
+import SystemHealthWidget from "@/components/dashboard/SystemHealthWidget";
 
 export const metadata = {
   title: "Dashboard | Dapur Arabella",
@@ -12,6 +13,7 @@ export default async function DashboardPage() {
   const totalProducts = await prisma.product.count();
   const totalCategories = await prisma.category.count();
   const totalUsers = await prisma.user.count({ where: { isActive: true } });
+  const totalOrders = await prisma.order.count();
   
   // Analytics queries
   const now = new Date();
@@ -96,17 +98,20 @@ export default async function DashboardPage() {
           
           <div className={styles.statCard}>
             <div className={styles.statHeader}>
-              <span className={styles.statTitle}>Status Sistem</span>
+              <span className={styles.statTitle}>Total Pesanan</span>
               <div className={`${styles.iconWrapper} ${styles.green}`}>
-                <Eye size={20} />
+                <ShoppingCart size={20} />
               </div>
             </div>
-            <div className={styles.statValue}>Aman</div>
-            <div className={styles.statDesc}>Semua layanan berjalan lancar</div>
+            <div className={styles.statValue}>{totalOrders}</div>
+            <div className={styles.statDesc}>Seluruh transaksi masuk</div>
           </div>
         </div>
       </div>
       
+      {/* System Health Row */}
+      <SystemHealthWidget />
+
       {/* Bottom Row: Insights */}
       <div className={styles.bottomRow}>
         <div className={styles.insightCard}>
