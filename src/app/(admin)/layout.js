@@ -81,7 +81,7 @@ function AdminSidebar({ pathname, router }) {
                     className={`${styles.navItem} ${isActive ? styles.active : ""}`}
                   >
                     <Icon size={20} />
-                    {item.name}
+                    <span className={styles.navText}>{item.name}</span>
                   </Link>
                 );
               })}
@@ -93,14 +93,14 @@ function AdminSidebar({ pathname, router }) {
       <div className={styles.sidebarFooter}>
         <button className={styles.logoutBtn} onClick={handleLogout}>
           <LogOut size={20} />
-          Keluar
+          <span className={styles.navText}>Keluar</span>
         </button>
       </div>
     </>
   );
 }
 
-function AdminContent({ children, onMenuClick }) {
+function AdminContent({ children, onToggleSidebar }) {
   const session = useSession();
   const initial = session?.name?.charAt(0)?.toUpperCase() || "A";
 
@@ -108,7 +108,7 @@ function AdminContent({ children, onMenuClick }) {
     <div className={styles.mainContent}>
       <header className={styles.topbar}>
         <div className={styles.topbarLeft}>
-          <button className={styles.mobileMenuBtn} onClick={onMenuClick}>
+          <button className={styles.mobileMenuBtn} onClick={onToggleSidebar}>
             <Menu size={24} />
           </button>
           <h1 className={styles.pageTitle}>Kokpit Admin</h1>
@@ -132,11 +132,20 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Auto-close sidebar on route change on mobile
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [pathname]);
+
+  const handleToggleSidebar = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setIsSidebarOpen(true);
+    } else {
+      setIsSidebarCollapsed(!isSidebarCollapsed);
+    }
+  };
 
   return (
     <AuthGuard>
@@ -144,7 +153,7 @@ export default function AdminLayout({ children }) {
         {isSidebarOpen && (
           <div className={styles.sidebarOverlay} onClick={() => setIsSidebarOpen(false)} />
         )}
-        <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ""}`}>
+        <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ""} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
           <div className={styles.sidebarMobileHeader}>
             <button className={styles.closeSidebarBtn} onClick={() => setIsSidebarOpen(false)}>
               <X size={24} />
@@ -152,7 +161,7 @@ export default function AdminLayout({ children }) {
           </div>
           <AdminSidebar pathname={pathname} router={router} />
         </aside>
-        <AdminContent onMenuClick={() => setIsSidebarOpen(true)}>
+        <AdminContent onToggleSidebar={handleToggleSidebar}>
           {children}
         </AdminContent>
       </div>
