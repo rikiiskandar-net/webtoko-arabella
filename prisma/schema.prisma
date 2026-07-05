@@ -130,3 +130,14 @@ model Product {
   @@index([isPromo])
   @@index([badge])
 }
+
+model PageView {
+  id        String   @id @default(uuid())
+  path      String
+  country   String   @default("Unknown")
+  browser   String   @default("Unknown")
+  os        String   @default("Unknown")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

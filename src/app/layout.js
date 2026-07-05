@@ -1,5 +1,6 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 const googleFont = Plus_Jakarta_Sans({
   variable: "--font-google",
@@ -64,6 +65,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <body className={`${googleFont.variable}`}>
+        <AnalyticsTracker />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
