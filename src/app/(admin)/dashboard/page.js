@@ -153,10 +153,6 @@ export default async function DashboardPage() {
             )}
           </div>
         </div>
-      </div>
-
-      {/* Calendar Row */}
-      <div className={styles.calendarRow}>
         <CalendarWidget />
       </div>
 
