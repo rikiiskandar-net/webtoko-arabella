@@ -233,3 +233,8 @@
   padding: 2rem 0;
 }
 
+.calendarRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}

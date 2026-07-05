@@ -2,6 +2,7 @@ import { Package, Tags, Eye, Globe, Smartphone, Users } from "lucide-react";
 import styles from "./Dashboard.module.css";
 import prisma from "@/lib/prisma";
 import { AreaChart, DonutChart } from "@/components/charts/DashboardCharts";
+import CalendarWidget from "@/components/calendar/CalendarWidget";
 
 export const metadata = {
   title: "Dashboard | Dapur Arabella",
@@ -152,6 +153,11 @@ export default async function DashboardPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Calendar Row */}
+      <div className={styles.calendarRow}>
+        <CalendarWidget />
       </div>
 
     </div>
