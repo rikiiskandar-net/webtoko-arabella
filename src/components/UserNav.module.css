@@ -9,8 +9,15 @@
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
 /* Guest Nav */
-.guestNav { display: flex; align-items: center; gap: 1.25rem; }
+.guestNav { display: flex; align-items: center; gap: 1rem; }
 .authGroup { display: flex; align-items: center; gap: 0.5rem; }
+
+.divider {
+  width: 1px;
+  height: 28px;
+  background-color: #E2E8F0;
+  margin: 0 0.5rem;
+}
 
 @media (max-width: 768px) {
   .guestNav { gap: 0.75rem; }
@@ -84,7 +91,7 @@
 .btnDaftar:hover { background: #D97706; }
 
 /* User Nav */
-.userNav { position: relative; display: flex; align-items: center; gap: 1.25rem; }
+.userNav { position: relative; display: flex; align-items: center; gap: 1rem; }
 
 @media (max-width: 768px) {
   .userNav { gap: 0.75rem; }

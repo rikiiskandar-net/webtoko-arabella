@@ -84,6 +84,7 @@ export default function UserNav({ cartLocalCount = 0 }) {
           <ShoppingCart size={20} />
           {cartLocalCount > 0 && <span className={styles.badge}>{cartLocalCount}</span>}
         </Link>
+        <div className={styles.divider}></div>
         <div className={styles.authGroup}>
           <Link href="/masuk" className={styles.btnMasuk}>Masuk</Link>
           <Link href="/daftar" className={styles.btnDaftar}>Daftar</Link>
@@ -99,6 +100,8 @@ export default function UserNav({ cartLocalCount = 0 }) {
         <ShoppingCart size={20} />
         {dbCartCount > 0 && <span className={styles.badge}>{dbCartCount}</span>}
       </Link>
+      
+      <div className={styles.divider}></div>
 
       <button className={styles.avatarBtn} onClick={() => setDropdownOpen(!dropdownOpen)}>
         {user.avatar ? (
