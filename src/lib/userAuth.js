@@ -1,4 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
+import prisma from "@/lib/prisma";
 
 const USER_JWT_SECRET = new TextEncoder().encode(
   process.env.USER_JWT_SECRET || "user-secret-key-arabella-2025-secure"
@@ -23,10 +24,29 @@ export async function verifyUserToken(token) {
   }
 }
 
-export function getUserFromRequest(request) {
+export async function getUserFromRequest(request) {
   const token = request.cookies.get(COOKIE_NAME)?.value;
   if (!token) return null;
-  return verifyUserToken(token);
+  
+  const payload = await verifyUserToken(token);
+  if (!payload || !payload.userId) return null;
+
+  // Cek keaktifan user langsung di database
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { isActive: true }
+    });
+
+    if (!user || !user.isActive) {
+      return null;
+    }
+  } catch (error) {
+    console.error("Auth DB Error:", error);
+    return null;
+  }
+
+  return payload;
 }
 
 export { COOKIE_NAME as USER_COOKIE_NAME };
