@@ -20,7 +20,7 @@ export default async function UsersPage() {
     avatar: u.avatar,
     isActive: u.isActive,
     createdAt: u.createdAt,
-    cartItemCount: u.cart?.items.reduce((a, i) => a + i.quantity, 0) || 0,
+    cartItemCount: u.cart && u.cart.items ? u.cart.items.reduce((a, i) => a + i.quantity, 0) : 0,
   }));
 
   return <UsersClient initialUsers={usersWithCartCount} />;
