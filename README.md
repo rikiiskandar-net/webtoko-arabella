@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dapur Arabella - E-Commerce Platform
 
-## Getting Started
+Sistem toko online (e-commerce) khusus makanan rumahan (F&B) untuk Dapur Arabella.
+Dibuat dengan Next.js App Router, Prisma, dan PostgreSQL.
 
-First, run the development server:
+## 🚀 Fitur Utama
+- **Katalog Produk & Kategori:** Pengunjung bisa melihat menu, detail produk, promo, dan label (badge).
+- **Keranjang & Checkout:** Autentikasi pelanggan terpisah dengan Admin. Pelanggan bisa menambah produk ke keranjang dan checkout.
+- **Kokpit Admin (Dasbor):** Antarmuka khusus superadmin & admin untuk mengatur konfigurasi toko, produk, pengguna, media, banner, dan pesanan.
+- **Sidebar Minimalis:** Dasbor dilengkapi sidebar yang bisa di-*collapse* untuk memaksimalkan ruang layar.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠️ Tech Stack
+- Framework: Next.js (App Router)
+- Database ORM: Prisma
+- Database: PostgreSQL
+- Styling: CSS Modules (Vanilla) + Lucide React Icons
+- Authentication: Custom JWT (jose) untuk *Server-Side* dan *Client-Side*.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📂 Struktur Penting
+- `src/app/(admin)`: Rute khusus Dasbor Admin (dilindungi `AuthGuard`).
+- `src/app/api`: Semua endpoint *backend*.
+  - `/api/admin/*`: Endpoint khusus admin.
+  - `/api/cart/*`, `/api/orders/*`, `/api/auth/*`: Endpoint *frontend*.
+- `src/lib`: *Library* utilitas seperti `prisma.js`, `auth.js` (Admin Auth), `userAuth.js` (Customer Auth), dan Konteks Sesi.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ⚠️ Status Saat Ini & Bug yang Belum Diselesaikan
+Perhatikan dokumen `.agents/AGENTS.md` untuk informasi serah-terima teknis yang lebih detail kepada AI (Artificial Intelligence) selanjutnya.
+1. **Next.js Build InvariantError**: Sistem saat ini gagal di-*build* (`npm run build`) dengan pesan `Expected workStore to be initialized`. Kemungkinan karena penggunaan `headers()` atau `cookies()` di dalam layout atau komponen yang di-*render* statis seperti `_not-found` atau `_global-error`.
+2. **Bug Pesanan Terdampar (Orphaned Orders)**: Saat pelanggan login dan checkout, pesanan tidak tertaut ke akun mereka karena `schema.prisma` model `Order` belum memiliki kolom `userId`.
+3. **Bug Keranjang (Cart Clear)**: Setelah *checkout* sukses, isi keranjang belum dihapus dari database.
