@@ -16,6 +16,7 @@
   z-index: 2000;
   overflow-x: hidden;
   position: relative;
+  transition: width 0.3s ease;
 }
 
 .sidebar.collapsed {
@@ -34,6 +35,7 @@
     height: 100vh;
     transform: translateX(-100%);
     width: 260px; /* Keep full width on mobile */
+    transition: transform 0.3s ease;
   }
   .sidebar.sidebarOpen { transform: translateX(0); }
   .sidebar.collapsed { width: 260px; } /* Disable collapse on mobile */
@@ -73,8 +75,8 @@
   box-sizing: border-box;
 }
 .logoIcon { width: 32px; height: 32px; background-color: rgba(37, 99, 235, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.brandName { flex-grow: 1; font-size: 1.05rem; font-weight: 700; color: #0F172A; letter-spacing: -0.02em; white-space: nowrap; transition: opacity 0.2s; }
-.sidebar.collapsed .brandName { opacity: 0; width: 0; overflow: hidden; }
+.brandName { flex-grow: 1; font-size: 1.05rem; font-weight: 700; color: #0F172A; letter-spacing: -0.02em; white-space: nowrap; transition: opacity 0.3s ease, width 0.3s ease; overflow: hidden; }
+.sidebar.collapsed .brandName { opacity: 0; width: 0; }
 
 .collapseDesktopBtn {
   background: #F1F5F9;
@@ -117,9 +119,10 @@
   padding: 0 0.75rem;
   margin-bottom: 0.4rem;
   white-space: nowrap;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease;
+  overflow: hidden;
 }
-.sidebar.collapsed .groupLabel { opacity: 0; height: 0; margin: 0; overflow: hidden; }
+.sidebar.collapsed .groupLabel { opacity: 0; height: 0; margin: 0; }
 
 .navItem {
   display: flex;
@@ -130,19 +133,21 @@
   color: #64748B;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   text-decoration: none;
   white-space: nowrap;
+  overflow: hidden;
+  border-left: 3px solid transparent;
 }
 .navItem:hover { background-color: #F0F7FF; color: #0F172A; }
-.navItem.active { background-color: #F0F7FF; color: #2563EB; border-left: 3px solid #2563EB; }
-.navText { transition: opacity 0.2s; white-space: nowrap; }
-.sidebar.collapsed .navText { opacity: 0; width: 0; overflow: hidden; display: none; }
-.sidebar.collapsed .navItem { justify-content: center; padding: 0.75rem; border-left: none; }
-.sidebar.collapsed .navItem.active { background-color: #DBEAFE; color: #1D4ED8; }
+.navItem.active { background-color: #F0F7FF; color: #2563EB; border-left-color: #2563EB; }
+.navText { transition: opacity 0.3s ease, width 0.3s ease; white-space: nowrap; overflow: hidden; opacity: 1; }
+.sidebar.collapsed .navText { opacity: 0; width: 0; }
+.sidebar.collapsed .navItem { justify-content: center; padding: 0.75rem; border-left-color: transparent; }
+.sidebar.collapsed .navItem.active { background-color: #DBEAFE; color: #1D4ED8; border-left-color: transparent; }
 
 .sidebarFooter { padding: 1.25rem 0.75rem; border-top: 1px solid #E5E7EB; }
-.logoutBtn { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.6rem 0.75rem; border-radius: 8px; color: #EF4444; background: transparent; border: none; font-weight: 500; cursor: pointer; transition: all 0.2s ease; font-size: 0.9rem; white-space: nowrap; }
+.logoutBtn { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.6rem 0.75rem; border-radius: 8px; color: #EF4444; background: transparent; border: none; font-weight: 500; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem; white-space: nowrap; overflow: hidden; }
 .logoutBtn:hover { background-color: rgba(239, 68, 68, 0.1); }
 .sidebar.collapsed .logoutBtn { justify-content: center; }
 
