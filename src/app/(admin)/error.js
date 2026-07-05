@@ -15,9 +15,16 @@ export default function AdminError({ error, reset }) {
       <h2 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem", color: "#1E293B" }}>
         Terjadi Kesalahan
       </h2>
-      <p style={{ color: "#64748B", marginBottom: "1.5rem" }}>
+      <p style={{ color: "#64748B", marginBottom: "0.75rem" }}>
         Silakan coba lagi atau hubungi superadmin.
       </p>
+      {error?.message && (
+        <p style={{ color: "#EF4444", fontSize: "0.8rem", marginBottom: "1rem",
+          background: "#FEF2F2", padding: "0.5rem 1rem", borderRadius: "6px",
+          maxWidth: "500px", wordBreak: "break-word" }}>
+          {error.message}
+        </p>
+      )}
       <button onClick={reset} style={{
         padding: "0.6rem 1.25rem", borderRadius: "8px", border: "none",
         background: "#3B82F6", color: "white", fontWeight: 600, cursor: "pointer"

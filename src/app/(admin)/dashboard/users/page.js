@@ -2,26 +2,49 @@ import prisma from "@/lib/prisma";
 import UsersClient from "./UsersClient";
 
 export const metadata = { title: "Pengguna | Admin Dapur Arabella" };
+export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
-  const users = await prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      cart: { include: { items: { select: { quantity: true } } } }
-    }
-  });
+  let usersWithCartCount = [];
 
-  // Hitung total item di keranjang setiap user
-  const usersWithCartCount = users.map(u => ({
-    id: u.id,
-    name: u.name,
-    email: u.email,
-    phone: u.phone,
-    avatar: u.avatar,
-    isActive: u.isActive,
-    createdAt: u.createdAt.toISOString(),
-    cartItemCount: u.cart && u.cart.items ? u.cart.items.reduce((a, i) => a + i.quantity, 0) : 0,
-  }));
+  try {
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        avatar: true,
+        isActive: true,
+        createdAt: true,
+        cart: {
+          select: {
+            items: {
+              select: { quantity: true }
+            }
+          }
+        }
+      }
+    });
+
+    usersWithCartCount = users.map(u => ({
+      id: u.id,
+      name: u.name || "",
+      email: u.email || "",
+      phone: u.phone || "",
+      avatar: u.avatar || "",
+      isActive: u.isActive,
+      createdAt: u.createdAt ? u.createdAt.toISOString() : new Date().toISOString(),
+      cartItemCount: u.cart?.items
+        ? u.cart.items.reduce((a, i) => a + (i.quantity || 0), 0)
+        : 0,
+    }));
+  } catch (err) {
+    console.error("UsersPage error:", err);
+    // Return empty state, bukan crash
+    usersWithCartCount = [];
+  }
 
   return <UsersClient initialUsers={usersWithCartCount} />;
 }
