@@ -80,12 +80,14 @@ export default function UserNav({ cartLocalCount = 0 }) {
   if (!user) {
     return (
       <div className={styles.guestNav}>
-        <Link href="/keranjang" className={styles.cartLink}>
+        <Link href="/keranjang" className={styles.cartBtn}>
           <ShoppingCart size={20} />
           {cartLocalCount > 0 && <span className={styles.badge}>{cartLocalCount}</span>}
         </Link>
-        <Link href="/masuk" className={styles.btnMasuk}>Masuk</Link>
-        <Link href="/daftar" className={styles.btnDaftar}>Daftar</Link>
+        <div className={styles.authGroup}>
+          <Link href="/masuk" className={styles.btnMasuk}>Masuk</Link>
+          <Link href="/daftar" className={styles.btnDaftar}>Daftar</Link>
+        </div>
       </div>
     );
   }
@@ -93,7 +95,7 @@ export default function UserNav({ cartLocalCount = 0 }) {
   // Sudah login
   return (
     <div className={styles.userNav} ref={dropdownRef}>
-      <Link href="/keranjang" className={styles.cartLink}>
+      <Link href="/keranjang" className={styles.cartBtn}>
         <ShoppingCart size={20} />
         {dbCartCount > 0 && <span className={styles.badge}>{dbCartCount}</span>}
       </Link>

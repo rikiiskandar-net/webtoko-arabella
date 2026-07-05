@@ -9,32 +9,53 @@
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
 /* Guest Nav */
-.guestNav { display: flex; align-items: center; gap: 0.5rem; }
+.guestNav { display: flex; align-items: center; gap: 1.25rem; }
+.authGroup { display: flex; align-items: center; gap: 0.5rem; }
 
-.cartLink {
+@media (max-width: 768px) {
+  .guestNav { gap: 0.75rem; }
+  .btnMasuk { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+  .btnDaftar { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+}
+
+.cartBtn {
   position: relative;
-  font-size: 1.25rem;
-  text-decoration: none;
-  padding: 0.25rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: rgba(248, 250, 252, 0.8);
+  border: 1px solid #E2E8F0;
   display: flex;
   align-items: center;
+  justify-content: center;
+  color: #475569;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cartBtn:hover {
+  background-color: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #2563EB;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.12);
 }
 
 .badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #EF4444;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #EF4444, #DC2626);
   color: white;
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 800;
   min-width: 18px;
   height: 18px;
-  border-radius: 99px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  border: 2px solid white;
 }
 
 .btnMasuk {
@@ -63,7 +84,12 @@
 .btnDaftar:hover { background: #D97706; }
 
 /* User Nav */
-.userNav { position: relative; display: flex; align-items: center; gap: 0.5rem; }
+.userNav { position: relative; display: flex; align-items: center; gap: 1.25rem; }
+
+@media (max-width: 768px) {
+  .userNav { gap: 0.75rem; }
+  .userName { display: none; }
+}
 
 .avatarBtn {
   display: flex;
