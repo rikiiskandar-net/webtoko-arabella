@@ -45,22 +45,30 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
     }, 3000);
   };
 
-  const handleUpdateQuantity = (productId, change, productName) => {
-    setCartItems(prev => {
-      const currentQty = prev[productId] || 0;
-      const newQty = Math.max(0, currentQty + change);
-      
-      const newCart = { ...prev };
-      if (newQty === 0) {
-        delete newCart[productId];
-      } else {
-        newCart[productId] = newQty;
-      }
-      return newCart;
-    });
+  const handleUpdateQuantity = async (productId, change, productName) => {
+    // Hanya bisa tambah 1 dari tombol "Tambah" di halaman depan
+    if (change > 0) {
+      try {
+        const res = await fetch("/api/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId, quantity: change }),
+        });
+        
+        if (res.status === 401) {
+          // Belum login, arahkan ke halaman masuk
+          window.location.href = "/masuk";
+          return;
+        }
 
-    if (change > 0 && productName) {
-      showToast(`${productName} ditambahkan ke keranjang`);
+        if (res.ok && productName) {
+          showToast(`${productName} ditambahkan ke keranjang`);
+          // Trigger UserNav untuk merender ulang badge dengan dispatch custom event
+          window.dispatchEvent(new Event('cartUpdated'));
+        }
+      } catch (error) {
+        console.error("Gagal menambah keranjang", error);
+      }
     }
   };
 

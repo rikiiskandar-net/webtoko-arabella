@@ -18,6 +18,16 @@ export default function UserNav({ cartLocalCount = 0 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  const fetchCartCount = () => {
+    fetch("/api/cart")
+      .then(r => r.ok ? r.json() : [])
+      .then(items => {
+        const total = items.reduce((a, i) => a + i.quantity, 0);
+        setDbCartCount(total);
+      })
+      .catch(() => setDbCartCount(0));
+  };
+
   useEffect(() => {
     // Cek status login user
     fetch("/api/user/profile")
@@ -25,15 +35,17 @@ export default function UserNav({ cartLocalCount = 0 }) {
       .then(data => {
         setUser(data);
         if (data) {
-          // Ambil jumlah item di keranjang
-          fetch("/api/cart")
-            .then(r => r.ok ? r.json() : [])
-            .then(items => {
-              const total = items.reduce((a, i) => a + i.quantity, 0);
-              setDbCartCount(total);
-            });
+          fetchCartCount();
         }
-      });
+      })
+      .catch(() => setUser(null));
+
+    // Listen untuk event tambah ke keranjang
+    const handleCartUpdate = () => {
+      fetchCartCount();
+    };
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, []);
 
   useEffect(() => {

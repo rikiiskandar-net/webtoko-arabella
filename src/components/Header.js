@@ -111,11 +111,6 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
             </div>
           </div>
 
-          <button className={`${styles.cartBtn} ${cartBounce ? styles.cartBounce : ""}`} onClick={onCartClick}>
-            <ShoppingCart size={20} />
-            {cartItemCount > 0 && <span className={styles.badge}>{cartItemCount}</span>}
-          </button>
-
           {/* UserNav: Tombol Login/Register atau Dropdown Profil */}
           <UserNav cartLocalCount={cartItemCount} />
         </div>
