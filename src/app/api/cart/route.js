@@ -35,7 +35,7 @@ export async function POST(request) {
     const session = await getUserFromRequest(request);
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { productId, quantity = 1 } = await request.json();
+    const { productId, quantity = 1, variants = [] } = await request.json();
 
     if (!productId) return NextResponse.json({ error: "productId wajib diisi" }, { status: 400 });
     if (quantity < 1) return NextResponse.json({ error: "Quantity minimal 1" }, { status: 400 });
@@ -50,13 +50,29 @@ export async function POST(request) {
       cart = await prisma.cart.create({ data: { userId: session.userId } });
     }
 
-    // Upsert: tambah kuantitas jika sudah ada, buat baru jika belum
-    const cartItem = await prisma.cartItem.upsert({
-      where: { cartId_productId: { cartId: cart.id, productId } },
-      update: { quantity: { increment: quantity } },
-      create: { cartId: cart.id, productId, quantity },
-      include: { product: { select: { id: true, name: true, price: true, isPromo: true, image: true } } }
+    // Cari apakah item dengan produk & varian yang persis sama sudah ada
+    // Note: Prisma Json equals bersifat strict, jadi pastikan array variants konsisten
+    const existingItems = await prisma.cartItem.findMany({
+      where: { cartId: cart.id, productId }
     });
+    
+    const incomingVariantsStr = JSON.stringify(variants || []);
+    let cartItem = existingItems.find(item => JSON.stringify(item.variants || []) === incomingVariantsStr);
+
+    if (cartItem) {
+      // Update quantity
+      cartItem = await prisma.cartItem.update({
+        where: { id: cartItem.id },
+        data: { quantity: cartItem.quantity + quantity },
+        include: { product: { select: { id: true, name: true, price: true, isPromo: true, image: true } } }
+      });
+    } else {
+      // Create new
+      cartItem = await prisma.cartItem.create({
+        data: { cartId: cart.id, productId, quantity, variants: variants || [] },
+        include: { product: { select: { id: true, name: true, price: true, isPromo: true, image: true } } }
+      });
+    }
 
     return NextResponse.json(cartItem, { status: 201 });
   } catch (error) {

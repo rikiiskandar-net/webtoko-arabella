@@ -12,6 +12,11 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
     }).format(price);
   };
 
+  const stripHtml = (html) => {
+    if (!html) return "";
+    return html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim();
+  };
+
   return (
     <div className={`${styles.card} ${isSmall ? styles.cardSmall : ''}`}>
       <div className={`${styles.imageContainer} ${isSmall ? styles.imageContainerSmall : ''} ${styles.skeletonBg}`} onClick={() => onViewDetail && onViewDetail(product)} style={{cursor: 'pointer'}}>
@@ -37,7 +42,7 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
           <span className={styles.soldCount}>Terjual {product.sold || '1k+'}</span>
         </div>
 
-        <p className={`${styles.description} ${isSmall ? styles.descriptionSmall : ''}`}>{product.description}</p>
+        <p className={`${styles.description} ${isSmall ? styles.descriptionSmall : ''}`}>{stripHtml(product.description)}</p>
         
         <div className={`${styles.priceContainer} ${isSmall ? styles.priceContainerSmall : ''}`}>
           {displayOriginal && (

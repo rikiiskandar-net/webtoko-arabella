@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Star, ShoppingCart, MessageCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import ProductClientHeader from "./ProductClientHeader";
+import ProductDetailClient from "./ProductDetailClient";
 import Footer from "@/components/Footer";
 import styles from "./ProductDetail.module.css";
 import prisma from "@/lib/prisma";
@@ -75,46 +76,7 @@ export default async function ProductDetailPage({ params }) {
       <ProductClientHeader />
       <main className={styles.main}>
         <Link href="/" className={styles.backLink}><ArrowLeft size={16} /> Kembali ke Menu</Link>
-
-        <div className={styles.card}>
-          <div className={styles.imageSection}>
-            {product.badge && (
-              <div className={styles.badge}>{product.badge}</div>
-            )}
-            <img src={product.image} alt={product.name} className={styles.image} />
-          </div>
-
-          <div className={styles.infoSection}>
-            <h1 className={styles.name}>{product.name}</h1>
-
-            <div className={styles.ratingRow}>
-              <Star size={16} fill="var(--accent)" color="var(--accent)" />
-              <span>{product.rating}</span>
-              <span className={styles.dot}>·</span>
-              <span>Terjual {product.sold}</span>
-            </div>
-
-            <p className={styles.description}>{product.description}</p>
-
-            <div className={styles.priceRow}>
-              {displayOriginal && (
-                <span className={styles.originalPrice}>{formatPrice(displayOriginal)}</span>
-              )}
-              <span className={styles.price}>{formatPrice(displayPrice)}</span>
-            </div>
-
-            <div className={styles.actions}>
-              {config?.waNumber && (
-                <a href={waLink} target="_blank" rel="noopener noreferrer" className={styles.waBtn}>
-                  <MessageCircle size={20} /> Pesan Lewat WhatsApp
-                </a>
-              )}
-              <Link href="/#menu-section" className={styles.orderLink}>
-                <ShoppingCart size={20} /> Lihat Menu Lainnya
-              </Link>
-            </div>
-          </div>
-        </div>
+        <ProductDetailClient product={product} config={config} />
       </main>
       <Footer config={config} />
     </>

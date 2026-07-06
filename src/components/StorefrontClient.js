@@ -45,14 +45,14 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
     }, 3000);
   };
 
-  const handleUpdateQuantity = async (productId, change, productName) => {
+  const handleUpdateQuantity = async (productId, change, productName, variants = []) => {
     // Hanya bisa tambah 1 dari tombol "Tambah" di halaman depan
     if (change > 0) {
       try {
         const res = await fetch("/api/cart", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId, quantity: change }),
+          body: JSON.stringify({ productId, quantity: change, variants }),
         });
         
         if (res.status === 401) {
@@ -80,13 +80,23 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
     }).format(price);
   };
 
-  const handleBuyNow = (productId) => {
+  const handleBuyNow = (productId, selectedVariants = []) => {
     const product = initialProducts.find(p => p.id === productId);
     if (!product) return;
 
+    let variantText = "";
+    let extraPrice = 0;
+    
+    if (selectedVariants && selectedVariants.length > 0) {
+      variantText = " (" + selectedVariants.map(v => `${v.groupName}: ${v.optionName}`).join(", ") + ")";
+      extraPrice = selectedVariants.reduce((sum, v) => sum + (v.priceMod || 0), 0);
+    }
+
+    const finalPrice = product.price + extraPrice;
+
     let message = "Halo Dapur Arabella, saya mau pesan:\n\n";
-    message += `- 1x ${product.name} (@ ${formatPrice(product.price)})\n`;
-    message += `\n*Total: ${formatPrice(product.price)}*\n\nMohon info untuk pembayaran dan pengiriman ya. Terima kasih!`;
+    message += `- 1x ${product.name}${variantText} (@ ${formatPrice(finalPrice)})\n`;
+    message += `\n*Total: ${formatPrice(finalPrice)}*\n\nMohon info untuk pembayaran dan pengiriman ya. Terima kasih!`;
     
     const encodedMessage = encodeURIComponent(message);
     const phoneNumber = storeConfig?.waNumber || "6281234567890";

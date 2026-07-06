@@ -64,7 +64,9 @@ export default function KeranjangClient({ storeWaNumber }) {
 
   const getItemPrice = (item) => {
     const p = item.product;
-    return p.isPromo && p.promoPrice ? p.promoPrice : p.price;
+    const basePrice = p.isPromo && p.promoPrice ? p.promoPrice : p.price;
+    const extraPrice = (item.variants || []).reduce((sum, v) => sum + (v.priceMod || 0), 0);
+    return basePrice + extraPrice;
   };
 
   const totalPrice = items.reduce((acc, item) => acc + getItemPrice(item) * item.quantity, 0);
@@ -74,7 +76,8 @@ export default function KeranjangClient({ storeWaNumber }) {
     let message = `Halo Dapur Arabella! 👋\n\nSaya ingin memesan:\n\n`;
     items.forEach(item => {
       const price = getItemPrice(item);
-      message += `• ${item.quantity}x ${item.product.name} — ${formatPrice(price * item.quantity)}\n`;
+      const varText = (item.variants || []).length > 0 ? ` (${item.variants.map(v => `${v.groupName}: ${v.optionName}`).join(', ')})` : '';
+      message += `• ${item.quantity}x ${item.product.name}${varText} — ${formatPrice(price * item.quantity)}\n`;
     });
     message += `\n*Total: ${formatPrice(totalPrice)}*\n\n`;
     if (user?.name) message += `Nama: ${user.name}\n`;
@@ -119,6 +122,13 @@ export default function KeranjangClient({ storeWaNumber }) {
                     <img src={item.product.image} alt={item.product.name} className={styles.itemImg} />
                     <div className={styles.itemInfo}>
                       <h3 className={styles.itemName}>{item.product.name}</h3>
+                      {item.variants && item.variants.length > 0 && (
+                        <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '4px', marginBottom: '8px' }}>
+                          {item.variants.map((v, i) => (
+                            <div key={i}>{v.groupName}: <strong>{v.optionName}</strong></div>
+                          ))}
+                        </div>
+                      )}
                       <div className={styles.itemPriceRow}>
                         <span className={styles.itemPrice}>{formatPrice(price)}</span>
                         {isPromo && <span className={styles.itemOriginal}>{formatPrice(item.product.price)}</span>}
