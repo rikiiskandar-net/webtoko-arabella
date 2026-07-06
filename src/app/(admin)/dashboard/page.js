@@ -5,6 +5,8 @@ import { AreaChart, DonutChart } from "@/components/charts/DashboardCharts";
 import CalendarWidget from "@/components/calendar/CalendarWidget";
 import SystemHealthWidget from "@/components/dashboard/SystemHealthWidget";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Dashboard | Dapur Arabella",
 };
@@ -108,12 +110,10 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
-      
-      {/* System Health Row */}
-      <SystemHealthWidget />
 
-      {/* Bottom Row: Insights */}
+      {/* Bottom Row: Insights & Health */}
       <div className={styles.bottomRow}>
+        <SystemHealthWidget />
         <div className={styles.insightCard}>
           <div className={styles.insightHeader}>
             <Globe size={18} className={styles.insightIcon} />

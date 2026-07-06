@@ -2,11 +2,10 @@
   background: var(--card-bg);
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  padding: 1.5rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 1rem;
+  gap: 1.25rem;
   box-shadow: var(--shadow-sm);
 }
 
@@ -92,13 +91,7 @@
 .metricsGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .metricsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  gap: 1.25rem;
 }
 
 .metricCard {
