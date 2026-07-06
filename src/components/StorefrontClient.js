@@ -13,29 +13,26 @@ import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
 import FloatingCart from "@/components/FloatingCart";
 import ProductModal from "@/components/ProductModal";
-import Cart from "@/components/Cart";
 import Toast from "@/components/Toast";
 import { Flame, Star, Sparkles } from "lucide-react";
 import { renderIcon } from "@/app/(admin)/dashboard/categories/iconOptions";
 
 export default function StorefrontClient({ initialProducts = [], initialCategories = [], storeConfig }) {
-  const [cartItems, setCartItems] = useState({});
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   
   // Toast State
   const [toastMessage, setToastMessage] = useState("");
   const [isToastVisible, setIsToastVisible] = useState(false);
 
   useEffect(() => {
-    if (selectedProduct || isCartOpen) {
+    if (selectedProduct) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-  }, [selectedProduct, isCartOpen]);
+  }, [selectedProduct]);
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -135,29 +132,13 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
   const bestsellerProducts = initialProducts.slice(0, 4);
   const newProducts = initialProducts.slice(-4).reverse();
 
-  const totalCartItems = Object.values(cartItems).reduce((a, b) => a + b, 0);
-  let totalCartPrice = 0;
-  let discountableCartPrice = 0;
-  
-  Object.entries(cartItems).forEach(([id, qty]) => {
-    const p = initialProducts.find(prod => prod.id === parseInt(id) || prod.id === id);
-    if (p) {
-      const activePrice = p.isPromo && p.promoPrice ? p.promoPrice : p.price;
-      const lineTotal = activePrice * qty;
-      totalCartPrice += lineTotal;
-      if (p.isWebDiscountable !== false) {
-        discountableCartPrice += lineTotal;
-      }
-    }
-  });
-
   const renderProductGrid = (items, isSmall = false) => (
     <div className={isSmall ? styles.smallProductGrid : styles.productGrid}>
       {items.map(product => (
         <ProductCard 
           key={product.id} 
           product={product} 
-          cartQuantity={cartItems[product.id] || 0}
+          cartQuantity={0}
           onUpdateQuantity={handleUpdateQuantity}
           onBuyNow={handleBuyNow}
           onViewDetail={setSelectedProduct}
@@ -172,14 +153,6 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
       <Header 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        cartItemCount={totalCartItems}
-        onCartClick={() => {
-          if (totalCartItems > 0) {
-            setIsCartOpen(true);
-          } else {
-            showToast("Keranjang masih kosong, yuk jajan dulu!");
-          }
-        }}
       />
       
       <main className={styles.main}>
@@ -278,35 +251,13 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
           </>
         )}
 
-        <FloatingCart 
-          itemCount={totalCartItems} 
-          totalPrice={totalCartPrice} 
-          discountablePrice={discountableCartPrice}
-          onClick={() => setIsCartOpen(true)}
-        />
-        
         <ProductModal 
           product={selectedProduct} 
           onClose={() => setSelectedProduct(null)} 
-          cartQuantity={selectedProduct ? (cartItems[selectedProduct.id] || 0) : 0}
+          cartQuantity={0}
           onUpdateQuantity={handleUpdateQuantity}
           onBuyNow={handleBuyNow}
         />
-        
-        {isCartOpen && (
-          <div className={styles.cartDrawerOverlay} onClick={() => setIsCartOpen(false)}>
-             <div className={styles.cartDrawerContainer} onClick={e => e.stopPropagation()}>
-                <Cart 
-                  cartItems={cartItems} 
-                  products={initialProducts} 
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onClearCart={() => setCartItems({})}
-                  waNumber={storeConfig?.waNumber}
-                  onClose={() => setIsCartOpen(false)} 
-                />
-             </div>
-          </div>
-        )}
 
         <Toast 
           message={toastMessage} 

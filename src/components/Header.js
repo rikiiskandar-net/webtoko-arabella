@@ -6,12 +6,10 @@ import { Menu, X, ShoppingCart, Search } from "lucide-react";
 import styles from "./Header.module.css";
 import UserNav from "./UserNav";
 
-export default function Header({ searchQuery, onSearchChange, cartItemCount, onCartClick }) {
+export default function Header({ searchQuery, onSearchChange }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [cartBounce, setCartBounce] = useState(false);
-  const prevCount = useRef(cartItemCount);
   const headerRef = useRef(null);
 
   useEffect(() => {
@@ -33,15 +31,7 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
     };
   }, []);
 
-  useEffect(() => {
-    if (cartItemCount > prevCount.current) {
-      setCartBounce(true);
-      const timer = setTimeout(() => setCartBounce(false), 400);
-      prevCount.current = cartItemCount;
-      return () => clearTimeout(timer);
-    }
-    prevCount.current = cartItemCount;
-  }, [cartItemCount]);
+
 
   const scrollTo = (id) => {
     const element = document.getElementById(id);
@@ -112,7 +102,7 @@ export default function Header({ searchQuery, onSearchChange, cartItemCount, onC
           </div>
 
           {/* UserNav: Tombol Login/Register atau Dropdown Profil */}
-          <UserNav cartLocalCount={cartItemCount} />
+          <UserNav />
         </div>
       </div>
 

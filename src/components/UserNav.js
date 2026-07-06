@@ -12,7 +12,7 @@ function getInitials(name) {
   return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 }
 
-export default function UserNav({ cartLocalCount = 0 }) {
+export default function UserNav() {
   const router = useRouter();
   const [user, setUser] = useState(undefined); // undefined = loading
   const [dbCartCount, setDbCartCount] = useState(0);
@@ -68,9 +68,6 @@ export default function UserNav({ cartLocalCount = 0 }) {
     router.refresh();
   };
 
-  // Hitung total keranjang: jika user login, dari DB; jika tidak, dari local state
-  const totalCartCount = user ? dbCartCount : cartLocalCount;
-
   // Loading state
   if (user === undefined) {
     return <div className={styles.skeleton}></div>;
@@ -82,7 +79,6 @@ export default function UserNav({ cartLocalCount = 0 }) {
       <div className={styles.guestNav}>
         <Link href="/keranjang" className={styles.cartBtn}>
           <ShoppingCart size={20} />
-          {cartLocalCount > 0 && <span className={styles.badge}>{cartLocalCount}</span>}
         </Link>
         <div className={styles.divider}></div>
         <div className={styles.authGroup}>
