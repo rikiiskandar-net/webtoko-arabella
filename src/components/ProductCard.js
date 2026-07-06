@@ -52,7 +52,11 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
         </div>
         
         <div className={`${styles.actions} ${isSmall ? styles.actionsSmall : ''}`}>
-          {cartQuantity === 0 ? (
+          {(product.variants && product.variants.length > 0) ? (
+            <button className={`${styles.buyNowBtn} ${isSmall ? styles.buyNowBtnSmall : ''}`} onClick={() => onViewDetail && onViewDetail(product)} style={{ width: '100%' }}>
+              Pilih Varian
+            </button>
+          ) : cartQuantity === 0 ? (
             <>
               <button className={`${styles.buyNowBtn} ${isSmall ? styles.buyNowBtnSmall : ''}`} onClick={() => onBuyNow(product.id)}>
                 Pesan
