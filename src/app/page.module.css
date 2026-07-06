@@ -106,15 +106,15 @@
 
 @media (min-width: 480px) {
   .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
   }
 }
 
 @media (min-width: 768px) {
   .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem;
   }
 }
 
@@ -159,15 +159,15 @@
 
 @media (min-width: 640px) {
   .smallProductGrid {
-    grid-template-columns: repeat(auto-fit, 180px);
+    grid-template-columns: repeat(auto-fit, 140px);
     justify-content: center;
   }
 }
 
 @media (min-width: 768px) {
   .smallProductGrid {
-    grid-template-columns: repeat(auto-fit, 190px);
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, 150px);
+    gap: 1rem;
   }
 }
 

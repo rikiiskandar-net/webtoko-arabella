@@ -1,7 +1,24 @@
+import { useState, useEffect } from "react";
 import styles from "./ProductCard.module.css";
 import { Star } from "lucide-react";
 
 export default function ProductCard({ product, cartQuantity, onUpdateQuantity, onBuyNow, onViewDetail, isSmall = false }) {
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
+
+  const allImages = [product.image];
+  if (product.images && product.images.length > 0) {
+    allImages.push(...product.images);
+  }
+
+  useEffect(() => {
+    if (allImages.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentImgIndex(prev => (prev + 1) % allImages.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [allImages.length]);
+
   const displayPrice = product.price;
   const displayOriginal = product.originalPrice;
   const formatPrice = (price) => {
@@ -19,14 +36,24 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
 
   return (
     <div className={`${styles.card} ${isSmall ? styles.cardSmall : ''}`}>
-      <div className={`${styles.imageContainer} ${isSmall ? styles.imageContainerSmall : ''} ${styles.skeletonBg}`} onClick={() => onViewDetail && onViewDetail(product)} style={{cursor: 'pointer'}}>
+      <div className={`${styles.imageContainer} ${styles.skeletonBg}`} onClick={() => onViewDetail && onViewDetail(product)} style={{cursor: 'pointer'}}>
         {product.badge && (
           <div className={`${styles.badge} ${isSmall ? styles.badgeSmall : ''}`} style={{ backgroundColor: product.badgeColor || 'var(--primary)' }}>
             {product.badge}
           </div>
         )}
-        {/* Placeholder grey background acts as a skeleton before image loads */}
-        <img src={product.image} alt={product.name} className={styles.image} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22300%22%20fill%3D%22%23E2E8F0%22%3E%3Crect%20width%3D%22400%22%20height%3D%22300%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394A3B8%22%20font-size%3D%2216%22%20dy%3D%22.1em%22%3EGambar%20tidak%20tersedia%3C%2Ftext%3E%3C%2Fsvg%3E'; }} />
+        <div className={styles.sliderWrapper} style={{ transform: `translateX(-${currentImgIndex * 100}%)` }}>
+          {allImages.map((imgUrl, idx) => (
+            <img 
+              key={idx} 
+              src={imgUrl} 
+              alt={`${product.name} - slide ${idx + 1}`} 
+              className={styles.slideImage} 
+              loading={idx === 0 ? "lazy" : "eager"} 
+              onError={(e) => { e.target.onerror = null; e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22300%22%20fill%3D%22%23E2E8F0%22%3E%3Crect%20width%3D%22400%22%20height%3D%22300%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20fill%3D%22%2394A3B8%22%20font-size%3D%2216%22%20dy%3D%22.1em%22%3EGambar%20tidak%20tersedia%3C%2Ftext%3E%3C%2Fsvg%3E'; }} 
+            />
+          ))}
+        </div>
       </div>
       <div className={`${styles.content} ${isSmall ? styles.contentSmall : ''}`}>
         <h3 className={`${styles.name} ${isSmall ? styles.nameSmall : ''}`} onClick={() => onViewDetail && onViewDetail(product)} style={{cursor: 'pointer'}}>{product.name}</h3>
