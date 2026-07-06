@@ -366,6 +366,33 @@ export default function ProductsClient() {
                 </div>
               </div>
 
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Harga Coret / Lama (Opsional)</label>
+                  <input type="number" className={styles.input} value={formData.originalPrice} onChange={(e) => setFormData({...formData, originalPrice: e.target.value})} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Label Badge</label>
+                  <select className={styles.input} value={formData.badge} onChange={(e) => setFormData({...formData, badge: e.target.value})}>
+                    <option value="">Tanpa Badge</option>
+                    <option value="Bestseller">Bestseller</option>
+                    <option value="Terbaru">Terbaru</option>
+                    <option value="Rekomendasi">Rekomendasi</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Rating</label>
+                  <input type="number" step="0.1" max="5" className={styles.input} value={formData.rating} onChange={(e) => setFormData({...formData, rating: e.target.value})} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Terjual</label>
+                  <input type="text" className={styles.input} value={formData.sold} onChange={(e) => setFormData({...formData, sold: e.target.value})} placeholder="Cth: 500+" />
+                </div>
+              </div>
+
               {/* Variants */}
               <div className={styles.formGroup}>
                 <label className={styles.label} style={{ marginTop: '10px' }}>Varian Produk & Kustomisasi (Opsional)</label>
