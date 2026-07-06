@@ -31,7 +31,7 @@ export default async function SystemHealthWidget() {
     // 3. Storage Size (Supabase specific)
     try {
       const storageResult = await prisma.$queryRawUnsafe(`
-        SELECT sum(metadata->>'size')::bigint as total_bytes FROM storage.objects;
+        SELECT sum((metadata->>'size')::bigint) as total_bytes FROM storage.objects;
       `);
       const storageBytes = Number(storageResult[0].total_bytes || 0);
       storageSizeMB = storageBytes / 1024 / 1024;
