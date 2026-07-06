@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BookOpen, Plus, Pencil, Trash2, Loader2, TrendingUp, TrendingDown, Wallet, X, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
+import { BookOpen, Plus, Pencil, Trash2, Loader2, TrendingUp, TrendingDown, Wallet, X, ArrowUpCircle, ArrowDownCircle, SlidersHorizontal } from "lucide-react";
 import styles from "./Cashbook.module.css";
 
 const MONTHS = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
@@ -24,6 +24,10 @@ export default function CashbookClient() {
   const [showModal, setShowModal] = useState(false);
   const [editingEntry, setEditingEntry] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  // Sort & Filter states
+  const [sortBy, setSortBy] = useState("newest"); // newest, oldest, highest, lowest
+  const [filterType, setFilterType] = useState("all"); // all, income, expense
 
   // Form states
   const [formType, setFormType] = useState("income");
@@ -127,6 +131,19 @@ export default function CashbookClient() {
   const dailyExpense = entries.filter(e => e.type === "expense").reduce((s, e) => s + e.amount, 0);
   const dailyBalance = dailyIncome - dailyExpense;
 
+  // Apply filter & sort
+  const filteredEntries = entries
+    .filter(e => filterType === "all" ? true : e.type === filterType)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "oldest": return new Date(a.date) - new Date(b.date);
+        case "highest": return b.amount - a.amount;
+        case "lowest": return a.amount - b.amount;
+        case "newest":
+        default: return new Date(b.date) - new Date(a.date);
+      }
+    });
+
   // Year options
   const currentYear = new Date().getFullYear();
   const yearOptions = [];
@@ -178,6 +195,27 @@ export default function CashbookClient() {
             </button>
           </div>
 
+          {/* Filter & Sort Bar */}
+          {entries.length > 0 && (
+            <div className={styles.filterBar}>
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}><SlidersHorizontal size={14} /> Filter:</span>
+                <button className={`${styles.filterPill} ${filterType === "all" ? styles.filterPillActive : ""}`} onClick={() => setFilterType("all")}>Semua</button>
+                <button className={`${styles.filterPill} ${filterType === "income" ? styles.filterPillActive : ""} ${filterType === "income" ? styles.filterPillIncome : ""}`} onClick={() => setFilterType("income")}>💰 Pemasukan</button>
+                <button className={`${styles.filterPill} ${filterType === "expense" ? styles.filterPillActive : ""} ${filterType === "expense" ? styles.filterPillExpense : ""}`} onClick={() => setFilterType("expense")}>💸 Pengeluaran</button>
+              </div>
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}>Urutkan:</span>
+                <select className={styles.sortSelect} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                  <option value="newest">⏰ Terbaru</option>
+                  <option value="oldest">📅 Terlama</option>
+                  <option value="highest">📈 Terbanyak</option>
+                  <option value="lowest">📉 Terkecil</option>
+                </select>
+              </div>
+            </div>
+          )}
+
           {/* Table */}
           {loading ? (
             <div className={styles.emptyState}><Loader2 size={40} className={styles.spin} /><h3>Memuat data...</h3></div>
@@ -186,6 +224,12 @@ export default function CashbookClient() {
               <BookOpen size={48} className={styles.emptyIcon} />
               <h3>Belum ada catatan</h3>
               <p>Klik &quot;Catat Transaksi&quot; untuk mulai mencatat pemasukan atau pengeluaran hari ini.</p>
+            </div>
+          ) : filteredEntries.length === 0 ? (
+            <div className={styles.emptyState}>
+              <BookOpen size={48} className={styles.emptyIcon} />
+              <h3>Tidak ada data yang cocok</h3>
+              <p>Coba ubah filter atau urutan Anda.</p>
             </div>
           ) : (
             <div className={styles.tableContainer}>
@@ -200,7 +244,7 @@ export default function CashbookClient() {
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.map(entry => (
+                  {filteredEntries.map(entry => (
                     <tr key={entry.id}>
                       <td>{new Date(entry.date).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</td>
                       <td>
