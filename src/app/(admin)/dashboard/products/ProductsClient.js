@@ -6,9 +6,7 @@ import styles from "./Products.module.css";
 import { useNotification } from "@/lib/useNotification";
 import ImageCropper from "@/components/ImageCropper";
 import dynamic from 'next/dynamic';
-import 'react-quill-new/dist/quill.snow.css';
-
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+import RichTextEditor from '@/components/RichTextEditor';
 
 export default function ProductsClient() {
   const { notify, NotificationBar } = useNotification();
@@ -452,7 +450,7 @@ export default function ProductsClient() {
               <div className={styles.formGroup} style={{ marginTop: '20px' }}>
                 <label className={styles.label}>Deskripsi Cerita Produk (Rich Text)</label>
                 <div style={{ background: 'white', border: '1px solid #CBD5E1', borderRadius: '6px', overflow: 'hidden' }}>
-                  <ReactQuill theme="snow" value={formData.description} onChange={(val) => setFormData({...formData, description: val})} style={{ minHeight: '200px', border: 'none' }} />
+                  <RichTextEditor value={formData.description} onChange={(val) => setFormData({...formData, description: val})} />
                 </div>
               </div>
 
