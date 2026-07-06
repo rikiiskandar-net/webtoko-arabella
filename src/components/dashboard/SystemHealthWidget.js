@@ -37,7 +37,7 @@ export default async function SystemHealthWidget() {
       storageSizeMB = storageBytes / 1024 / 1024;
     } catch (err) {
       // Postgres user might not have access to storage schema in some setups
-      storageError = "Tidak dapat membaca skema storage (dibutuhkan akses khusus).";
+      storageError = "Error: " + err.message;
     }
 
   } catch (err) {
