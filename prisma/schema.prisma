@@ -183,3 +183,21 @@ model CartItem {
 
   @@index([cartId])
 }
+
+enum CashType {
+  income
+  expense
+}
+
+model CashEntry {
+  id          String   @id @default(uuid())
+  type        CashType
+  amount      Int
+  description String
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+  @@index([type])
+}
