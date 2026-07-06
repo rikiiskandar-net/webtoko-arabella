@@ -38,7 +38,7 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
     <div className={`${styles.card} ${isSmall ? styles.cardSmall : ''}`}>
       <div className={`${styles.imageContainer} ${styles.skeletonBg}`} onClick={() => onViewDetail && onViewDetail(product)} style={{cursor: 'pointer'}}>
         {product.badge && (
-          <div className={`${styles.badge} ${isSmall ? styles.badgeSmall : ''}`} style={{ backgroundColor: product.badgeColor || 'var(--primary)' }}>
+          <div className={`${styles.badge} ${isSmall ? styles.badgeSmall : ''}`}>
             {product.badge}
           </div>
         )}
