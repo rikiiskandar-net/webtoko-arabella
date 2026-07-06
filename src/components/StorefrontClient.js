@@ -11,7 +11,6 @@ import Testimonial from "@/components/Testimonial";
 import AboutUs from "@/components/AboutUs";
 import Gallery from "@/components/Gallery";
 import Footer from "@/components/Footer";
-import FloatingCart from "@/components/FloatingCart";
 import ProductModal from "@/components/ProductModal";
 import Toast from "@/components/Toast";
 import { Flame, Star, Sparkles } from "lucide-react";
