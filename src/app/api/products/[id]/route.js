@@ -24,6 +24,8 @@ export async function PUT(request, { params }) {
     if (data.price !== undefined) updateData.price = parseInt(data.price);
     if (data.description !== undefined) updateData.description = data.description;
     if (data.image !== undefined) updateData.image = data.image;
+    if (data.images !== undefined) updateData.images = data.images;
+    if (data.variants !== undefined) updateData.variants = data.variants;
     if (data.isPromo !== undefined) updateData.isPromo = data.isPromo;
     if (data.isWebDiscountable !== undefined) updateData.isWebDiscountable = data.isWebDiscountable;
     updateData.promoPrice = null;

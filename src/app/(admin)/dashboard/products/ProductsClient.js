@@ -5,6 +5,10 @@ import { Plus, Edit2, Trash2, PackageSearch, X, Loader2, ImagePlus } from "lucid
 import styles from "./Products.module.css";
 import { useNotification } from "@/lib/useNotification";
 import ImageCropper from "@/components/ImageCropper";
+import dynamic from 'next/dynamic';
+import 'react-quill/dist/quill.snow.css';
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function ProductsClient() {
   const { notify, NotificationBar } = useNotification();
@@ -15,24 +19,20 @@ export default function ProductsClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [cropperSrc, setCropperSrc] = useState(null); // URL gambar yang akan di-crop
+  
+  const [cropperSrc, setCropperSrc] = useState(null);
+  const [cropperTarget, setCropperTarget] = useState("main"); // "main" or "gallery"
 
   useEffect(() => {
     async function fetchData() {
       try {
         const [prodRes, catRes] = await Promise.all([
           fetch("/api/products"),
-          fetch("/api/categories") // Assuming we need this or we can fetch them together
+          fetch("/api/categories")
         ]);
         
-        if (prodRes.ok) {
-          const prods = await prodRes.json();
-          setProducts(prods);
-        }
-        if (catRes.ok) {
-           const cats = await catRes.json();
-           setCategories(cats);
-        }
+        if (prodRes.ok) setProducts(await prodRes.json());
+        if (catRes.ok) setCategories(await catRes.json());
       } catch (err) {
         console.error("Failed to fetch", err);
       } finally {
@@ -42,12 +42,13 @@ export default function ProductsClient() {
     fetchData();
   }, []);
 
-  // Form State
   const [formData, setFormData] = useState({
     name: "",
     price: "",
     description: "",
     image: "/images/placeholder.jpg",
+    images: [],
+    variants: [],
     isPromo: false,
     originalPrice: "",
     badge: "",
@@ -67,7 +68,7 @@ export default function ProductsClient() {
 
   const openModal = (product = null) => {
     if (!product && categories.length === 0) {
-      notify("Anda belum memiliki Kategori. Silakan buat kategori terlebih dahulu di menu Manajemen Kategori!", "error");
+      notify("Anda belum memiliki Kategori. Silakan buat kategori terlebih dahulu!", "error");
       return;
     }
     if (product) {
@@ -77,6 +78,8 @@ export default function ProductsClient() {
         price: product.price,
         description: product.description || "",
         image: product.image || "/images/placeholder.jpg",
+        images: product.images || [],
+        variants: product.variants || [],
         isPromo: product.isPromo,
         originalPrice: product.originalPrice || "",
         badge: product.badge || "",
@@ -92,6 +95,8 @@ export default function ProductsClient() {
         price: "",
         description: "",
         image: "/images/placeholder.jpg",
+        images: [],
+        variants: [],
         isPromo: false,
         originalPrice: "",
         badge: "",
@@ -120,14 +125,18 @@ export default function ProductsClient() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+           ...formData,
+           price: Number(formData.price),
+           originalPrice: formData.originalPrice ? Number(formData.originalPrice) : null,
+           rating: formData.rating ? Number(formData.rating) : 0
+        })
       });
 
       if (!res.ok) throw new Error("Gagal menyimpan data");
       
       const savedProduct = await res.json();
       
-      // Update local state without reloading the page
       if (editingProduct) {
         setProducts(products.map(p => p.id === savedProduct.id ? { ...savedProduct, category: categories.find(c => c.id === savedProduct.categoryId) } : p));
       } else {
@@ -143,22 +152,19 @@ export default function ProductsClient() {
     }
   };
 
-  // Step 1: User pilih file → buka cropper
-  const handleFileSelect = (e) => {
+  const handleFileSelect = (e, target = "main") => {
     const file = e.target.files[0];
     if (!file) return;
+    setCropperTarget(target);
 
-    // Buat URL preview untuk dibuka di cropper
     const reader = new FileReader();
     reader.onload = () => {
       setCropperSrc(reader.result);
     };
     reader.readAsDataURL(file);
-    // Reset input agar bisa pilih file yang sama lagi
     e.target.value = "";
   };
 
-  // Step 2: Setelah di-crop, upload hasilnya
   const handleCropComplete = async (croppedFile) => {
     setIsUploading(true);
 
@@ -171,12 +177,17 @@ export default function ProductsClient() {
         body: uploadData,
       });
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Gagal mengunggah gambar");
+         throw new Error("Gagal mengunggah gambar");
       }
       const data = await res.json();
-      setFormData(prev => ({ ...prev, image: data.url }));
-      setCropperSrc(null); // Tutup cropper
+      
+      if (cropperTarget === "main") {
+        setFormData(prev => ({ ...prev, image: data.url }));
+      } else {
+        setFormData(prev => ({ ...prev, images: [...prev.images, data.url] }));
+      }
+      
+      setCropperSrc(null);
       notify("Gambar berhasil diunggah!");
     } catch (error) {
       notify("Error upload gambar: " + error.message, "error");
@@ -185,16 +196,11 @@ export default function ProductsClient() {
     }
   };
 
-  const handleCropCancel = () => {
-    setCropperSrc(null);
-  };
-
   const handleDelete = async (id) => {
     if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
       try {
         const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Gagal menghapus data");
-        
         setProducts(products.filter(p => p.id !== id));
       } catch (error) {
         notify("Error: " + error.message, "error");
@@ -219,13 +225,11 @@ export default function ProductsClient() {
           <div className={styles.emptyState}>
             <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
             <h3>Memuat Data...</h3>
-            <p>Sedang menyinkronkan dengan database Supabase.</p>
           </div>
         ) : products.length === 0 ? (
           <div className={styles.emptyState}>
             <PackageSearch size={48} className={styles.emptyIcon} />
             <h3>Belum ada produk</h3>
-            <p>Klik tombol &quot;Tambah Produk&quot; untuk mulai mengisi etalase.</p>
           </div>
         ) : (
           <table className={styles.table}>
@@ -266,10 +270,10 @@ export default function ProductsClient() {
                   </td>
                   <td>
                     <div className={styles.actionCell}>
-                      <button className={`${styles.iconBtn} ${styles.edit}`} title="Edit" onClick={() => openModal(product)}>
+                      <button type="button" className={`${styles.iconBtn} ${styles.edit}`} onClick={() => openModal(product)}>
                         <Edit2 size={18} />
                       </button>
-                      <button className={`${styles.iconBtn} ${styles.delete}`} title="Hapus" onClick={() => handleDelete(product.id)}>
+                      <button type="button" className={`${styles.iconBtn} ${styles.delete}`} onClick={() => handleDelete(product.id)}>
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -281,13 +285,12 @@ export default function ProductsClient() {
         )}
       </div>
 
-      {/* Modal Form */}
       {isModalOpen && (
         <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
+          <div className={styles.modalContent} style={{ maxWidth: '800px', width: '95%' }}>
             <div className={styles.modalHeader}>
               <h3 className={styles.modalTitle}>{editingProduct ? "Edit Produk" : "Tambah Produk Baru"}</h3>
-              <button className={styles.closeBtn} onClick={closeModal}><X size={24} /></button>
+              <button type="button" className={styles.closeBtn} onClick={closeModal}><X size={24} /></button>
             </div>
             
             <form onSubmit={handleSubmit} className={styles.formBody}>
@@ -313,29 +316,38 @@ export default function ProductsClient() {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Foto Produk</label>
-                
-                {formData.image && formData.image !== "/images/placeholder.jpg" && (
-                  <div style={{ marginBottom: '10px', position: 'relative', display: 'inline-block' }}>
-                    <img src={formData.image} alt="Preview" style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '8px', border: '2px solid #e5e7eb' }} />
-                    <span style={{ position: 'absolute', bottom: '4px', right: '4px', background: '#22C55E', color: 'white', fontSize: '0.6rem', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>4:3</span>
+              {/* Photos */}
+              <div className={styles.formRow} style={{ alignItems: 'flex-start' }}>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Foto Utama *</label>
+                  {formData.image && (
+                    <img src={formData.image} alt="Preview" style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px', border: '1px solid #e2e8f0' }} />
+                  )}
+                  <div>
+                    <label style={{ display: 'inline-flex', padding: '8px 16px', background: '#F8FAFC', border: '1px dashed #CBD5E1', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                      <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, "main")} disabled={isUploading} />
+                      Ganti Foto Utama
+                    </label>
                   </div>
-                )}
-                
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', background: '#F8FAFC', border: '2px dashed #CBD5E1', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '0.9rem', fontWeight: 600, color: '#475569' }}>
-                  <ImagePlus size={20} style={{ color: '#3B82F6' }} />
-                  {formData.image !== "/images/placeholder.jpg" ? "Ganti Gambar" : "Pilih Gambar Produk"}
-                  <input 
-                    type="file" 
-                    accept="image/jpeg,image/png,image/webp,image/avif" 
-                    style={{ display: 'none' }}
-                    onChange={handleFileSelect} 
-                    disabled={isUploading}
-                  />
-                </label>
-                
-                <span className={styles.helpText}>Gambar akan otomatis di-crop (4:3) dan dikompres ke WebP sebelum diunggah.</span>
+                </div>
+
+                <div className={styles.formGroup} style={{ flex: 2 }}>
+                  <label className={styles.label}>Foto Tambahan Galeri (Opsional)</label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                    {formData.images.map((img, idx) => (
+                      <div key={idx} style={{ position: 'relative' }}>
+                        <img src={img} alt="Gallery" style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #e2e8f0' }} />
+                        <button type="button" onClick={() => setFormData({...formData, images: formData.images.filter((_, i) => i !== idx)})} style={{ position: 'absolute', top: -5, right: -5, background: 'red', color: 'white', borderRadius: '50%', width: 20, height: 20, border: 'none', cursor: 'pointer', fontSize: '12px' }}>&times;</button>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <label style={{ display: 'inline-flex', padding: '8px 16px', background: '#EFF6FF', border: '1px dashed #3B82F6', color: '#3B82F6', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500 }}>
+                      <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleFileSelect(e, "gallery")} disabled={isUploading} />
+                      + Tambah Foto Galeri
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div className={styles.formRow}>
@@ -351,43 +363,73 @@ export default function ProductsClient() {
                     <input type="checkbox" checked={formData.isWebDiscountable} onChange={(e) => setFormData({...formData, isWebDiscountable: e.target.checked})} />
                     Aktifkan Diskon Web Spesial
                   </label>
-                  <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block', marginTop: '4px' }}>Berhak dapat diskon Rp1.000 per kelipatan Rp10.000</span>
                 </div>
               </div>
 
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Harga Coret / Lama (Opsional)</label>
-                  <input type="number" className={styles.input} value={formData.originalPrice} onChange={(e) => setFormData({...formData, originalPrice: e.target.value})} placeholder="Cth: 25000" />
-                </div>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Label Badge</label>
-                  <select className={styles.input} value={formData.badge} onChange={(e) => setFormData({...formData, badge: e.target.value})}>
-                    <option value="">Tidak ada</option>
-                    <option value="Promo">Promo</option>
-                    <option value="Bestseller">Bestseller</option>
-                    <option value="Baru">Baru</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Rating</label>
-                  <input type="number" step="0.1" min="0" max="5" className={styles.input} value={formData.rating} onChange={(e) => setFormData({...formData, rating: e.target.value})} placeholder="Cth: 4.8" />
-                </div>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>Terjual</label>
-                  <input type="text" className={styles.input} value={formData.sold} onChange={(e) => setFormData({...formData, sold: e.target.value})} placeholder="Cth: 1.2k" />
-                </div>
-              </div>
-
+              {/* Variants */}
               <div className={styles.formGroup}>
-                <label className={styles.label}>Deskripsi</label>
-                <textarea className={styles.textarea} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Ceritakan kelezatan produk ini..."></textarea>
+                <label className={styles.label} style={{ marginTop: '10px' }}>Varian Produk & Kustomisasi (Opsional)</label>
+                <div style={{ fontSize: '0.8rem', color: '#64748B', marginBottom: '12px' }}>Gunakan fitur ini untuk menambah opsi ke pesanan. Misalnya: Ekstra Keju (+Rp3.000) atau Porsi Reguler (+Rp0).</div>
+                
+                {formData.variants.map((variant, vIdx) => (
+                  <div key={vIdx} style={{ background: '#F8FAFC', padding: '16px', borderRadius: '8px', marginBottom: '12px', border: '1px solid #E2E8F0' }}>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                      <input type="text" className={styles.input} placeholder="Nama Opsi (Cth: Level Pedas)" value={variant.name} onChange={(e) => {
+                        const newVars = [...formData.variants];
+                        newVars[vIdx].name = e.target.value;
+                        setFormData({...formData, variants: newVars});
+                      }} style={{ flex: 1, fontWeight: 600 }} />
+                      <button type="button" onClick={() => {
+                        const newVars = [...formData.variants];
+                        newVars.splice(vIdx, 1);
+                        setFormData({...formData, variants: newVars});
+                      }} style={{ padding: '8px 12px', background: '#FEE2E2', color: '#EF4444', borderRadius: '6px', border: 'none', cursor: 'pointer' }}><Trash2 size={18} /></button>
+                    </div>
+
+                    <div style={{ marginLeft: '12px', borderLeft: '2px solid #CBD5E1', paddingLeft: '12px' }}>
+                      {variant.options.map((opt, oIdx) => (
+                        <div key={oIdx} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                          <input type="text" className={styles.input} placeholder="Pilihan (Cth: Level 1)" value={opt.name} onChange={(e) => {
+                            const newVars = [...formData.variants];
+                            newVars[vIdx].options[oIdx].name = e.target.value;
+                            setFormData({...formData, variants: newVars});
+                          }} style={{ flex: 1, padding: '6px 10px' }} />
+                          <span style={{ fontSize: '0.9rem', color: '#64748B' }}>+Rp</span>
+                          <input type="number" className={styles.input} placeholder="Harga Tambahan" value={opt.priceMod} onChange={(e) => {
+                            const newVars = [...formData.variants];
+                            newVars[vIdx].options[oIdx].priceMod = Number(e.target.value);
+                            setFormData({...formData, variants: newVars});
+                          }} style={{ width: '120px', padding: '6px 10px' }} />
+                          <button type="button" onClick={() => {
+                            const newVars = [...formData.variants];
+                            newVars[vIdx].options.splice(oIdx, 1);
+                            setFormData({...formData, variants: newVars});
+                          }} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px' }}><X size={16} /></button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => {
+                        const newVars = [...formData.variants];
+                        newVars[vIdx].options.push({ name: '', priceMod: 0 });
+                        setFormData({...formData, variants: newVars});
+                      }} style={{ fontSize: '0.85rem', color: '#3B82F6', background: 'none', border: 'none', cursor: 'pointer', marginTop: '8px', fontWeight: 500 }}>+ Tambah Pilihan</button>
+                    </div>
+                  </div>
+                ))}
+                
+                <button type="button" onClick={() => {
+                  setFormData({...formData, variants: [...formData.variants, { name: '', options: [{ name: '', priceMod: 0 }] }]});
+                }} style={{ display: 'block', width: '100%', padding: '10px', background: 'transparent', color: '#3B82F6', border: '2px dashed #93C5FD', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>+ Tambah Grup Varian</button>
               </div>
 
-              <div className={styles.formFooter}>
+              {/* Rich Text Description */}
+              <div className={styles.formGroup} style={{ marginTop: '20px' }}>
+                <label className={styles.label}>Deskripsi Cerita Produk (Rich Text)</label>
+                <div style={{ background: 'white', border: '1px solid #CBD5E1', borderRadius: '6px', overflow: 'hidden' }}>
+                  <ReactQuill theme="snow" value={formData.description} onChange={(val) => setFormData({...formData, description: val})} style={{ minHeight: '200px', border: 'none' }} />
+                </div>
+              </div>
+
+              <div className={styles.formFooter} style={{ marginTop: '40px' }}>
                 <button type="button" className={styles.cancelBtn} onClick={closeModal}>Batal</button>
                 <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
                   {isSubmitting ? "Menyimpan..." : "Simpan Produk"}
@@ -398,12 +440,11 @@ export default function ProductsClient() {
         </div>
       )}
 
-      {/* Image Cropper Modal */}
       {cropperSrc && (
         <ImageCropper
           imageSrc={cropperSrc}
           onCropComplete={handleCropComplete}
-          onCancel={handleCropCancel}
+          onCancel={() => setCropperSrc(null)}
           isUploading={isUploading}
         />
       )}

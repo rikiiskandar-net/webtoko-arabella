@@ -114,7 +114,9 @@ model Product {
   price         Int
   description   String
   image         String
-  isPromo       Boolean  @default(false)
+  images        Json?       @default("[]")
+  variants      Json?       @default("[]")
+  isPromo       Boolean     @default(false)
   isWebDiscountable Boolean @default(true)
   promoPrice    Int?
   originalPrice Int?

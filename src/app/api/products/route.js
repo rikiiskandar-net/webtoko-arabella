@@ -49,6 +49,8 @@ export async function POST(request) {
         price: parseInt(data.price),
         description: data.description || "",
         image: data.image || "/images/placeholder.jpg",
+        images: data.images || [],
+        variants: data.variants || [],
         isPromo: data.isPromo || false,
         isWebDiscountable: data.isWebDiscountable !== undefined ? data.isWebDiscountable : true,
         promoPrice: null,
