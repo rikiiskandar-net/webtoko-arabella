@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ShoppingCart, Tag, ChevronLeft, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import styles from "./Keranjang.module.css";
 
 const formatPrice = (price) =>
@@ -12,22 +13,31 @@ export default function KeranjangClient({ storeWaNumber }) {
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [user, setUser] = useState(null);
+  const [promoProducts, setPromoProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState({});
+  const [addingToCart, setAddingToCart] = useState({});
 
   useEffect(() => {
-    // Load keranjang + profil user sekaligus
+    // Load keranjang, profil user, dan promo sekaligus
     Promise.all([
       fetch("/api/cart").then(res => {
         if (res.status === 401) { router.push("/masuk"); return []; }
         return res.json();
       }),
-      fetch("/api/user/profile").then(res => res.ok ? res.json() : null)
+      fetch("/api/user/profile").then(res => res.ok ? res.json() : null),
+      fetch("/api/products").then(res => res.ok ? res.json() : [])
     ])
-      .then(([cartData, userData]) => {
+      .then(([cartData, userData, productsData]) => {
         setItems(Array.isArray(cartData) ? cartData : []);
         setUser(userData);
+        // Filter promo products
+        if (Array.isArray(productsData)) {
+          const promos = productsData.filter(p => p.isPromo).slice(0, 4); // Ambil 4 promo
+          setPromoProducts(promos);
+        }
       })
+      .catch(console.error)
       .finally(() => setLoading(false));
   }, [router]);
 
@@ -44,6 +54,7 @@ export default function KeranjangClient({ storeWaNumber }) {
       });
       if (res.ok) {
         setItems(prev => prev.map(item => item.id === itemId ? { ...item, quantity: newQty } : item));
+        window.dispatchEvent(new Event('cartUpdated'));
       }
     } finally {
       setUpdating(prev => ({ ...prev, [itemId]: false }));
@@ -56,9 +67,35 @@ export default function KeranjangClient({ storeWaNumber }) {
       const res = await fetch(`/api/cart?itemId=${itemId}`, { method: "DELETE" });
       if (res.ok) {
         setItems(prev => prev.filter(item => item.id !== itemId));
+        window.dispatchEvent(new Event('cartUpdated'));
       }
     } finally {
       setUpdating(prev => ({ ...prev, [itemId]: false }));
+    }
+  };
+
+  const addPromoToCart = async (product) => {
+    setAddingToCart(prev => ({ ...prev, [product.id]: true }));
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id, quantity: 1, variants: [] }),
+      });
+      if (res.ok) {
+        const newItem = await res.json();
+        // Cek apakah item sudah ada di keranjang
+        setItems(prev => {
+          const existing = prev.find(item => item.productId === product.id && (!item.variants || item.variants.length === 0));
+          if (existing) {
+            return prev.map(item => item.id === existing.id ? { ...item, quantity: item.quantity + 1 } : item);
+          }
+          return [...prev, newItem];
+        });
+        window.dispatchEvent(new Event('cartUpdated'));
+      }
+    } finally {
+      setAddingToCart(prev => ({ ...prev, [product.id]: false }));
     }
   };
 
@@ -101,89 +138,149 @@ export default function KeranjangClient({ storeWaNumber }) {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <Link href="/" className={styles.backLink}>← Lanjut Belanja</Link>
-        <h1 className={styles.title}>Keranjang Belanja</h1>
+        <Link href="/" className={styles.backLink}><ChevronLeft size={16} /> Lanjut Belanja</Link>
+        
+        <div className={styles.pageHeader}>
+          <h1 className={styles.title}>Keranjang Belanja</h1>
+          <p className={styles.subtitle}>Selesaikan pesananmu sebelum kehabisan!</p>
+        </div>
 
         {items.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>🛒</div>
+            <div className={styles.emptyIconWrap}>
+              <ShoppingCart size={48} className={styles.emptyIcon} />
+            </div>
             <h2 className={styles.emptyTitle}>Keranjang Masih Kosong</h2>
-            <p className={styles.emptyText}>Yuk, tambahkan menu favorit Anda!</p>
-            <Link href="/" className={styles.btnBrowse}>Lihat Menu</Link>
+            <p className={styles.emptyText}>Yuk, isi keranjangmu dengan menu-menu lezat kami!</p>
+            <Link href="/" className={styles.btnPrimary}>Lihat Menu Sekarang <ArrowRight size={16} /></Link>
           </div>
         ) : (
           <div className={styles.layout}>
-            <div className={styles.itemList}>
-              {items.map(item => {
-                const price = getItemPrice(item);
-                const isPromo = item.product.isPromo && item.product.promoPrice;
-                return (
-                  <div key={item.id} className={styles.itemCard}>
-                    <img src={item.product.image} alt={item.product.name} className={styles.itemImg} />
-                    <div className={styles.itemInfo}>
-                      <h3 className={styles.itemName}>{item.product.name}</h3>
-                      {item.variants && item.variants.length > 0 && (
-                        <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '4px', marginBottom: '8px' }}>
-                          {item.variants.map((v, i) => (
-                            <div key={i}>{v.groupName}: <strong>{v.optionName}</strong></div>
-                          ))}
+            {/* Bagian Kiri: List Item & Godaan */}
+            <div className={styles.leftCol}>
+              <div className={styles.card}>
+                <div className={styles.itemList}>
+                  {items.map(item => {
+                    const price = getItemPrice(item);
+                    const isPromo = item.product.isPromo && item.product.promoPrice;
+                    return (
+                      <div key={item.id} className={styles.itemCard}>
+                        <img src={item.product.image} alt={item.product.name} className={styles.itemImg} />
+                        <div className={styles.itemInfo}>
+                          <h3 className={styles.itemName}>{item.product.name}</h3>
+                          {item.variants && item.variants.length > 0 && (
+                            <div className={styles.itemVariants}>
+                              {item.variants.map((v, i) => (
+                                <span key={i} className={styles.variantBadge}>{v.groupName}: {v.optionName}</span>
+                              ))}
+                            </div>
+                          )}
+                          <div className={styles.itemPriceRow}>
+                            <span className={styles.itemPrice}>{formatPrice(price)}</span>
+                            {isPromo && <span className={styles.itemOriginal}>{formatPrice(item.product.price)}</span>}
+                          </div>
                         </div>
-                      )}
-                      <div className={styles.itemPriceRow}>
-                        <span className={styles.itemPrice}>{formatPrice(price)}</span>
-                        {isPromo && <span className={styles.itemOriginal}>{formatPrice(item.product.price)}</span>}
+                        
+                        <div className={styles.itemActions}>
+                          <div className={styles.qtyControl}>
+                            <button className={styles.qtyBtn} onClick={() => updateQty(item.id, item.quantity - 1)} disabled={updating[item.id]}>
+                              <Minus size={14} />
+                            </button>
+                            <span className={styles.qtyValue}>{item.quantity}</span>
+                            <button className={styles.qtyBtn} onClick={() => updateQty(item.id, item.quantity + 1)} disabled={updating[item.id]}>
+                              <Plus size={14} />
+                            </button>
+                          </div>
+                          <button className={styles.removeBtn} onClick={() => removeItem(item.id)} disabled={updating[item.id]} title="Hapus Item">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
-                      <div className={styles.qtyControl}>
-                        <button
-                          className={styles.qtyBtn}
-                          onClick={() => updateQty(item.id, item.quantity - 1)}
-                          disabled={updating[item.id]}
-                        >−</button>
-                        <span className={styles.qtyValue}>{item.quantity}</span>
-                        <button
-                          className={styles.qtyBtn}
-                          onClick={() => updateQty(item.id, item.quantity + 1)}
-                          disabled={updating[item.id]}
-                        >+</button>
-                      </div>
-                    </div>
-                    <div className={styles.itemRight}>
-                      <span className={styles.itemSubtotal}>{formatPrice(price * item.quantity)}</span>
-                      <button
-                        className={styles.removeBtn}
-                        onClick={() => removeItem(item.id)}
-                        disabled={updating[item.id]}
-                      >🗑️</button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              </div>
 
-            {/* Summary */}
-            <div className={styles.summary}>
-              <h2 className={styles.summaryTitle}>Ringkasan Pesanan</h2>
-              {user?.name && (
-                <div className={styles.userInfo}>
-                  <div className={styles.userInfoRow}><span>Nama</span><span>{user.name}</span></div>
-                  {user.address && <div className={styles.userInfoRow}><span>Alamat</span><span>{user.address}</span></div>}
+              {/* Godaan Promo (Cross-sell) */}
+              {promoProducts.length > 0 && (
+                <div className={styles.promoSection}>
+                  <div className={styles.promoHeader}>
+                    <h3 className={styles.promoTitle}>
+                      <span className={styles.promoEmoji}>🤤</span> Masih lapar?
+                    </h3>
+                    <p className={styles.promoSubtitle}>Tambah yang seger-seger & manis ini mumpung lagi <strong>DISKON</strong> lho! 👇</p>
+                  </div>
+                  
+                  <div className={styles.promoGrid}>
+                    {promoProducts.map(product => (
+                      <div key={product.id} className={styles.promoCard}>
+                        <div className={styles.promoImgWrap}>
+                          <img src={product.image} alt={product.name} className={styles.promoImg} />
+                          <div className={styles.promoBadge}><Tag size={12} /> PROMO</div>
+                        </div>
+                        <div className={styles.promoCardBody}>
+                          <h4 className={styles.promoName}>{product.name}</h4>
+                          <div className={styles.promoPriceGroup}>
+                            <span className={styles.promoOriginal}>{formatPrice(product.price)}</span>
+                            <span className={styles.promoCurrent}>{formatPrice(product.promoPrice || product.price)}</span>
+                          </div>
+                          <button 
+                            className={styles.promoAddBtn}
+                            onClick={() => addPromoToCart(product)}
+                            disabled={addingToCart[product.id]}
+                          >
+                            {addingToCart[product.id] ? "Menambahkan..." : "+ Keranjang"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
-              <div className={styles.summaryRow}>
-                <span>Total ({totalItems} item)</span>
-                <span className={styles.summaryTotal}>{formatPrice(totalPrice)}</span>
+            </div>
+
+            {/* Bagian Kanan: Ringkasan & Checkout */}
+            <div className={styles.rightCol}>
+              <div className={styles.summaryCard}>
+                <h2 className={styles.summaryTitle}>Ringkasan Belanja</h2>
+                
+                {user?.name && (
+                  <div className={styles.userInfoBox}>
+                    <div className={styles.userInfoRow}>
+                      <span className={styles.userInfoLabel}>Penerima:</span>
+                      <span className={styles.userInfoValue}>{user.name}</span>
+                    </div>
+                    {user.address && (
+                      <div className={styles.userInfoRow}>
+                        <span className={styles.userInfoLabel}>Alamat:</span>
+                        <span className={styles.userInfoValue}>{user.address}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <div className={styles.summaryDetails}>
+                  <div className={styles.summaryRow}>
+                    <span>Total Harga ({totalItems} barang)</span>
+                    <span>{formatPrice(totalPrice)}</span>
+                  </div>
+                </div>
+                
+                <div className={styles.summaryTotalRow}>
+                  <span>Total Belanja</span>
+                  <span className={styles.summaryTotalAmount}>{formatPrice(totalPrice)}</span>
+                </div>
+                
+                <button className={styles.btnCheckoutWa} onClick={handleCheckoutWA}>
+                  <span className={styles.waIcon}>📱</span> Beli via WhatsApp
+                </button>
+                
+                {!user?.address && (
+                  <p className={styles.addressHint}>
+                    💡 <Link href="/profil" className={styles.hintLink}>Lengkapi alamat pengiriman</Link> di profil Anda
+                  </p>
+                )}
               </div>
-              <button
-                className={styles.btnCheckout}
-                onClick={handleCheckoutWA}
-              >
-                📱 Pesan via WhatsApp
-              </button>
-              {!user?.address && (
-                <p className={styles.addressHint}>
-                  💡 <Link href="/profil" className={styles.hintLink}>Lengkapi profil</Link> untuk isi alamat otomatis
-                </p>
-              )}
             </div>
           </div>
         )}
@@ -191,3 +288,4 @@ export default function KeranjangClient({ storeWaNumber }) {
     </div>
   );
 }
+
