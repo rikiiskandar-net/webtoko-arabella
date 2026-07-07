@@ -80,9 +80,10 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
   cursor: pointer;
   flex-shrink: 0;
+  text-decoration: none;
 }
 
 .logoIconWrapper {
@@ -91,26 +92,45 @@
   justify-content: center;
 }
 
-.customLogoImg {
-  height: 38px;
-  width: auto;
-  object-fit: contain;
-  mix-blend-mode: multiply;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.logoIconInner {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.logo:hover .customLogoImg {
-  transform: scale(1.08) rotate(-3deg);
+.logo:hover .logoIconInner {
+  transform: scale(1.08) rotate(-5deg);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.logoTextWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .title {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #2563EB, #F59E0B);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.5px;
+  color: #0F172A;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #3B82F6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
 }
 
 .navLinks {
