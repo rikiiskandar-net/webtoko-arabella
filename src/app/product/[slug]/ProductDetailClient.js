@@ -1,29 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./ProductDetail.module.css";
 import { Star, MessageCircle, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import ProductReviews from "@/components/ProductReviews";
 
 export default function ProductDetailClient({ product, config }) {
-  const [selectedVariants, setSelectedVariants] = useState({});
-  const [activeImage, setActiveImage] = useState("");
-
-  useEffect(() => {
-    if (product) {
-      setActiveImage(product.image);
-      const initialVars = {};
-      if (product.variants && Array.isArray(product.variants)) {
-        product.variants.forEach(v => {
-          if (v.options && v.options.length > 0) {
-            initialVars[v.name] = v.options[0];
-          }
-        });
-      }
-      setSelectedVariants(initialVars);
+  const getInitialVariants = () => {
+    const initialVars = {};
+    if (product && product.variants && Array.isArray(product.variants)) {
+      product.variants.forEach(v => {
+        if (v.options && v.options.length > 0) {
+          initialVars[v.name] = v.options[0];
+        }
+      });
     }
-  }, [product]);
+    return initialVars;
+  };
+
+  const [selectedVariants, setSelectedVariants] = useState(getInitialVariants);
+  const [activeImage, setActiveImage] = useState(product?.image || "");
 
   if (!product) return null;
 
