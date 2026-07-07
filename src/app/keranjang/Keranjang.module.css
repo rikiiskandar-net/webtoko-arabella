@@ -3,7 +3,7 @@
 .page {
   min-height: 100vh;
   background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 50%, #F8FAFC 100%);
-  padding: 1.5rem 1rem;
+  padding: 90px 1rem 1.5rem;
   font-family: var(--font-google, "Plus Jakarta Sans", sans-serif);
 }
 
@@ -113,8 +113,12 @@
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  padding: 1.25rem;
+  padding: 1rem;
   margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .card { padding: 1.25rem; }
 }
 
 .itemList {
@@ -136,8 +140,8 @@
 }
 
 @media (max-width: 540px) {
-  .itemCard { flex-direction: column; align-items: stretch; }
-  .itemActions { justify-content: space-between; width: 100%; margin-top: 0.5rem; }
+  .itemCard { flex-direction: row; align-items: center; gap: 0.75rem; padding-bottom: 0.75rem; }
+  .itemActions { flex-direction: column; align-items: flex-end; gap: 0.5rem; }
 }
 
 .itemImg {
@@ -147,6 +151,10 @@
   object-fit: cover;
   flex-shrink: 0;
   border: 1px solid #F1F5F9;
+}
+
+@media (max-width: 540px) {
+  .itemImg { width: 65px; height: 65px; }
 }
 
 .itemInfo {
@@ -159,6 +167,9 @@
   font-weight: 700;
   color: #0F172A;
   margin: 0 0 0.25rem;
+}
+@media (max-width: 540px) {
+  .itemName { font-size: 0.85rem; line-height: 1.2; margin-bottom: 0.15rem; }
 }
 
 .itemVariants {
@@ -186,6 +197,9 @@
   color: #3B82F6;
   font-weight: 700;
   font-size: 0.95rem;
+}
+@media (max-width: 540px) {
+  .itemPrice { font-size: 0.85rem; }
 }
 
 .itemOriginal {
@@ -257,6 +271,7 @@
 /* ===== PROMO / GODAAN SECTION ===== */
 .promoSection {
   margin-top: 1rem;
+  grid-column: 1 / -1;
 }
 
 .promoHeader {

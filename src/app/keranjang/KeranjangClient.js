@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShoppingCart, Tag, ChevronLeft, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
+import Header from "@/components/Header";
 import styles from "./Keranjang.module.css";
 
 const formatPrice = (price) =>
@@ -136,9 +137,18 @@ export default function KeranjangClient({ storeWaNumber }) {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <Link href="/" className={styles.backLink}><ChevronLeft size={16} /> Lanjut Belanja</Link>
+    <>
+      <Header 
+        searchQuery="" 
+        onSearchChange={(q) => {
+          if (q) router.push(`/?search=${encodeURIComponent(q)}`);
+        }} 
+        categories={[]} 
+        onCategoryClick={() => {}} 
+      />
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <Link href="/" className={styles.backLink}><ChevronLeft size={16} /> Lanjut Belanja</Link>
         
         <div className={styles.pageHeader}>
           <h1 className={styles.title}>Keranjang Belanja</h1>
@@ -200,43 +210,6 @@ export default function KeranjangClient({ storeWaNumber }) {
                   })}
                 </div>
               </div>
-
-              {/* Godaan Promo (Cross-sell) */}
-              {promoProducts.length > 0 && (
-                <div className={styles.promoSection}>
-                  <div className={styles.promoHeader}>
-                    <h3 className={styles.promoTitle}>
-                      <span className={styles.promoEmoji}>🤤</span> Masih lapar?
-                    </h3>
-                    <p className={styles.promoSubtitle}>Tambah yang seger-seger & manis ini mumpung lagi <strong>DISKON</strong> lho! 👇</p>
-                  </div>
-                  
-                  <div className={styles.promoGrid}>
-                    {promoProducts.map(product => (
-                      <div key={product.id} className={styles.promoCard}>
-                        <div className={styles.promoImgWrap}>
-                          <img src={product.image} alt={product.name} className={styles.promoImg} />
-                          <div className={styles.promoBadge}><Tag size={12} /> PROMO</div>
-                        </div>
-                        <div className={styles.promoCardBody}>
-                          <h4 className={styles.promoName}>{product.name}</h4>
-                          <div className={styles.promoPriceGroup}>
-                            <span className={styles.promoOriginal}>{formatPrice(product.price)}</span>
-                            <span className={styles.promoCurrent}>{formatPrice(product.promoPrice || product.price)}</span>
-                          </div>
-                          <button 
-                            className={styles.promoAddBtn}
-                            onClick={() => addPromoToCart(product)}
-                            disabled={addingToCart[product.id]}
-                          >
-                            {addingToCart[product.id] ? "Menambahkan..." : "+ Keranjang"}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Bagian Kanan: Ringkasan & Checkout */}
@@ -282,10 +255,49 @@ export default function KeranjangClient({ storeWaNumber }) {
                 )}
               </div>
             </div>
+            
+            {/* Godaan Promo (Cross-sell) dipindah ke bawah agar di HP muncul di akhir */}
+            {promoProducts.length > 0 && (
+              <div className={styles.promoSection}>
+                <div className={styles.promoHeader}>
+                  <h3 className={styles.promoTitle}>
+                    <span className={styles.promoEmoji}>🤤</span> Masih lapar?
+                  </h3>
+                  <p className={styles.promoSubtitle}>Tambah yang seger-seger & manis ini mumpung lagi <strong>DISKON</strong> lho! 👇</p>
+                </div>
+                
+                <div className={styles.promoGrid}>
+                  {promoProducts.map(product => (
+                    <div key={product.id} className={styles.promoCard}>
+                      <div className={styles.promoImgWrap}>
+                        <img src={product.image} alt={product.name} className={styles.promoImg} />
+                        <div className={styles.promoBadge}><Tag size={12} /> PROMO</div>
+                      </div>
+                      <div className={styles.promoCardBody}>
+                        <h4 className={styles.promoName}>{product.name}</h4>
+                        <div className={styles.promoPriceGroup}>
+                          <span className={styles.promoOriginal}>{formatPrice(product.price)}</span>
+                          <span className={styles.promoCurrent}>{formatPrice(product.promoPrice || product.price)}</span>
+                        </div>
+                        <button 
+                          className={styles.promoAddBtn}
+                          onClick={() => addPromoToCart(product)}
+                          disabled={addingToCart[product.id]}
+                        >
+                          {addingToCart[product.id] ? "Menambahkan..." : "+ Keranjang"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
           </div>
         )}
       </div>
     </div>
+    </>
   );
 }
 
