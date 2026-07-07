@@ -154,6 +154,8 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
       <Header 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        categories={initialCategories}
+        onCategoryClick={handleCategoryClick}
       />
       
       <main className={styles.main}>
