@@ -18,6 +18,11 @@ export default async function HomePage() {
 
   const storeConfig = await prisma.storeConfig.findFirst();
 
+  const banners = await prisma.heroBanner.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: 'asc' }
+  });
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -75,6 +80,7 @@ export default async function HomePage() {
         initialProducts={products} 
         initialCategories={categories} 
         storeConfig={storeConfig}
+        initialBanners={banners}
       />
     </>
   );

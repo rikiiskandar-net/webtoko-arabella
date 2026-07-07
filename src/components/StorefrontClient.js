@@ -16,7 +16,7 @@ import Toast from "@/components/Toast";
 import { Flame, Star, Sparkles } from "lucide-react";
 import { renderIcon } from "@/app/(admin)/dashboard/categories/iconOptions";
 
-export default function StorefrontClient({ initialProducts = [], initialCategories = [], storeConfig }) {
+export default function StorefrontClient({ initialProducts = [], initialCategories = [], storeConfig, initialBanners = [] }) {
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -158,7 +158,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
         
         {isDefaultView && (
           <>
-            <HeroBanner />
+            <HeroBanner initialBanners={initialBanners} />
             <TrustBadges />
             <MenuHariIni />
           </>

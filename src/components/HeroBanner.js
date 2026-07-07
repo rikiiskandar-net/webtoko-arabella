@@ -1,39 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import styles from "./HeroBanner.module.css";
 
-export default function HeroBanner() {
-  const [banners, setBanners] = useState([]);
+export default function HeroBanner({ initialBanners = [] }) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    fetch("/api/store/banners")
-      .then((r) => r.json())
-      .then((data) => { if (Array.isArray(data)) setBanners(data); })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (banners.length <= 1) return;
+    if (initialBanners.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length);
+      setCurrent((prev) => (prev + 1) % initialBanners.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [banners.length]);
+  }, [initialBanners.length]);
 
-  if (!banners || banners.length === 0 || !banners[current]) return null;
+  if (!initialBanners || initialBanners.length === 0 || !initialBanners[current]) return null;
 
-  const banner = banners[current];
+  const banner = initialBanners[current];
 
   return (
     <div className={styles.banner}>
       <div className={styles.backgroundGlow}></div>
       <div className={styles.imageWrapper}>
-        <img
+        <Image
           src={banner.image}
           alt={banner.title}
+          fill
+          priority={current === 0} // LCP optimization: preloads the first banner
           className={styles.image}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+          quality={85}
         />
       </div>
       <div className={styles.gradientOverlay}></div>
@@ -52,9 +49,9 @@ export default function HeroBanner() {
         </div>
       </div>
 
-      {banners.length > 1 && (
+      {initialBanners.length > 1 && (
         <div className={styles.dots}>
-          {banners.map((_, i) => (
+          {initialBanners.map((_, i) => (
             <button
               key={i}
               className={`${styles.dot} ${i === current ? styles.activeDot : ""}`}
