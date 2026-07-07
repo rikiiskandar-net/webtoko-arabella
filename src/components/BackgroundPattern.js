@@ -44,7 +44,7 @@ export default function BackgroundPattern() {
         height: "100%",
         pointerEvents: "none",
         zIndex: 0,
-        opacity: 0.15, // Dibuat lebih tebal agar lebih terlihat
+        opacity: 0.06, // Dibuat lebih transparan sesuai permintaan (6%)
         backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(svgContent)}")`,
         backgroundSize: "300px 300px",
       }}
