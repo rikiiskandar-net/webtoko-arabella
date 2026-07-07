@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, User } from "lucide-react";
 import styles from "./UserNav.module.css";
 
 function getInitials(name) {
@@ -88,6 +88,9 @@ export default function UserNav() {
           <Link href="/masuk" className={styles.btnMasuk}>Masuk</Link>
           <Link href="/daftar" className={styles.btnDaftar}>Daftar</Link>
         </div>
+        <Link href="/masuk" className={styles.mobileLoginBtn} aria-label="Masuk">
+          <User size={22} />
+        </Link>
       </div>
     );
   }

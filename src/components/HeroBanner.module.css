@@ -6,7 +6,7 @@
   margin-top: 1rem;
   box-shadow: var(--shadow-xl);
   display: flex;
-  min-height: 380px;
+  min-height: 260px;
   background-color: #1e3a8a; /* fallback */
 }
 
