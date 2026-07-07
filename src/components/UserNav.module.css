@@ -189,3 +189,139 @@
   transition: background 0.1s;
 }
 .dropdownLogout:hover { background: #FEF2F2; }
+
+/* ===== CART WRAPPER & HOVER POPUP ===== */
+.cartWrapper {
+  position: relative;
+}
+
+.cartPopup {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 320px;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  overflow: hidden;
+  animation: cartPopupIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cartPopupIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cartPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.cartPopupTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.cartPopupCount {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #3B82F6;
+  background: #EFF6FF;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+}
+
+.cartPopupEmpty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #94A3B8;
+}
+
+.cartPopupEmptyIcon {
+  color: #CBD5E1;
+  margin-bottom: 0.5rem;
+}
+
+.cartPopupEmpty p {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.cartPopupList {
+  max-height: 260px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.cartPopupItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #F8FAFC;
+  transition: background 0.15s;
+}
+
+.cartPopupItem:last-child { border-bottom: none; }
+.cartPopupItem:hover { background: #F8FAFC; }
+
+.cartPopupImg {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #F1F5F9;
+  flex-shrink: 0;
+}
+
+.cartPopupInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cartPopupName {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #0F172A;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartPopupMeta {
+  font-size: 0.78rem;
+  color: #64748B;
+}
+
+.cartPopupMore {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #94A3B8;
+  padding: 0.5rem;
+  border-top: 1px solid #F1F5F9;
+}
+
+.cartPopupBtn {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.88rem;
+  transition: all 0.2s;
+}
+
+.cartPopupBtn:hover {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+}

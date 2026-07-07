@@ -6,59 +6,67 @@ import { useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import styles from "./UserNav.module.css";
 
-// Helper inisial nama
 function getInitials(name) {
   if (!name) return "?";
   return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 }
 
+const formatRp = (n) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n);
+
 export default function UserNav() {
   const router = useRouter();
-  const [user, setUser] = useState(undefined); // undefined = loading
+  const [user, setUser] = useState(undefined);
+  const [cartItems, setCartItems] = useState([]);
   const [dbCartCount, setDbCartCount] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [cartHover, setCartHover] = useState(false);
   const dropdownRef = useRef(null);
+  const cartRef = useRef(null);
+  const cartHoverTimeout = useRef(null);
 
-  const fetchCartCount = () => {
+  const fetchCart = () => {
     fetch("/api/cart")
       .then(r => r.ok ? r.json() : [])
       .then(items => {
-        const total = items.reduce((a, i) => a + i.quantity, 0);
-        setDbCartCount(total);
+        if (Array.isArray(items)) {
+          setCartItems(items);
+          const total = items.reduce((a, i) => a + i.quantity, 0);
+          setDbCartCount(total);
+        }
       })
-      .catch(() => setDbCartCount(0));
+      .catch(() => { setCartItems([]); setDbCartCount(0); });
   };
 
   useEffect(() => {
-    // Cek status login user
     fetch("/api/user/profile")
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         setUser(data);
-        if (data) {
-          fetchCartCount();
-        }
+        if (data) fetchCart();
       })
       .catch(() => setUser(null));
 
-    // Listen untuk event tambah ke keranjang
-    const handleCartUpdate = () => {
-      fetchCartCount();
-    };
+    const handleCartUpdate = () => fetchCart();
     window.addEventListener('cartUpdated', handleCartUpdate);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, []);
 
   useEffect(() => {
-    // Tutup dropdown jika klik di luar
     const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDropdownOpen(false);
+      if (cartRef.current && !cartRef.current.contains(e.target)) setCartHover(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const handleCartEnter = () => {
+    clearTimeout(cartHoverTimeout.current);
+    setCartHover(true);
+  };
+  const handleCartLeave = () => {
+    cartHoverTimeout.current = setTimeout(() => setCartHover(false), 200);
+  };
 
   const handleLogout = async () => {
     await fetch("/api/user/logout", { method: "POST" });
@@ -68,18 +76,13 @@ export default function UserNav() {
     router.refresh();
   };
 
-  // Loading state
-  if (user === undefined) {
-    return <div className={styles.skeleton}></div>;
-  }
+  if (user === undefined) return <div className={styles.skeleton}></div>;
 
-  // Belum login
+  // Guest
   if (!user) {
     return (
       <div className={styles.guestNav}>
-        <Link href="/keranjang" className={styles.cartBtn}>
-          <ShoppingCart size={20} />
-        </Link>
+        <Link href="/keranjang" className={styles.cartBtn}><ShoppingCart size={20} /></Link>
         <div className={styles.divider}></div>
         <div className={styles.authGroup}>
           <Link href="/masuk" className={styles.btnMasuk}>Masuk</Link>
@@ -89,16 +92,56 @@ export default function UserNav() {
     );
   }
 
-  // Sudah login
+  // Logged in
+  const previewItems = cartItems.slice(0, 4);
+
   return (
     <div className={styles.userNav} ref={dropdownRef}>
-      <Link href="/keranjang" className={styles.cartBtn}>
-        <ShoppingCart size={20} />
-        {dbCartCount > 0 && <span className={styles.badge}>{dbCartCount}</span>}
-      </Link>
-      
+      {/* Cart Button with Hover Preview */}
+      <div className={styles.cartWrapper} ref={cartRef} onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
+        <Link href="/keranjang" className={styles.cartBtn}>
+          <ShoppingCart size={20} />
+          {dbCartCount > 0 && <span className={styles.badge}>{dbCartCount}</span>}
+        </Link>
+
+        {/* Cart Hover Popup */}
+        {cartHover && (
+          <div className={styles.cartPopup} onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
+            <div className={styles.cartPopupHeader}>
+              <span className={styles.cartPopupTitle}>Keranjang Belanja</span>
+              {dbCartCount > 0 && <span className={styles.cartPopupCount}>{dbCartCount} item</span>}
+            </div>
+            {previewItems.length === 0 ? (
+              <div className={styles.cartPopupEmpty}>
+                <ShoppingCart size={32} className={styles.cartPopupEmptyIcon} />
+                <p>Keranjang Anda masih kosong</p>
+              </div>
+            ) : (
+              <>
+                <div className={styles.cartPopupList}>
+                  {previewItems.map(item => (
+                    <div key={item.id} className={styles.cartPopupItem}>
+                      <img src={item.product?.image || "/images/placeholder.png"} alt={item.product?.name} className={styles.cartPopupImg} />
+                      <div className={styles.cartPopupInfo}>
+                        <span className={styles.cartPopupName}>{item.product?.name}</span>
+                        <span className={styles.cartPopupMeta}>{item.quantity}x {formatRp(item.product?.price || 0)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {cartItems.length > 4 && (
+                  <div className={styles.cartPopupMore}>+{cartItems.length - 4} item lainnya</div>
+                )}
+              </>
+            )}
+            <Link href="/keranjang" className={styles.cartPopupBtn}>Lihat Keranjang</Link>
+          </div>
+        )}
+      </div>
+
       <div className={styles.divider}></div>
 
+      {/* User Avatar Dropdown */}
       <button className={styles.avatarBtn} onClick={() => setDropdownOpen(!dropdownOpen)}>
         {user.avatar ? (
           <img src={user.avatar} alt={user.name} className={styles.avatarImg} />
