@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
+import Image from "next/image";
 import styles from "./Gallery.module.css";
 
 export default function Gallery() {
@@ -25,7 +25,14 @@ export default function Gallery() {
       <div className={styles.grid}>
         {images.map((img) => (
           <div key={img.id} className={styles.imageWrapper}>
-            <img src={img.src} alt={img.alt} className={styles.image} />
+            <Image 
+              src={img.src} 
+              alt={img.alt} 
+              fill
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className={styles.image} 
+            />
             <div className={styles.overlay}>
               <span className={styles.caption}>{img.alt}</span>
             </div>

@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 import { CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 import styles from "./AboutUs.module.css";
 
 export default function AboutUs({ config }) {
@@ -21,7 +21,15 @@ export default function AboutUs({ config }) {
     <section className={styles.aboutSection} id="tentang-kami">
       <div className={styles.container}>
         <div className={styles.imageColumn}>
-          <img src={image} alt="Dapur Arabella" className={styles.mainImage} />
+          <Image 
+            src={image} 
+            alt="Dapur Arabella" 
+            width={600}
+            height={500}
+            className={styles.mainImage} 
+            loading="lazy"
+            sizes="(max-width: 992px) 100vw, 50vw"
+          />
           <div className={styles.floatingBadge}>
             <span className={styles.badgeNumber}>{badgeNumber}</span>
             <span className={styles.badgeText}>
