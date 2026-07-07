@@ -129,10 +129,26 @@ model Product {
   cartItems     CartItem[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  reviews       ProductReview[]
 
   @@index([categoryId])
   @@index([isPromo])
   @@index([badge])
+}
+
+model ProductReview {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int      // 1 to 5
+  comment   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
 }
 
 model PageView {
@@ -156,6 +172,7 @@ model User {
   avatar    String   @default("")
   isActive  Boolean  @default(true)
   cart      Cart?
+  reviews   ProductReview[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -7,7 +7,6 @@ import HeroBanner from "@/components/HeroBanner";
 import TrustBadges from "@/components/TrustBadges";
 import MenuHariIni from "@/components/MenuHariIni";
 import ProductCard from "@/components/ProductCard";
-import ProductModal from "@/components/ProductModal";
 import Toast from "@/components/Toast";
 import dynamic from "next/dynamic";
 
@@ -21,19 +20,12 @@ import { renderIcon } from "@/app/(admin)/dashboard/categories/iconOptions";
 export default function StorefrontClient({ initialProducts = [], initialCategories = [], storeConfig, initialBanners = [] }) {
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null);
   
   // Toast State
   const [toastMessage, setToastMessage] = useState("");
   const [isToastVisible, setIsToastVisible] = useState(false);
 
-  useEffect(() => {
-    if (selectedProduct) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-  }, [selectedProduct]);
+
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -142,7 +134,6 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
           cartQuantity={0}
           onUpdateQuantity={handleUpdateQuantity}
           onBuyNow={handleBuyNow}
-          onViewDetail={setSelectedProduct}
           isSmall={isSmall}
         />
       ))}
@@ -254,19 +245,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
           </>
         )}
 
-        <ProductModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
-          cartQuantity={0}
-          onUpdateQuantity={handleUpdateQuantity}
-          onBuyNow={handleBuyNow}
-        />
-
-        <Toast 
-          message={toastMessage} 
-          isVisible={isToastVisible} 
-          onClose={() => setIsToastVisible(false)} 
-        />
+        {isToastVisible && <Toast message={toastMessage} onClose={() => setIsToastVisible(false)} />}
       </main>
       
       <Footer config={storeConfig} />

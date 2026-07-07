@@ -57,12 +57,44 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductDetailPage({ params }) {
   let product = await prisma.product.findUnique({
-    where: { slug: params.slug }
+    where: { slug: params.slug },
+    include: {
+      category: true,
+      reviews: {
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              avatar: true,
+            }
+          }
+        }
+      }
+    }
   });
 
   // Handle Backward Compatibility (Redirect old UUIDs to Slug)
   if (!product && isUUID(params.slug)) {
-    product = await prisma.product.findUnique({ where: { id: params.slug } });
+    product = await prisma.product.findUnique({ 
+      where: { id: params.slug },
+      include: {
+        category: true,
+        reviews: {
+          orderBy: { createdAt: 'desc' },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              }
+            }
+          }
+        }
+      }
+    });
     if (product && product.slug) {
       redirect(`/product/${product.slug}`);
     }

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./ProductCard.module.css";
 import { Star } from "lucide-react";
 
-export default function ProductCard({ product, cartQuantity, onUpdateQuantity, onBuyNow, onViewDetail, isSmall = false }) {
+export default function ProductCard({ product, cartQuantity, onUpdateQuantity, onBuyNow, isSmall = false }) {
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
 
   const allImages = [product.image];
@@ -37,7 +38,7 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
 
   return (
     <div className={`${styles.card} ${isSmall ? styles.cardSmall : ''}`}>
-      <div className={`${styles.imageContainer} ${styles.skeletonBg}`} onClick={() => onViewDetail && onViewDetail(product)} style={{cursor: 'pointer'}}>
+      <Link href={`/product/${product.slug}`} className={`${styles.imageContainer} ${styles.skeletonBg}`} style={{cursor: 'pointer', display: 'block'}}>
         {product.badge && (
           <div className={`${styles.badge} ${isSmall ? styles.badgeSmall : ''}`}>
             {product.badge}
@@ -58,9 +59,11 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
             </div>
           ))}
         </div>
-      </div>
+      </Link>
       <div className={`${styles.content} ${isSmall ? styles.contentSmall : ''}`}>
-        <h3 className={`${styles.name} ${isSmall ? styles.nameSmall : ''}`} onClick={() => onViewDetail && onViewDetail(product)} style={{cursor: 'pointer'}}>{product.name}</h3>
+        <Link href={`/product/${product.slug}`} style={{ textDecoration: 'none' }}>
+          <h3 className={`${styles.name} ${isSmall ? styles.nameSmall : ''}`} style={{cursor: 'pointer'}}>{product.name}</h3>
+        </Link>
         
         {/* Social Proof: Rating & Terjual */}
         <div className={`${styles.metaContainer} ${isSmall ? styles.metaContainerSmall : ''}`}>
@@ -84,9 +87,11 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
         
         <div className={`${styles.actions} ${isSmall ? styles.actionsSmall : ''}`}>
           {(product.variants && product.variants.length > 0) ? (
-            <button className={`${styles.buyNowBtn} ${isSmall ? styles.buyNowBtnSmall : ''}`} onClick={() => onViewDetail && onViewDetail(product)} style={{ width: '100%' }}>
-              Pilih Varian
-            </button>
+            <Link href={`/product/${product.slug}`} style={{ width: '100%', textDecoration: 'none' }}>
+              <button className={`${styles.buyNowBtn} ${isSmall ? styles.buyNowBtnSmall : ''}`} style={{ width: '100%' }}>
+                Pilih Varian
+              </button>
+            </Link>
           ) : cartQuantity === 0 ? (
             <>
               <button className={`${styles.buyNowBtn} ${isSmall ? styles.buyNowBtnSmall : ''}`} onClick={() => onBuyNow(product.id)}>

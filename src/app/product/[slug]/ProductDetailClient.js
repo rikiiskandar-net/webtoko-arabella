@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import styles from "./ProductDetail.module.css";
 import { Star, MessageCircle, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import ProductReviews from "@/components/ProductReviews";
 
 export default function ProductDetailClient({ product, config }) {
   const [selectedVariants, setSelectedVariants] = useState({});
@@ -149,6 +150,8 @@ export default function ProductDetailClient({ product, config }) {
         <div style={{ marginTop: '16px', textAlign: 'center' }}>
            <Link href="/#menu-section" style={{ color: '#64748B', textDecoration: 'underline', fontSize: '0.95rem' }}>Lihat Menu Lainnya</Link>
         </div>
+        
+        <ProductReviews product={product} reviews={product.reviews || []} />
       </div>
     </div>
   );
