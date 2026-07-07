@@ -112,6 +112,10 @@ export default function ProductDetailClient({ product, config }) {
           )}
           <span className={styles.price}>{formatPrice(finalPrice)}</span>
         </div>
+        
+        <div style={{ display: 'inline-block', backgroundColor: '#ecfdf5', color: '#059669', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '16px', border: '1px solid #10b981' }}>
+          ✨ Stok selalu fresh setiap hari
+        </div>
 
         <div className={styles.description} dangerouslySetInnerHTML={{ __html: product.description || '' }}></div>
 
@@ -138,17 +142,13 @@ export default function ProductDetailClient({ product, config }) {
 
         <div className={styles.actions} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {config?.waNumber && (
-            <button onClick={handleDirectBuy} className={styles.waBtn} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--green)', color: '#fff', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <button onClick={handleDirectBuy} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'background 0.2s' }}>
               <MessageCircle size={20} /> Pesan Sekarang
             </button>
           )}
-          <button onClick={handleAddToCart} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '2px solid var(--primary)', background: '#fff', color: 'var(--primary)', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <button onClick={handleAddToCart} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', background: 'white', color: 'var(--primary)', border: '2px solid var(--primary)', borderRadius: '8px', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#f0f9ff'} onMouseOut={e => e.currentTarget.style.background = 'white'}>
             <ShoppingCart size={20} /> + Keranjang
           </button>
-        </div>
-        
-        <div style={{ marginTop: '16px', textAlign: 'center' }}>
-           <Link href="/#menu-section" style={{ color: '#64748B', textDecoration: 'underline', fontSize: '0.95rem' }}>Lihat Menu Lainnya</Link>
         </div>
         
         <ProductReviews product={product} reviews={product.reviews || []} />

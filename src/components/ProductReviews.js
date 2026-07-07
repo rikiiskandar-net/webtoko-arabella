@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/SessionContext';
 import { Star, UserCircle2 } from 'lucide-react';
 import styles from './ProductReviews.module.css';
 import Toast from './Toast';
 
 export default function ProductReviews({ product, reviews: initialReviews }) {
-  const session = useSession();
+  const [session, setSession] = useState(null);
+  
+  useEffect(() => {
+    fetch("/api/user/profile")
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data) setSession({ user: data });
+      })
+      .catch(() => setSession(null));
+  }, []);
+
   const [reviews, setReviews] = useState(initialReviews || []);
   const [filterRating, setFilterRating] = useState(0); // 0 = all
   const [showForm, setShowForm] = useState(false);
@@ -27,9 +37,9 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
     1: reviews.filter(r => r.rating === 1).length,
   };
 
-  const averageRating = product.rating || (reviews.length > 0 
+  const averageRating = reviews.length > 0 
     ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1) 
-    : 0);
+    : 0;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
