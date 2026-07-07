@@ -2,7 +2,7 @@ export default function BackgroundPattern() {
   // SVG Pattern with culinary and leaf motifs
   const svgContent = `
     <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <g fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8">
+      <g fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.06">
         <!-- Leaf 1 -->
         <g transform="translate(30, 30) scale(1.2) rotate(15)">
           <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
@@ -44,7 +44,8 @@ export default function BackgroundPattern() {
         height: "100%",
         pointerEvents: "none",
         zIndex: 0,
-        opacity: 0.06, // Dibuat lebih transparan sesuai permintaan (6%)
+        transform: "translateZ(0)",
+        willChange: "transform",
         backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(svgContent)}")`,
         backgroundSize: "300px 300px",
       }}
