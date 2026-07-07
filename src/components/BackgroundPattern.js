@@ -1,4 +1,4 @@
-﻿export default function BackgroundPattern() {
+export default function BackgroundPattern() {
   // SVG Pattern with culinary and leaf motifs
   const svgContent = `
     <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -43,8 +43,8 @@
         width: "100%",
         height: "100%",
         pointerEvents: "none",
-        zIndex: -1,
-        opacity: 0.04, // Sangat transparan, hanya 4%
+        zIndex: 0,
+        opacity: 0.15, // Dibuat lebih tebal agar lebih terlihat
         backgroundImage: `url("data:image/svg+xml;utf8,${svgContent}")`,
         backgroundSize: "300px 300px",
       }}
