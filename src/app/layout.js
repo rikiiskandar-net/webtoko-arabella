@@ -2,6 +2,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import { ThemeProvider, ThemeScript } from "@/components/ThemeProvider";
+import BackgroundPattern from "@/components/BackgroundPattern";
 
 const googleFont = Plus_Jakarta_Sans({
   variable: "--font-google",
@@ -128,6 +129,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${googleFont.variable}`}>
         <ThemeProvider>
+          <BackgroundPattern />
           <AnalyticsTracker />
           <script
             type="application/ld+json"
