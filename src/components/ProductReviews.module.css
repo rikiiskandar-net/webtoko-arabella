@@ -15,13 +15,14 @@
 
 .overviewBox {
   display: flex;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
-  padding: 16px;
-  gap: 16px;
+  background: #fffbf8;
+  border: 1px solid #f9ede5;
+  border-radius: 2px;
+  padding: 30px;
+  gap: 30px;
   align-items: center;
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .scoreSection {
@@ -30,18 +31,19 @@
 }
 
 .bigScore {
-  color: var(--primary);
+  color: #ee4d2d;
   margin-bottom: 4px;
 }
 
 .scoreNumber {
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-size: 1.875rem;
+  font-weight: 500;
 }
 
 .scoreOut {
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: #ee4d2d;
 }
 
 .starsWrapper {
@@ -59,25 +61,25 @@
 
 .filterBtn {
   background: #fff;
-  border: 1px solid #CBD5E1;
-  color: #475569;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  border: 1px solid rgba(0,0,0,.09);
+  color: rgba(0,0,0,.8);
+  padding: 6px 15px;
+  border-radius: 2px;
+  font-size: 0.875rem;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .filterBtn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: #ee4d2d;
+  color: #ee4d2d;
 }
 
 .filterBtn.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
+  background: #fff;
+  border-color: #ee4d2d;
+  color: #ee4d2d;
 }
 
 .actionsBox {
@@ -144,20 +146,21 @@
 
 .commentInput {
   width: 100%;
-  min-height: 100px;
-  padding: 16px;
-  border: 1px solid #CBD5E1;
-  border-radius: 8px;
+  min-height: 80px;
+  padding: 12px 16px;
+  padding-bottom: 45px;
+  border: 1px solid rgba(0,0,0,.14);
+  border-radius: 2px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   resize: vertical;
-  margin-bottom: 16px;
+  background: #fdfdfd;
 }
 
 .commentInput:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #ee4d2d;
+  box-shadow: 0 0 0 1px rgba(238, 77, 45, 0.2);
 }
 
 .formActions {
@@ -176,17 +179,26 @@
 }
 
 .submitBtn {
-  background: var(--primary);
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: #ee4d2d;
   color: #fff;
   border: none;
-  padding: 10px 24px;
-  border-radius: 6px;
-  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 2px;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.submitBtn:hover {
+  opacity: 0.9;
 }
 
 .submitBtn:disabled {
-  opacity: 0.7;
+  background: #facac0;
   cursor: not-allowed;
 }
 
@@ -198,8 +210,8 @@
 .reviewCard {
   display: flex;
   gap: 16px;
-  padding: 24px 0;
-  border-bottom: 1px solid #E2E8F0;
+  padding: 15px 0 15px 20px;
+  border-bottom: 1px solid rgba(0,0,0,.09);
 }
 
 .reviewCard:last-child {
@@ -218,9 +230,9 @@
 }
 
 .userName {
-  font-weight: 600;
-  color: #1E293B;
-  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(0,0,0,.87);
+  font-size: 0.75rem;
   margin-bottom: 4px;
 }
 
@@ -231,23 +243,22 @@
 }
 
 .reviewDate {
-  font-size: 0.85rem;
-  color: #94A3B8;
+  font-size: 0.75rem;
+  color: rgba(0,0,0,.54);
   margin-bottom: 12px;
 }
 
 .reviewText {
-  color: #334155;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  color: rgba(0,0,0,.87);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
   white-space: pre-wrap;
 }
 
 .emptyState {
   text-align: center;
   padding: 40px 0;
-  color: #94A3B8;
-  font-style: italic;
+  color: rgba(0,0,0,.54);
 }
 
 @media (max-width: 640px) {

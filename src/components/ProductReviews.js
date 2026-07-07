@@ -18,7 +18,6 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
 
   const [reviews, setReviews] = useState(initialReviews || []);
   const [filterRating, setFilterRating] = useState(0); // 0 = all
-  const [showForm, setShowForm] = useState(false);
   
   const [ratingInput, setRatingInput] = useState(5);
   const [commentInput, setCommentInput] = useState("");
@@ -69,7 +68,6 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
           user: { name: session.user.name, avatar: session.user.avatar || "" }
         };
         setReviews([newReview, ...reviews]);
-        setShowForm(false);
         setCommentInput("");
         setRatingInput(5);
         setToastMessage("Ulasan berhasil dikirim!");
@@ -84,7 +82,7 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
 
   const renderStars = (count) => {
     return Array(5).fill(0).map((_, i) => (
-      <Star key={i} size={14} fill={i < count ? "var(--accent)" : "#E2E8F0"} color={i < count ? "var(--accent)" : "#E2E8F0"} />
+      <Star key={i} size={14} fill={i < count ? "#ee4d2d" : "#E2E8F0"} color={i < count ? "#ee4d2d" : "#E2E8F0"} />
     ));
   };
 
@@ -116,53 +114,7 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
         </div>
       </div>
 
-      <div className={styles.actionsBox}>
-        {session ? (
-          !showForm ? (
-            <button className={styles.writeBtn} onClick={() => setShowForm(true)}>
-              Tulis Ulasan
-            </button>
-          ) : (
-            <form className={styles.reviewForm} onSubmit={handleSubmit}>
-              <h4>Ulasan Anda</h4>
-              <div className={styles.ratingSelect}>
-                <span>Beri Rating:</span>
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <Star 
-                      key={star} 
-                      size={24} 
-                      fill={star <= ratingInput ? "var(--accent)" : "none"} 
-                      color={star <= ratingInput ? "var(--accent)" : "#94A3B8"} 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setRatingInput(star)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <textarea 
-                className={styles.commentInput} 
-                placeholder="Bagaimana kualitas produk ini? (Minimal 10 karakter)" 
-                value={commentInput}
-                onChange={e => setCommentInput(e.target.value)}
-                required
-                minLength={10}
-              />
-              <div className={styles.formActions}>
-                <button type="button" className={styles.cancelBtn} onClick={() => setShowForm(false)}>Batal</button>
-                <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-                  {isSubmitting ? "Mengirim..." : "Kirim Ulasan"}
-                </button>
-              </div>
-            </form>
-          )
-        ) : (
-          <div className={styles.loginPrompt}>
-            Silakan <a href="/masuk">login</a> untuk memberikan ulasan.
-          </div>
-        )}
-      </div>
-
+      {/* Form at the bottom like a comment section */}
       <div className={styles.reviewList}>
         {filteredReviews.length === 0 ? (
           <div className={styles.emptyState}>Belum ada ulasan di kategori ini.</div>
@@ -193,6 +145,55 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
         )}
       </div>
       
+      <div className={styles.actionsBox}>
+        {session ? (
+          <form className={styles.reviewForm} onSubmit={handleSubmit}>
+            <div className={styles.ratingSelect}>
+              <span>Beri Nilai:</span>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[1, 2, 3, 4, 5].map(star => (
+                  <Star 
+                    key={star} 
+                    size={24} 
+                    fill={star <= ratingInput ? "#ee4d2d" : "none"} 
+                    color={star <= ratingInput ? "#ee4d2d" : "#94A3B8"} 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setRatingInput(star)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <div className={styles.userAvatar} style={{ marginTop: '5px' }}>
+                {session.user?.avatar ? (
+                  <img src={session.user.avatar} alt={session.user.name} />
+                ) : (
+                  <UserCircle2 size={40} color="#94A3B8" />
+                )}
+              </div>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <textarea 
+                  className={styles.commentInput} 
+                  placeholder="Tulis ulasan Anda tentang produk ini (Minimal 10 karakter)..." 
+                  value={commentInput}
+                  onChange={e => setCommentInput(e.target.value)}
+                  required
+                  minLength={10}
+                />
+                <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+                  {isSubmitting ? "Mengirim..." : "Kirim"}
+                </button>
+              </div>
+            </div>
+          </form>
+        ) : (
+          <div className={styles.loginPrompt}>
+            Silakan <a href="/masuk">login</a> untuk memberikan ulasan.
+          </div>
+        )}
+      </div>
+
+
       {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage("")} />}
     </div>
   );

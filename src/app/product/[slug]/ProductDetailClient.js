@@ -79,80 +79,123 @@ export default function ProductDetailClient({ product, config }) {
   };
 
   return (
-    <div className={styles.card}>
-      <div className={styles.imageSection}>
-        {product.badge && (
-          <div className={styles.badge}>{product.badge}</div>
-        )}
-        <img src={activeImage} alt={product.name} className={styles.image} />
-        
-        {product.images && product.images.length > 0 && (
-          <div style={{ display: 'flex', gap: '8px', padding: '12px 0', overflowX: 'auto' }}>
-            <img src={product.image} onClick={() => setActiveImage(product.image)} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer', border: activeImage === product.image ? '2px solid var(--primary)' : '1px solid #CBD5E1' }} alt="Main" />
-            {product.images.map((img, idx) => (
-              <img key={idx} src={img} onClick={() => setActiveImage(img)} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer', border: activeImage === img ? '2px solid var(--primary)' : '1px solid #CBD5E1' }} alt="Gallery" />
-            ))}
+    <div className={styles.productContainer}>
+      <div className={styles.card}>
+        <div className={styles.imageSection}>
+          {product.badge && (
+            <div className={styles.badge}>{product.badge}</div>
+          )}
+          <img src={activeImage} alt={product.name} className={styles.image} />
+          
+          {product.images && product.images.length > 0 && (
+            <div style={{ display: 'flex', gap: '8px', padding: '12px 0', overflowX: 'auto' }}>
+              <img src={product.image} onClick={() => setActiveImage(product.image)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === product.image ? '2px solid #ee4d2d' : '1px solid transparent' }} alt="Main" />
+              {product.images.map((img, idx) => (
+                <img key={idx} src={img} onClick={() => setActiveImage(img)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === img ? '2px solid #ee4d2d' : '1px solid transparent' }} alt="Gallery" />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className={styles.infoSection}>
+          <h1 className={styles.name}>
+            <span style={{ backgroundColor: '#ee4d2d', color: 'white', padding: '2px 6px', borderRadius: '2px', fontSize: '0.75rem', marginRight: '8px', verticalAlign: 'middle' }}>Star</span>
+            {product.name}
+          </h1>
+
+          <div className={styles.ratingRow}>
+            <div className={styles.ratingStars}>
+              <span>{product.rating}</span>
+              <Star size={14} fill="#d0011b" color="#d0011b" />
+              <Star size={14} fill="#d0011b" color="#d0011b" />
+              <Star size={14} fill="#d0011b" color="#d0011b" />
+              <Star size={14} fill="#d0011b" color="#d0011b" />
+              <Star size={14} fill="#d0011b" color="#d0011b" />
+            </div>
+            <div className={styles.soldCount}>
+              <span>{product.sold}</span> Penilaian
+            </div>
+            <div className={styles.soldCount}>
+              <span>{product.sold * 3}</span> Terjual
+            </div>
           </div>
-        )}
+
+          <div className={styles.priceRow}>
+            {displayOriginal && (
+              <span className={styles.originalPrice}>{formatPrice(displayOriginal)}</span>
+            )}
+            <span className={styles.price}>{formatPrice(finalPrice)}</span>
+            <div style={{ backgroundColor: '#ee4d2d', color: 'white', padding: '2px 4px', fontSize: '0.7rem', fontWeight: 600, borderRadius: '2px', marginLeft: '10px' }}>DISKON</div>
+          </div>
+
+          {product.variants && product.variants.length > 0 && (
+            <div style={{ marginTop: '24px', marginBottom: '24px' }}>
+              {product.variants.map((v, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                  <div style={{ width: '100px', color: '#757575', fontSize: '0.875rem' }}>{v.name}</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', flex: 1 }}>
+                    {v.options.map((opt, oIdx) => (
+                      <button 
+                        key={oIdx} 
+                        onClick={() => handleVariantSelect(v.name, opt)}
+                        style={{ 
+                          padding: '8px 16px', 
+                          border: selectedVariants[v.name]?.name === opt.name ? '1px solid #ee4d2d' : '1px solid rgba(0,0,0,.09)',
+                          color: selectedVariants[v.name]?.name === opt.name ? '#ee4d2d' : 'rgba(0,0,0,.8)',
+                          background: '#fff',
+                          borderRadius: '2px',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          position: 'relative'
+                        }}
+                      >
+                        {opt.name}
+                        {selectedVariants[v.name]?.name === opt.name && (
+                          <div style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', background: '#ee4d2d', clipPath: 'polygon(100% 0, 0% 100%, 100% 100%)' }}></div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className={styles.actions} style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
+            <button onClick={handleAddToCart} style={{ flex: 1, padding: '12px', background: 'rgba(255,87,34,.1)', color: '#ee4d2d', border: '1px solid #ee4d2d', borderRadius: '2px', fontWeight: 500, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <ShoppingCart size={20} /> Masukkan Keranjang
+            </button>
+            {config?.waNumber && (
+              <button onClick={handleDirectBuy} style={{ flex: 1, padding: '12px', background: '#ee4d2d', color: 'white', border: 'none', borderRadius: '2px', fontWeight: 500, fontSize: '1rem', cursor: 'pointer' }}>
+                Beli Sekarang
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className={styles.infoSection}>
-        <h1 className={styles.name}>{product.name}</h1>
-
-        <div className={styles.ratingRow}>
-          <Star size={16} fill="var(--accent)" color="var(--accent)" />
-          <span>{product.rating}</span>
-          <span className={styles.dot}>·</span>
-          <span>Terjual {product.sold}</span>
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>Spesifikasi Produk</div>
+        <div style={{ display: 'flex', marginBottom: '15px', fontSize: '0.875rem' }}>
+          <div style={{ width: '140px', color: 'rgba(0,0,0,.4)' }}>Kategori</div>
+          <div><Link href="/#menu-section" style={{ color: '#05a' }}>Jajanan & Minuman</Link></div>
+        </div>
+        <div style={{ display: 'flex', marginBottom: '15px', fontSize: '0.875rem' }}>
+          <div style={{ width: '140px', color: 'rgba(0,0,0,.4)' }}>Stok</div>
+          <div>Selalu Fresh</div>
+        </div>
+        <div style={{ display: 'flex', marginBottom: '25px', fontSize: '0.875rem' }}>
+          <div style={{ width: '140px', color: 'rgba(0,0,0,.4)' }}>Dikirim Dari</div>
+          <div>KAB. JEMBER</div>
         </div>
 
-        <div className={styles.priceRow}>
-          {displayOriginal && (
-            <span className={styles.originalPrice}>{formatPrice(displayOriginal)}</span>
-          )}
-          <span className={styles.price}>{formatPrice(finalPrice)}</span>
-        </div>
-        
-        <div style={{ display: 'inline-block', backgroundColor: '#ecfdf5', color: '#059669', padding: '6px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '16px', border: '1px solid #10b981' }}>
-          ✨ Stok selalu fresh setiap hari
-        </div>
-
+        <div className={styles.sectionHeader}>Deskripsi Produk</div>
         <div className={styles.description} dangerouslySetInnerHTML={{ __html: product.description || '' }}></div>
+      </div>
 
-        {product.variants && product.variants.length > 0 && (
-          <div style={{ marginTop: '24px', marginBottom: '24px' }}>
-            {product.variants.map((v, idx) => (
-              <div key={idx} style={{ marginBottom: '16px' }}>
-                <h4 style={{ fontSize: '1rem', fontWeight: 600, color: '#1E293B', marginBottom: '12px' }}>{v.name}</h4>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                  {v.options.map((opt, oIdx) => (
-                    <label key={oIdx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', border: selectedVariants[v.name]?.name === opt.name ? '2px solid var(--primary)' : '1px solid #E2E8F0', borderRadius: '8px', cursor: 'pointer', background: selectedVariants[v.name]?.name === opt.name ? '#F0F9FF' : '#FFF', minWidth: '140px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <input type="radio" name={`variant-${v.name}`} checked={selectedVariants[v.name]?.name === opt.name} onChange={() => handleVariantSelect(v.name, opt)} style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }} />
-                        <span style={{ fontSize: '0.95rem', fontWeight: 500, color: '#334155' }}>{opt.name}</span>
-                      </div>
-                      {opt.priceMod > 0 && <span style={{ fontSize: '0.9rem', color: '#64748B', fontWeight: 600, marginLeft: '12px' }}>+{formatPrice(opt.priceMod)}</span>}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className={styles.actions} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          {config?.waNumber && (
-            <button onClick={handleDirectBuy} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'background 0.2s' }}>
-              <MessageCircle size={20} /> Pesan Sekarang
-            </button>
-          )}
-          <button onClick={handleAddToCart} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', background: 'white', color: 'var(--primary)', border: '2px solid var(--primary)', borderRadius: '8px', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#f0f9ff'} onMouseOut={e => e.currentTarget.style.background = 'white'}>
-            <ShoppingCart size={20} /> + Keranjang
-          </button>
-        </div>
-        
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>Penilaian Produk</div>
         <ProductReviews product={product} reviews={product.reviews || []} />
       </div>
     </div>
-  );
 }

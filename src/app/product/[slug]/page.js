@@ -217,10 +217,12 @@ export default async function ProductDetailPage({ params }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <ProductClientHeader />
-      <main className={styles.main}>
-        <Link href="/" className={styles.backLink}><ArrowLeft size={16} /> Kembali ke Menu</Link>
-        <ProductDetailClient product={product} config={config} />
-      </main>
+      <div className={styles.pageWrapper}>
+        <main className={styles.main}>
+          <Link href="/" className={styles.backLink}><ArrowLeft size={16} /> Kembali ke Menu</Link>
+          <ProductDetailClient product={product} config={config} />
+        </main>
+      </div>
       <Footer config={config} />
     </>
   );
