@@ -7,12 +7,14 @@ import HeroBanner from "@/components/HeroBanner";
 import TrustBadges from "@/components/TrustBadges";
 import MenuHariIni from "@/components/MenuHariIni";
 import ProductCard from "@/components/ProductCard";
-import Testimonial from "@/components/Testimonial";
-import AboutUs from "@/components/AboutUs";
-import Gallery from "@/components/Gallery";
-import Footer from "@/components/Footer";
 import ProductModal from "@/components/ProductModal";
 import Toast from "@/components/Toast";
+import dynamic from "next/dynamic";
+
+const AboutUs = dynamic(() => import("@/components/AboutUs"), { ssr: true });
+const Gallery = dynamic(() => import("@/components/Gallery"), { ssr: true });
+const Testimonial = dynamic(() => import("@/components/Testimonial"), { ssr: true });
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 import { Flame, Star, Sparkles } from "lucide-react";
 import { renderIcon } from "@/app/(admin)/dashboard/categories/iconOptions";
 
