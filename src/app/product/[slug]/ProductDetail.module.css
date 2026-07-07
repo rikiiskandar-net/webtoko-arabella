@@ -51,17 +51,17 @@
 
 .card {
   display: flex;
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 1px 0 rgba(0,0,0,.05);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
 .imageSection {
   width: 450px;
-  padding: 15px;
   flex-shrink: 0;
-  position: relative;
+  padding: 15px;
 }
 
 .badge {
@@ -79,26 +79,21 @@
 
 .image {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: auto;
   object-fit: cover;
   display: block;
 }
 
 .infoSection {
   flex: 1;
-  padding: 20px 35px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  padding: 20px;
 }
 
 .name {
   font-size: 1.25rem;
   font-weight: 500;
-  color: rgba(0,0,0,.8);
-  margin: 0;
-  line-height: 1.5;
-  word-wrap: break-word;
+  line-height: 1.5rem;
+  margin-bottom: 10px;
 }
 
 .ratingRow {
@@ -106,26 +101,26 @@
   align-items: center;
   gap: 15px;
   font-size: 1rem;
-  color: #767676;
+  margin-bottom: 15px;
+  color: var(--text-muted);
 }
 
 .ratingStars {
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: #d0011b;
-  border-right: 1px solid rgba(0,0,0,.14);
+  color: var(--accent);
+  border-right: 1px solid rgba(0,0,0,.1);
   padding-right: 15px;
 }
 
 .ratingStars span {
   font-size: 1.1rem;
-  border-bottom: 1px solid #d0011b;
+  border-bottom: 1px solid var(--accent);
   margin-right: 5px;
 }
 
 .soldCount span {
-  color: #222;
+  color: var(--foreground);
   font-size: 1.1rem;
 }
 
@@ -133,36 +128,41 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  background: #fafafa;
+  background: var(--hover-bg);
   padding: 15px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 25px;
 }
 
 .originalPrice {
   text-decoration: line-through;
-  color: #929292;
+  color: var(--text-muted);
   font-size: 1rem;
 }
 
 .price {
   font-size: 1.875rem;
-  font-weight: 500;
-  color: #ee4d2d;
+  font-weight: 600;
+  color: var(--primary);
 }
 
 .sectionCard {
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 1px 0 rgba(0,0,0,.05);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
   padding: 25px;
 }
 
 .sectionHeader {
-  background: rgba(0,0,0,.02);
-  padding: 14px;
+  background: var(--hover-bg);
+  padding: 14px 20px;
   font-size: 1.125rem;
-  color: rgba(0,0,0,.87);
+  font-weight: 600;
+  color: var(--foreground);
   text-transform: uppercase;
   margin: -25px -25px 25px -25px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .description {

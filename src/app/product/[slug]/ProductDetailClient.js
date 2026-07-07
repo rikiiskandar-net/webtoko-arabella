@@ -86,9 +86,9 @@ export default function ProductDetailClient({ product, config }) {
           
           {product.images && product.images.length > 0 && (
             <div style={{ display: 'flex', gap: '8px', padding: '12px 0', overflowX: 'auto' }}>
-              <img src={product.image} onClick={() => setActiveImage(product.image)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === product.image ? '2px solid #ee4d2d' : '1px solid transparent' }} alt="Main" />
+              <img src={product.image} onClick={() => setActiveImage(product.image)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === product.image ? '2px solid var(--primary)' : '1px solid transparent', borderRadius: 'var(--radius-sm)' }} alt="Main" />
               {product.images.map((img, idx) => (
-                <img key={idx} src={img} onClick={() => setActiveImage(img)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === img ? '2px solid #ee4d2d' : '1px solid transparent' }} alt="Gallery" />
+                <img key={idx} src={img} onClick={() => setActiveImage(img)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === img ? '2px solid var(--primary)' : '1px solid transparent', borderRadius: 'var(--radius-sm)' }} alt="Gallery" />
               ))}
             </div>
           )}
@@ -96,18 +96,18 @@ export default function ProductDetailClient({ product, config }) {
 
         <div className={styles.infoSection}>
           <h1 className={styles.name}>
-            <span style={{ backgroundColor: '#ee4d2d', color: 'white', padding: '2px 6px', borderRadius: '2px', fontSize: '0.75rem', marginRight: '8px', verticalAlign: 'middle' }}>Star</span>
+            <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '3px 8px', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem', marginRight: '8px', verticalAlign: 'middle', fontWeight: 600 }}>Star</span>
             {product.name}
           </h1>
 
           <div className={styles.ratingRow}>
             <div className={styles.ratingStars}>
               <span>{product.rating}</span>
-              <Star size={14} fill="#d0011b" color="#d0011b" />
-              <Star size={14} fill="#d0011b" color="#d0011b" />
-              <Star size={14} fill="#d0011b" color="#d0011b" />
-              <Star size={14} fill="#d0011b" color="#d0011b" />
-              <Star size={14} fill="#d0011b" color="#d0011b" />
+              <Star size={14} fill="var(--accent)" color="var(--accent)" />
+              <Star size={14} fill="var(--accent)" color="var(--accent)" />
+              <Star size={14} fill="var(--accent)" color="var(--accent)" />
+              <Star size={14} fill="var(--accent)" color="var(--accent)" />
+              <Star size={14} fill="var(--accent)" color="var(--accent)" />
             </div>
             <div className={styles.soldCount}>
               <span>{product.sold}</span> Penilaian
@@ -122,14 +122,14 @@ export default function ProductDetailClient({ product, config }) {
               <span className={styles.originalPrice}>{formatPrice(displayOriginal)}</span>
             )}
             <span className={styles.price}>{formatPrice(finalPrice)}</span>
-            <div style={{ backgroundColor: '#ee4d2d', color: 'white', padding: '2px 4px', fontSize: '0.7rem', fontWeight: 600, borderRadius: '2px', marginLeft: '10px' }}>DISKON</div>
+            <div style={{ backgroundColor: 'var(--primary)', color: 'white', padding: '3px 6px', fontSize: '0.7rem', fontWeight: 600, borderRadius: 'var(--radius-sm)', marginLeft: '10px' }}>DISKON</div>
           </div>
 
           {product.variants && product.variants.length > 0 && (
             <div style={{ marginTop: '24px', marginBottom: '24px' }}>
               {product.variants.map((v, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                  <div style={{ width: '100px', color: '#757575', fontSize: '0.875rem' }}>{v.name}</div>
+                  <div style={{ width: '100px', color: '#64748B', fontSize: '0.875rem', fontWeight: 500 }}>{v.name}</div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', flex: 1 }}>
                     {v.options.map((opt, oIdx) => (
                       <button 
@@ -137,19 +137,17 @@ export default function ProductDetailClient({ product, config }) {
                         onClick={() => handleVariantSelect(v.name, opt)}
                         style={{ 
                           padding: '8px 16px', 
-                          border: selectedVariants[v.name]?.name === opt.name ? '1px solid #ee4d2d' : '1px solid rgba(0,0,0,.09)',
-                          color: selectedVariants[v.name]?.name === opt.name ? '#ee4d2d' : 'rgba(0,0,0,.8)',
-                          background: '#fff',
-                          borderRadius: '2px',
+                          border: selectedVariants[v.name]?.name === opt.name ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                          color: selectedVariants[v.name]?.name === opt.name ? 'var(--primary)' : 'var(--foreground)',
+                          background: selectedVariants[v.name]?.name === opt.name ? 'rgba(37, 99, 235, 0.05)' : '#fff',
+                          borderRadius: 'var(--radius-md)',
                           cursor: 'pointer',
                           fontSize: '0.875rem',
-                          position: 'relative'
+                          fontWeight: selectedVariants[v.name]?.name === opt.name ? 600 : 400,
+                          transition: 'all 0.2s ease'
                         }}
                       >
                         {opt.name}
-                        {selectedVariants[v.name]?.name === opt.name && (
-                          <div style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', background: '#ee4d2d', clipPath: 'polygon(100% 0, 0% 100%, 100% 100%)' }}></div>
-                        )}
                       </button>
                     ))}
                   </div>
@@ -159,11 +157,11 @@ export default function ProductDetailClient({ product, config }) {
           )}
 
           <div className={styles.actions} style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
-            <button onClick={handleAddToCart} style={{ flex: 1, padding: '12px', background: 'rgba(255,87,34,.1)', color: '#ee4d2d', border: '1px solid #ee4d2d', borderRadius: '2px', fontWeight: 500, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <button onClick={handleAddToCart} style={{ flex: 1, padding: '12px', background: 'rgba(37, 99, 235, 0.1)', color: 'var(--primary)', border: '1px solid var(--primary)', borderRadius: 'var(--radius-md)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s ease' }}>
               <ShoppingCart size={20} /> Masukkan Keranjang
             </button>
             {config?.waNumber && (
-              <button onClick={handleDirectBuy} style={{ flex: 1, padding: '12px', background: '#ee4d2d', color: 'white', border: 'none', borderRadius: '2px', fontWeight: 500, fontSize: '1rem', cursor: 'pointer' }}>
+              <button onClick={handleDirectBuy} style={{ flex: 1, padding: '12px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s ease' }}>
                 Beli Sekarang
               </button>
             )}

@@ -82,7 +82,7 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
 
   const renderStars = (count) => {
     return Array(5).fill(0).map((_, i) => (
-      <Star key={i} size={14} fill={i < count ? "#ee4d2d" : "#E2E8F0"} color={i < count ? "#ee4d2d" : "#E2E8F0"} />
+      <Star key={i} size={14} fill={i < count ? "var(--accent)" : "var(--border-color)"} color={i < count ? "var(--accent)" : "var(--border-color)"} />
     ));
   };
 
@@ -149,26 +149,27 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
         {session ? (
           <form className={styles.reviewForm} onSubmit={handleSubmit}>
             <div className={styles.ratingSelect}>
-              <span>Beri Nilai:</span>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {[1, 2, 3, 4, 5].map(star => (
+              <span style={{ fontSize: '0.875rem', color: 'var(--foreground)', marginBottom: '8px', display: 'block', fontWeight: 500 }}>Berikan Penilaian:</span>
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                {[1,2,3,4,5].map(star => (
                   <Star 
                     key={star} 
                     size={24} 
-                    fill={star <= ratingInput ? "#ee4d2d" : "none"} 
-                    color={star <= ratingInput ? "#ee4d2d" : "#94A3B8"} 
-                    style={{ cursor: 'pointer' }}
+                    fill={star <= ratingInput ? "var(--accent)" : "none"} 
+                    color={star <= ratingInput ? "var(--accent)" : "var(--text-muted)"} 
+                    style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
                     onClick={() => setRatingInput(star)}
                   />
                 ))}
               </div>
             </div>
+            
             <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
               <div className={styles.userAvatar} style={{ marginTop: '5px' }}>
                 {session.user?.avatar ? (
                   <img src={session.user.avatar} alt={session.user.name} />
                 ) : (
-                  <UserCircle2 size={40} color="#94A3B8" />
+                  <UserCircle2 size={40} color="var(--text-muted)" />
                 )}
               </div>
               <div style={{ flex: 1, position: 'relative' }}>
@@ -188,7 +189,7 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
           </form>
         ) : (
           <div className={styles.loginPrompt}>
-            Silakan <a href="/masuk">login</a> untuk memberikan ulasan.
+            Silakan <a href="/masuk" style={{ color: 'var(--primary)', fontWeight: 600 }}>login</a> untuk memberikan ulasan.
           </div>
         )}
       </div>
