@@ -198,4 +198,5 @@ export default function ProductDetailClient({ product, config }) {
         <ProductReviews product={product} reviews={product.reviews || []} />
       </div>
     </div>
+  );
 }
