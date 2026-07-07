@@ -13,10 +13,11 @@ const isUUID = (str) => {
 };
 
 export async function generateMetadata({ params }) {
-  let product = await prisma.product.findUnique({ where: { slug: params.slug } });
+  const { slug } = await params;
+  let product = await prisma.product.findUnique({ where: { slug } });
   
-  if (!product && isUUID(params.slug)) {
-    product = await prisma.product.findUnique({ where: { id: params.slug } });
+  if (!product && isUUID(slug)) {
+    product = await prisma.product.findUnique({ where: { id: slug } });
   }
 
   if (!product) return { title: "Produk Tidak Ditemukan" };
@@ -56,8 +57,9 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ProductDetailPage({ params }) {
+  const { slug } = await params;
   let product = await prisma.product.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: {
       category: true,
       reviews: {
@@ -76,9 +78,9 @@ export default async function ProductDetailPage({ params }) {
   });
 
   // Handle Backward Compatibility (Redirect old UUIDs to Slug)
-  if (!product && isUUID(params.slug)) {
+  if (!product && isUUID(slug)) {
     product = await prisma.product.findUnique({ 
-      where: { id: params.slug },
+      where: { id: slug },
       include: {
         category: true,
         reviews: {
