@@ -49,7 +49,7 @@
 .left {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -142,7 +142,7 @@
 .navLinks {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 @media (max-width: 992px) {
@@ -158,16 +158,16 @@
 .navLink {
   background: transparent;
   border: none;
-  padding: 0.6rem 1rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #475569;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .navLink:hover {
@@ -201,10 +201,10 @@
   left: 50%;
   transform: translateX(-50%) translateY(10px);
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
-  padding: 0.75rem;
-  min-width: 240px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  min-width: 200px;
   opacity: 0;
   visibility: hidden;
   transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -226,15 +226,15 @@
 .dropdownItem {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
   width: 100%;
   text-align: left;
   background: transparent;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #334155;
   transition: all 0.2s ease;

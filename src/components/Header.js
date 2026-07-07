@@ -1,4 +1,4 @@
-﻿/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -134,7 +134,7 @@ export default function Header({ searchQuery, onSearchChange, categories = [], o
               if (nav.type === "link") {
                 return (
                   <button key={idx} className={`${styles.navLink} ${nav.highlight ? styles.navLinkHighlight : ""}`} onClick={() => scrollTo(nav.target)}>
-                    {Icon && <Icon size={18} className={styles.navIcon} />}
+                    {Icon && <Icon size={16} className={styles.navIcon} />}
                     {nav.label}
                   </button>
                 );
@@ -143,9 +143,9 @@ export default function Header({ searchQuery, onSearchChange, categories = [], o
               return (
                 <div key={idx} className={styles.navItemContainer}>
                   <button className={styles.navLink}>
-                    {Icon && <Icon size={18} className={styles.navIcon} />}
+                    {Icon && <Icon size={16} className={styles.navIcon} />}
                     {nav.label}
-                    <ChevronDown size={16} className={styles.chevron} />
+                    <ChevronDown size={14} className={styles.chevron} />
                   </button>
                   <div className={styles.dropdownMenu}>
                     {nav.items.map((item, i) => {
