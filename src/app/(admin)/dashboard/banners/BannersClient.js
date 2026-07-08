@@ -361,7 +361,6 @@ export default function BannersClient() {
           subtitle="Geser dan zoom untuk mengatur area banner (Rasio Lebar 21:9)"
         />
       )}
-    </div>
     </>
   );
 }

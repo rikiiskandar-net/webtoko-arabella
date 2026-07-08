@@ -504,7 +504,6 @@ export default function ProductsClient() {
           isUploading={isUploading}
         />
       )}
-    </div>
     </>
   );
 }
