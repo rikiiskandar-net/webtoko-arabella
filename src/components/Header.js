@@ -13,6 +13,7 @@ export default function Header({ searchQuery, onSearchChange, categories = [], o
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState(null);
   const headerRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -22,6 +23,9 @@ export default function Header({ searchQuery, onSearchChange, categories = [], o
     const handleClickOutside = (event) => {
       if (headerRef.current && !headerRef.current.contains(event.target)) {
         setIsMobileSearchOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setIsMobileMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
