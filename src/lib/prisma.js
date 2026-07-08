@@ -7,8 +7,15 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is not defined in environment variables!");
 }
 
+// Hapus sslmode dari URL karena konflik dengan ssl option di Pool.
+// pg versi terbaru treat sslmode=require sebagai verify-full,
+// sehingga rejectUnauthorized:false di Pool config jadi tidak mempan.
+const dbUrl = new URL(connectionString);
+dbUrl.searchParams.delete('sslmode');
+const cleanUrl = dbUrl.toString();
+
 const pool = new Pool({ 
-  connectionString,
+  connectionString: cleanUrl,
   ssl: { rejectUnauthorized: false },
   max: 10,
   idleTimeoutMillis: 30000,
