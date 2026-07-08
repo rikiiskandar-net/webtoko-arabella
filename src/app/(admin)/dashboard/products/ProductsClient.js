@@ -235,6 +235,7 @@ export default function ProductsClient() {
               <tr>
                 <th>Foto</th>
                 <th>Nama Produk</th>
+                <th>Promo</th>
                 <th>Kategori</th>
                 <th>Harga</th>
                 <th>Aksi</th>
@@ -248,7 +249,34 @@ export default function ProductsClient() {
                   </td>
                   <td>
                     <div className={styles.productName}>{product.name}</div>
-                    {product.isPromo && <span style={{ fontSize: '0.75rem', color: '#EF4444', fontWeight: 600 }}>PROMO</span>}
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <label style={{ position: 'relative', display: 'inline-block', width: '40px', height: '22px' }}>
+                        <input type="checkbox" style={{ opacity: 0, width: 0, height: 0 }} checked={product.isPromo} onChange={async (e) => {
+                          const newStatus = e.target.checked;
+                          // Optimistic update
+                          setProducts(products.map(p => p.id === product.id ? { ...p, isPromo: newStatus } : p));
+                          try {
+                            const res = await fetch(`/api/products/${product.id}/promo`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ isPromo: newStatus })
+                            });
+                            if (!res.ok) throw new Error("Gagal");
+                            notify(`Promo ${newStatus ? 'diaktifkan' : 'dimatikan'} untuk ${product.name}`);
+                          } catch (err) {
+                            // Revert on failure
+                            setProducts(products.map(p => p.id === product.id ? { ...p, isPromo: !newStatus } : p));
+                            notify("Gagal merubah status promo", "error");
+                          }
+                        }} />
+                        <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: product.isPromo ? '#10B981' : '#CBD5E1', transition: '.4s', borderRadius: '34px' }}>
+                          <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: product.isPromo ? '21px' : '3px', bottom: '3px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                        </span>
+                      </label>
+                      {product.isPromo && <span style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 600 }}>PROMO</span>}
+                    </div>
                   </td>
                   <td>
                     <span className={styles.categoryBadge}>

@@ -59,6 +59,7 @@ export async function PUT(request) {
           aboutBadgeNumber: data.aboutBadgeNumber ?? config.aboutBadgeNumber,
           aboutBadgeText: data.aboutBadgeText ?? config.aboutBadgeText,
           aboutImage: data.aboutImage ?? config.aboutImage,
+          isOpen: data.isOpen ?? config.isOpen,
         }
       });
     } else {

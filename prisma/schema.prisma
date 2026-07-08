@@ -58,6 +58,7 @@ model Admin {
 
 model StoreConfig {
   id             String   @id @default(uuid())
+  isOpen         Boolean  @default(true)
   storeName      String   @default("Dapur Arabella")
   waNumber       String   @default("")
   description    String   @default("")
