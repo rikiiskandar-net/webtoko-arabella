@@ -105,13 +105,75 @@ export default function Header({ searchQuery, onSearchChange, categories = [], o
     <header ref={headerRef} className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <div className={styles.left}>
-          <button
-            className={styles.hamburger}
-            onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Menu"
-          >
-            <Menu size={24} />
-          </button>
+          <div className={styles.hamburgerWrapper} ref={mobileMenuRef}>
+            <button
+              className={styles.hamburger}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+
+            {isMobileMenuOpen && (
+              <div className={styles.hamburgerDropdown}>
+                <div className={styles.hamburgerDropdownHeader}>
+                  <h3 className={styles.hamburgerDropdownTitle}>Menu Navigasi</h3>
+                </div>
+                
+                <div className={styles.hamburgerDropdownBody}>
+                  {navStructure.map((nav, idx) => {
+                    const Icon = nav.icon;
+                    const isActive = activeAccordion === idx;
+                    
+                    if (nav.type === "link") {
+                      return (
+                        <div key={idx} className={styles.hamburgerDropdownItemWrap}>
+                          <button 
+                            className={`${styles.hamburgerDropdownLink} ${nav.highlight ? styles.hamburgerDropdownLinkHighlight : ""}`}
+                            onClick={() => scrollTo(nav.target)}
+                          >
+                            <div className={styles.hamburgerDropdownIconWrap}>
+                              {Icon && <Icon size={18} />}
+                            </div>
+                            <span className={styles.hamburgerDropdownText}>{nav.label}</span>
+                          </button>
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <div key={idx} className={`${styles.hamburgerDropdownAccordion} ${isActive ? styles.hamburgerDropdownAccordionActive : ""}`}>
+                        <button className={styles.hamburgerDropdownLink} onClick={() => toggleAccordion(idx)}>
+                          <div className={styles.hamburgerDropdownIconWrap}>
+                            {Icon && <Icon size={18} />}
+                          </div>
+                          <span className={styles.hamburgerDropdownText}>{nav.label}</span>
+                          <ChevronDown size={16} className={styles.hamburgerDropdownChevron} style={{ transform: isActive ? "rotate(180deg)" : "rotate(0)" }} />
+                        </button>
+                        
+                        {isActive && (
+                          <div className={styles.hamburgerSubmenu}>
+                            {nav.items.map((item, i) => (
+                              <button 
+                                key={i} 
+                                className={styles.hamburgerSubmenuItem}
+                                onClick={() => item.id ? handleCategorySelect(item.id) : scrollTo(item.target)}
+                              >
+                                <div className={styles.hamburgerSubmenuIconWrap}>
+                                  {item.rawIcon ? renderIcon(item.rawIcon, 14, true) : (item.icon && <item.icon size={14} />)}
+                                </div>
+                                <span>{item.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className={styles.logo} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             <div className={styles.logoIconWrapper}>
@@ -190,81 +252,6 @@ export default function Header({ searchQuery, onSearchChange, categories = [], o
           <UserNav />
         </div>
       </div>
-
-      {isMobileMenuOpen && (
-        <div className={styles.mobileMenuOverlay} onClick={() => setIsMobileMenuOpen(false)}>
-          <div className={styles.mobileMenuContainer} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.mobileMenuHeader}>
-              <div className={styles.logo} onClick={() => { scrollTo("top"); setIsMobileMenuOpen(false); }}>
-                <div className={styles.logoIconWrapper}>
-                  <div className={styles.logoIconInner}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/>
-                      <line x1="6" y1="17" x2="18" y2="17"/>
-                    </svg>
-                  </div>
-                </div>
-                <div className={styles.logoTextWrapper}>
-                  <h1 className={styles.title} style={{ fontSize: "1.1rem" }}>Arabella</h1>
-                </div>
-              </div>
-              <button className={styles.closeMobileMenu} onClick={() => setIsMobileMenuOpen(false)}>
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div className={styles.mobileNavContent}>
-              {navStructure.map((nav, idx) => {
-                const Icon = nav.icon;
-                const isActive = activeAccordion === idx;
-                
-                if (nav.type === "link") {
-                  return (
-                    <div key={idx} className={styles.mobileNavItem}>
-                      <button 
-                        className={`${styles.mobileNavLink} ${nav.highlight ? styles.mobileNavLinkHighlight : ""}`}
-                        onClick={() => scrollTo(nav.target)}
-                      >
-                        <div className={styles.mobileNavLinkLeft}>
-                          {Icon && <Icon size={20} />}
-                          {nav.label}
-                        </div>
-                      </button>
-                    </div>
-                  );
-                }
-                
-                return (
-                  <div key={idx} className={`${styles.mobileNavItem} ${isActive ? styles.mobileNavItemActive : ""}`}>
-                    <button className={styles.mobileNavLink} onClick={() => toggleAccordion(idx)}>
-                      <div className={styles.mobileNavLinkLeft}>
-                        {Icon && <Icon size={20} />}
-                        {nav.label}
-                      </div>
-                      <ChevronDown size={18} style={{ transform: isActive ? "rotate(180deg)" : "rotate(0)", transition: "0.3s" }} />
-                    </button>
-                    
-                    {isActive && (
-                      <div className={styles.mobileDropdownContent}>
-                        {nav.items.map((item, i) => (
-                          <button 
-                            key={i} 
-                            className={styles.mobileDropdownItem}
-                            onClick={() => item.id ? handleCategorySelect(item.id) : scrollTo(item.target)}
-                          >
-                            {item.rawIcon ? renderIcon(item.rawIcon, 16, true) : (item.icon && <item.icon size={16} />)}
-                            {item.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
