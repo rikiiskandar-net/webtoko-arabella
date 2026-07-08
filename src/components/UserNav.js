@@ -78,11 +78,54 @@ export default function UserNav() {
 
   if (user === undefined) return <div className={styles.skeleton}></div>;
 
+  // Cart Popup Element
+  const renderCartPopup = () => (
+    <div className={styles.cartWrapper} ref={cartRef} onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
+      <button onClick={() => setCartHover(!cartHover)} className={styles.cartBtn}>
+        <ShoppingCart size={20} />
+        {dbCartCount > 0 && <span className={styles.badge}>{dbCartCount}</span>}
+      </button>
+
+      {cartHover && (
+        <div className={styles.cartPopup} onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
+          <div className={styles.cartPopupHeader}>
+            <span className={styles.cartPopupTitle}>Keranjang Belanja</span>
+            {dbCartCount > 0 && <span className={styles.cartPopupCount}>{dbCartCount} item</span>}
+          </div>
+          {cartItems.length === 0 ? (
+            <div className={styles.cartPopupEmpty}>
+              <ShoppingCart size={32} className={styles.cartPopupEmptyIcon} />
+              <p>Keranjang Anda masih kosong</p>
+            </div>
+          ) : (
+            <>
+              <div className={styles.cartPopupList}>
+                {cartItems.slice(0, 4).map(item => (
+                  <div key={item.id} className={styles.cartPopupItem}>
+                    <img src={item.product?.image || "/images/placeholder.png"} alt={item.product?.name} className={styles.cartPopupImg} />
+                    <div className={styles.cartPopupInfo}>
+                      <span className={styles.cartPopupName}>{item.product?.name}</span>
+                      <span className={styles.cartPopupMeta}>{item.quantity}x {formatRp(item.product?.price || 0)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {cartItems.length > 4 && (
+                <div className={styles.cartPopupMore}>+{cartItems.length - 4} item lainnya</div>
+              )}
+            </>
+          )}
+          <Link href="/keranjang" className={styles.cartPopupBtn} onClick={() => setCartHover(false)}>Lihat Keranjang</Link>
+        </div>
+      )}
+    </div>
+  );
+
   // Guest
   if (!user) {
     return (
       <div className={styles.guestNav}>
-        <Link href="/keranjang" className={styles.cartBtn}><ShoppingCart size={20} /></Link>
+        {renderCartPopup()}
         <div className={styles.divider}></div>
         <div className={styles.authGroup}>
           <Link href="/masuk" className={styles.btnMasuk}>Masuk</Link>
@@ -95,52 +138,9 @@ export default function UserNav() {
     );
   }
 
-  // Logged in
-  const previewItems = cartItems.slice(0, 4);
-
   return (
     <div className={styles.userNav} ref={dropdownRef}>
-      {/* Cart Button with Hover Preview */}
-      <div className={styles.cartWrapper} ref={cartRef} onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
-        <Link href="/keranjang" className={styles.cartBtn}>
-          <ShoppingCart size={20} />
-          {dbCartCount > 0 && <span className={styles.badge}>{dbCartCount}</span>}
-        </Link>
-
-        {/* Cart Hover Popup */}
-        {cartHover && (
-          <div className={styles.cartPopup} onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
-            <div className={styles.cartPopupHeader}>
-              <span className={styles.cartPopupTitle}>Keranjang Belanja</span>
-              {dbCartCount > 0 && <span className={styles.cartPopupCount}>{dbCartCount} item</span>}
-            </div>
-            {previewItems.length === 0 ? (
-              <div className={styles.cartPopupEmpty}>
-                <ShoppingCart size={32} className={styles.cartPopupEmptyIcon} />
-                <p>Keranjang Anda masih kosong</p>
-              </div>
-            ) : (
-              <>
-                <div className={styles.cartPopupList}>
-                  {previewItems.map(item => (
-                    <div key={item.id} className={styles.cartPopupItem}>
-                      <img src={item.product?.image || "/images/placeholder.png"} alt={item.product?.name} className={styles.cartPopupImg} />
-                      <div className={styles.cartPopupInfo}>
-                        <span className={styles.cartPopupName}>{item.product?.name}</span>
-                        <span className={styles.cartPopupMeta}>{item.quantity}x {formatRp(item.product?.price || 0)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {cartItems.length > 4 && (
-                  <div className={styles.cartPopupMore}>+{cartItems.length - 4} item lainnya</div>
-                )}
-              </>
-            )}
-            <Link href="/keranjang" className={styles.cartPopupBtn}>Lihat Keranjang</Link>
-          </div>
-        )}
-      </div>
+      {renderCartPopup()}
 
       <div className={styles.divider}></div>
 
