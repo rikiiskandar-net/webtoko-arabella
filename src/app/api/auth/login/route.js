@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { signToken, verifyPassword, seedFirstAdmin } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import rateLimit from "@/lib/rateLimit";
 
 
 export async function POST(request) {
@@ -9,6 +10,11 @@ export async function POST(request) {
 
     if (!username || !password) {
       return NextResponse.json({ error: "Username dan password wajib diisi" }, { status: 400 });
+    }
+
+    const rateLimitResult = rateLimit(request, { limit: 5, windowMs: 15 * 60 * 1000 });
+    if (!rateLimitResult.success) {
+      return NextResponse.json({ error: `Terlalu banyak percobaan. Coba lagi dalam ${rateLimitResult.retryAfter} detik.` }, { status: 429 });
     }
 
     await seedFirstAdmin();

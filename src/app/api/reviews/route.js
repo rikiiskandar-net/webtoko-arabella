@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { getUserFromRequest } from '@/lib/userAuth';
 
 export async function POST(request) {
   try {
-    const body = await request.json();
-    const { productId, userId, rating, comment } = body;
+    const session = await getUserFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    if (!productId || !userId || !rating || !comment) {
+    const body = await request.json();
+    const { productId, rating, comment } = body;
+    const userId = session.userId; // Use ID from verified session
+
+    if (!productId || !rating || !comment) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 

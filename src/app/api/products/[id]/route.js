@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import sanitizeHtml from "sanitize-html";
 
 function getSession(request) {
   const token = request.cookies.get("auth_token")?.value;
@@ -22,7 +23,15 @@ export async function PUT(request, { params }) {
     const updateData = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.price !== undefined) updateData.price = parseInt(data.price);
-    if (data.description !== undefined) updateData.description = data.description;
+    if (data.description !== undefined) {
+      updateData.description = data.description ? sanitizeHtml(data.description, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
+        allowedAttributes: {
+          ...sanitizeHtml.defaults.allowedAttributes,
+          '*': ['style', 'class'],
+        }
+      }) : "";
+    }
     if (data.image !== undefined) updateData.image = data.image;
     if (data.images !== undefined) updateData.images = data.images;
     if (data.variants !== undefined) updateData.variants = data.variants;
