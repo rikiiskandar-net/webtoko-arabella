@@ -96,24 +96,22 @@ export default function ProductDetailClient({ product, config }) {
 
         <div className={styles.infoSection}>
           <h1 className={styles.name}>
-            <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '3px 8px', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem', marginRight: '8px', verticalAlign: 'middle', fontWeight: 600 }}>Star</span>
+            <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '4px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginRight: '8px', verticalAlign: 'middle', boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)' }}>
+              <Star size={14} fill="white" color="white" />
+            </span>
             {product.name}
           </h1>
 
           <div className={styles.ratingRow}>
             <div className={styles.ratingStars}>
-              <span>{product.rating}</span>
-              <Star size={14} fill="var(--accent)" color="var(--accent)" />
-              <Star size={14} fill="var(--accent)" color="var(--accent)" />
-              <Star size={14} fill="var(--accent)" color="var(--accent)" />
-              <Star size={14} fill="var(--accent)" color="var(--accent)" />
+              <span>{product.rating > 0 ? product.rating : (product.reviews?.length > 0 ? (product.reviews.reduce((acc, curr) => acc + curr.rating, 0) / product.reviews.length).toFixed(1) : "0")}</span>
               <Star size={14} fill="var(--accent)" color="var(--accent)" />
             </div>
             <div className={styles.soldCount}>
-              <span>{product.sold}</span> Penilaian
+              <span>{product.reviews?.length || 0}</span> Penilaian
             </div>
             <div className={styles.soldCount}>
-              <span>{product.sold * 3}</span> Terjual
+              <span>{product.sold || "0"}</span> Terjual
             </div>
           </div>
 

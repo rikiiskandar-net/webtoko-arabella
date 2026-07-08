@@ -267,15 +267,34 @@
     flex-direction: column;
     gap: 16px;
     padding: 16px;
+    align-items: flex-start;
   }
   
   .scoreSection {
     border-bottom: 1px solid #E2E8F0;
     padding-bottom: 16px;
     width: 100%;
+    text-align: center;
   }
   
   .filterSection {
-    justify-content: center;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    width: 100%;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .filterSection::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  
+  .filterBtn {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    padding: 6px 14px;
   }
 }

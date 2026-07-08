@@ -163,6 +163,7 @@
   text-transform: uppercase;
   margin: -25px -25px 25px -25px;
   border-bottom: 1px solid var(--border-color);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 .description {
@@ -226,11 +227,13 @@
   }
 
   .imageSection {
-    min-height: 250px;
+    width: 100%;
+    padding: 15px;
+    min-height: auto;
   }
 
   .infoSection {
-    padding: 0 1.5rem 1.5rem;
+    padding: 0 1rem 1rem;
   }
 
   .name {
@@ -239,6 +242,17 @@
 
   .price {
     font-size: 1.5rem;
+  }
+  
+  .sectionCard {
+    padding: 15px;
+  }
+  
+  .sectionHeader {
+    margin: -15px -15px 15px -15px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
 
   .actions {
