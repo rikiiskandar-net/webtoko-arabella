@@ -14,7 +14,7 @@ async function verifyToken(token) {
   }
 }
 
-export async function middleware(request) {
+export default async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   // Protect /dashboard and /api/admin routes

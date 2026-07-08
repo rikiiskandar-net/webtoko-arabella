@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-async function await getSession(request) {
+async function getSession(request) {
   const token = request.cookies.get("auth_token")?.value;
   if (!token) return null;
   return await verifyToken(token);

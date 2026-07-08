@@ -12,7 +12,7 @@ function getClient() {
   return createClient(supabaseUrl, supabaseKey);
 }
 
-async function await getSession(request) {
+async function getSession(request) {
   const token = request.cookies.get("auth_token")?.value;
   if (!token) return null;
   return await verifyToken(token);
