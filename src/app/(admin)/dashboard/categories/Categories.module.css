@@ -112,55 +112,52 @@
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 
-/* Modal CSS - Glassmorphism */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-  animation: fadeIn 0.3s ease-out;
+/* Side-by-Side Layout CSS */
+.pageLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+  transition: all 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@media (min-width: 1024px) {
+  .pageLayout.withSidePanel {
+    grid-template-columns: 1fr 450px;
+  }
 }
 
-.modalContent {
+.mainContent {
+  width: 100%;
+}
+
+.sidePanel {
   background: rgba(30, 41, 59, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
   width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
 }
 
-[data-theme="light"] .modalContent {
+[data-theme="light"] .sidePanel {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-.modalHeader {
+.sidePanelHeader {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
@@ -168,30 +165,26 @@
   justify-content: space-between;
   position: sticky;
   top: 0;
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(30, 41, 59, 0.95);
   backdrop-filter: blur(10px);
   z-index: 10;
 }
 
-[data-theme="light"] .modalHeader {
+[data-theme="light"] .sidePanelHeader {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.95);
 }
 
-.modalTitle {
-  font-size: 1.4rem;
+.sidePanelTitle {
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--foreground);
-  letter-spacing: -0.02em;
   margin: 0;
-  background: linear-gradient(135deg, var(--foreground) 0%, var(--text-muted) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 
 
-.formBody {
+.sidePanelBody {
   padding: 2rem;
 }
 

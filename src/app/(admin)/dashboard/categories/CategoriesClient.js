@@ -126,79 +126,82 @@ export default function CategoriesClient() {
   return (
     <>
     {NotificationBar}
-    <div>
-      <div className={styles.pageHeader}>
-        <h2 className={styles.title}>Manajemen Kategori</h2>
-        <button className={styles.addBtn} onClick={() => openModal()}>
-          <Plus size={20} />
-          Tambah Kategori
-        </button>
-      </div>
-
-      <div className={styles.tableContainer}>
-        {isLoading ? (
-          <div className={styles.emptyState}>
-            <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
-            <h3>Memuat Data...</h3>
-            <p>Sedang menyinkronkan dengan database Supabase.</p>
+      <div className={`${styles.pageLayout} ${isModalOpen ? styles.withSidePanel : ''}`}>
+        <div className={styles.mainContent}>
+          <div className={styles.pageHeader}>
+            <h2 className={styles.title}>Manajemen Kategori</h2>
+            {!isModalOpen && (
+              <button className={styles.addBtn} onClick={() => openModal()}>
+                <Plus size={20} />
+                Tambah Kategori
+              </button>
+            )}
           </div>
-        ) : categories.length === 0 ? (
-          <div className={styles.emptyState}>
-            <Tags size={48} className={styles.emptyIcon} />
-            <h3>Belum ada kategori</h3>
-            <p>Klik tombol &quot;Tambah Kategori&quot; untuk mulai membuat pengelompokan produk.</p>
-          </div>
-        ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th style={{ width: '80px', textAlign: 'center' }}>Icon</th>
-                <th>Nama Kategori</th>
-                <th>Deskripsi</th>
-                <th style={{ width: '120px', textAlign: 'center' }}>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((category) => (
-                <tr key={category.id}>
-                  <td style={{ textAlign: 'center', fontSize: '1.5rem' }}>
-                    {renderIcon(category.icon, 24) || category.icon}
-                  </td>
-                  <td>
-                    <div className={styles.categoryName}>{category.name}</div>
-                  </td>
-                  <td>
-                    <span className={styles.descriptionText}>
-                      {category.description || "-"}
-                    </span>
-                  </td>
-                  <td>
-                    <div className={styles.actionCell}>
-                      <button className={`${styles.iconBtn} ${styles.edit}`} title="Edit" onClick={() => openModal(category)}>
-                        <Edit2 size={18} />
-                      </button>
-                      <button className={`${styles.iconBtn} ${styles.delete}`} title="Hapus" onClick={() => handleDelete(category.id)}>
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
 
-      {/* Modal Form */}
-      {isModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{editingCategory ? "Edit Kategori" : "Tambah Kategori Baru"}</h3>
+          <div className={styles.tableContainer}>
+            {isLoading ? (
+              <div className={styles.emptyState}>
+                <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
+                <h3>Memuat Data...</h3>
+                <p>Sedang menyinkronkan dengan database Supabase.</p>
+              </div>
+            ) : categories.length === 0 ? (
+              <div className={styles.emptyState}>
+                <Tags size={48} className={styles.emptyIcon} />
+                <h3>Belum ada kategori</h3>
+                <p>Klik tombol &quot;Tambah Kategori&quot; untuk mulai membuat pengelompokan produk.</p>
+              </div>
+            ) : (
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={{ width: '80px', textAlign: 'center' }}>Icon</th>
+                    <th>Nama Kategori</th>
+                    <th>Deskripsi</th>
+                    <th style={{ width: '120px', textAlign: 'center' }}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map((category) => (
+                    <tr key={category.id}>
+                      <td style={{ textAlign: 'center', fontSize: '1.5rem' }}>
+                        {renderIcon(category.icon, 24) || category.icon}
+                      </td>
+                      <td>
+                        <div className={styles.categoryName}>{category.name}</div>
+                      </td>
+                      <td>
+                        <span className={styles.descriptionText}>
+                          {category.description || "-"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className={styles.actionCell}>
+                          <button className={`${styles.iconBtn} ${styles.edit}`} title="Edit" onClick={() => openModal(category)}>
+                            <Edit2 size={18} />
+                          </button>
+                          <button className={`${styles.iconBtn} ${styles.delete}`} title="Hapus" onClick={() => handleDelete(category.id)}>
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+        {/* Side Panel Form */}
+        {isModalOpen && (
+          <div className={styles.sidePanel}>
+            <div className={styles.sidePanelHeader}>
+              <h3 className={styles.sidePanelTitle}>{editingCategory ? "Edit Kategori" : "Tambah Kategori Baru"}</h3>
               <button className={styles.closeBtn} onClick={closeModal}><X size={24} /></button>
             </div>
             
-            <form onSubmit={handleSubmit} className={styles.formBody}>
+            <form onSubmit={handleSubmit} className={styles.sidePanelBody}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Nama Kategori *</label>
                 <input required type="text" className={styles.input} value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Cth: Minuman Dingin" />
@@ -231,16 +234,15 @@ export default function CategoriesClient() {
               </div>
 
               <div className={styles.formFooter}>
-                <button type="button" className={styles.cancelBtn} onClick={closeModal}>Batal</button>
+                <button type="button" className={styles.cancelBtn} onClick={closeModal}>Tutup</button>
                 <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
                   {isSubmitting ? "Menyimpan..." : "Simpan Kategori"}
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </>
   );
 }

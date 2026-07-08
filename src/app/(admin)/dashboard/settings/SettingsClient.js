@@ -172,118 +172,126 @@ export default function SettingsClient() {
       </div>
 
       <form onSubmit={handleSave}>
-        <div className={styles.card}>
-          <h3 className={styles.sectionTitle}>Informasi Utama</h3>
+        <div className={styles.gridContainer}>
+          {/* Kolom Kiri */}
+          <div className={styles.gridColumn}>
+            <div className={styles.card}>
+              <h3 className={styles.sectionTitle}>Informasi Utama</h3>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Nama Toko</label>
-            <input className={styles.input} value={form.storeName} onChange={e => setForm({...form, storeName: e.target.value})} placeholder="Dapur Arabella" />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Deskripsi Singkat (Footer)</label>
-            <textarea className={styles.textarea} value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="Deskripsi singkat tentang toko..." />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Alamat Lengkap</label>
-            <textarea className={styles.textarea} value={form.address} onChange={e => setForm({...form, address: e.target.value})} placeholder="Alamat lokasi toko..." />
-            <span className={styles.helpText}>Digunakan untuk informasi pengiriman dan peta.</span>
-          </div>
-        </div>
-
-        <div className={styles.card} style={{ marginTop: '1.5rem' }}>
-          <h3 className={styles.sectionTitle}>Konten "Tentang Kami" (Beranda)</h3>
-
-          <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Judul Bagian</label>
-              <input className={styles.input} value={form.aboutTitle} onChange={e => setForm({...form, aboutTitle: e.target.value})} placeholder="Cth: Berawal dari Camilan Sehat" />
-            </div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Cerita Toko</label>
-            <textarea className={styles.textarea} rows={5} value={form.aboutDescription} onChange={e => setForm({...form, aboutDescription: e.target.value})} placeholder="Ceritakan sejarah berdirinya toko..." />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Poin Keunggulan (Pisahkan dengan koma)</label>
-            <input className={styles.input} value={form.aboutPoints} onChange={e => setForm({...form, aboutPoints: e.target.value})} placeholder="Tanpa Pengawet, Kebersihan Terjamin, Fresh" />
-          </div>
-
-          <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Angka Lencana (Badge)</label>
-              <input className={styles.input} value={form.aboutBadgeNumber} onChange={e => setForm({...form, aboutBadgeNumber: e.target.value})} placeholder="100%" />
-            </div>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Teks Lencana (Badge)</label>
-              <input className={styles.input} value={form.aboutBadgeText} onChange={e => setForm({...form, aboutBadgeText: e.target.value})} placeholder="Buatan Tangan" />
-            </div>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Foto "Tentang Kami"</label>
-            {form.aboutImage && (
-              <div>
-                <img src={form.aboutImage} alt="About Us" style={{ width: '200px', height: '140px', objectFit: 'cover', borderRadius: '8px', marginBottom: '12px', border: '1px solid #E2E8F0' }} />
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Nama Toko</label>
+                <input className={styles.input} value={form.storeName} onChange={e => setForm({...form, storeName: e.target.value})} placeholder="Dapur Arabella" />
               </div>
-            )}
-            <label style={{ display: 'inline-flex', padding: '10px 20px', background: '#F1F5F9', border: '1px dashed #94A3B8', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 500, color: '#334155' }}>
-              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} disabled={isUploading} />
-              {isUploading ? "Mengunggah..." : (form.aboutImage ? "Ganti Foto" : "Pilih Foto")}
-            </label>
-          </div>
-        </div>
 
-        <div className={styles.card} style={{ marginTop: '1.5rem' }}>
-          <h3 className={styles.sectionTitle}>Kontak & Layanan</h3>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Deskripsi Singkat (Footer)</label>
+                <textarea className={styles.textarea} value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="Deskripsi singkat tentang toko..." />
+              </div>
 
-          <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Nomor WhatsApp (Penerima Pesanan)</label>
-              <input className={styles.input} value={form.waNumber} onChange={e => setForm({...form, waNumber: e.target.value})} placeholder="6281234567890" />
-              <span className={styles.helpText}>Format: 628xxx (tanpa + atau spasi)</span>
-            </div>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Email Toko</label>
-              <input className={styles.input} value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="hello@dapurarabella.com" />
-            </div>
-          </div>
-
-          <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Teks Jam Operasional</label>
-              <input className={styles.input} value={form.hours} onChange={e => setForm({...form, hours: e.target.value})} placeholder="Senin-Sabtu: 08.00 - 21.00" />
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Alamat Lengkap</label>
+                <textarea className={styles.textarea} value={form.address} onChange={e => setForm({...form, address: e.target.value})} placeholder="Alamat lokasi toko..." />
+                <span className={styles.helpText}>Digunakan untuk informasi pengiriman dan peta.</span>
+              </div>
             </div>
 
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Estimasi Pengiriman (Footer)</label>
-              <input className={styles.input} value={form.deliveryETA} onChange={e => setForm({...form, deliveryETA: e.target.value})} placeholder="Antar mulai 15 menit" />
-            </div>
-          </div>
-        </div>
+            <div className={styles.card} style={{ marginTop: '1.5rem' }}>
+              <h3 className={styles.sectionTitle}>Kontak & Layanan</h3>
 
-        <div className={styles.card} style={{ marginTop: '1.5rem', marginBottom: '100px' }}>
-          <h3 className={styles.sectionTitle}>Media Sosial & Pembayaran</h3>
+              <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Nomor WhatsApp (Penerima Pesanan)</label>
+                  <input className={styles.input} value={form.waNumber} onChange={e => setForm({...form, waNumber: e.target.value})} placeholder="6281234567890" />
+                  <span className={styles.helpText}>Format: 628xxx (tanpa + atau spasi)</span>
+                </div>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Email Toko</label>
+                  <input className={styles.input} value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="hello@dapurarabella.com" />
+                </div>
+              </div>
 
-          <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Instagram Username</label>
-              <input className={styles.input} value={form.instagram} onChange={e => setForm({...form, instagram: e.target.value})} placeholder="@dapur.arabella" />
-            </div>
+              <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Teks Jam Operasional</label>
+                  <input className={styles.input} value={form.hours} onChange={e => setForm({...form, hours: e.target.value})} placeholder="Senin-Sabtu: 08.00 - 21.00" />
+                </div>
 
-            <div className={styles.formGroup} style={{ flex: 1 }}>
-              <label className={styles.label}>Facebook Page URL</label>
-              <input className={styles.input} value={form.facebook} onChange={e => setForm({...form, facebook: e.target.value})} placeholder="https://facebook.com/..." />
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Estimasi Pengiriman (Footer)</label>
+                  <input className={styles.input} value={form.deliveryETA} onChange={e => setForm({...form, deliveryETA: e.target.value})} placeholder="Antar mulai 15 menit" />
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Metode Pembayaran (Footer)</label>
-            <input className={styles.input} value={form.paymentMethods} onChange={e => setForm({...form, paymentMethods: e.target.value})} placeholder="BCA, Mandiri, GoPay, OVO, ShopeePay" />
-            <span className={styles.helpText}>Pisahkan dengan koma. Ini hanya untuk ikon tampilan.</span>
+          {/* Kolom Kanan */}
+          <div className={styles.gridColumn}>
+            <div className={styles.card}>
+              <h3 className={styles.sectionTitle}>Konten "Tentang Kami" (Beranda)</h3>
+
+              <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Judul Bagian</label>
+                  <input className={styles.input} value={form.aboutTitle} onChange={e => setForm({...form, aboutTitle: e.target.value})} placeholder="Cth: Berawal dari Camilan Sehat" />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Cerita Toko</label>
+                <textarea className={styles.textarea} rows={5} value={form.aboutDescription} onChange={e => setForm({...form, aboutDescription: e.target.value})} placeholder="Ceritakan sejarah berdirinya toko..." />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Poin Keunggulan (Pisahkan dengan koma)</label>
+                <input className={styles.input} value={form.aboutPoints} onChange={e => setForm({...form, aboutPoints: e.target.value})} placeholder="Tanpa Pengawet, Kebersihan Terjamin, Fresh" />
+              </div>
+
+              <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Angka Lencana (Badge)</label>
+                  <input className={styles.input} value={form.aboutBadgeNumber} onChange={e => setForm({...form, aboutBadgeNumber: e.target.value})} placeholder="100%" />
+                </div>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Teks Lencana (Badge)</label>
+                  <input className={styles.input} value={form.aboutBadgeText} onChange={e => setForm({...form, aboutBadgeText: e.target.value})} placeholder="Buatan Tangan" />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Foto "Tentang Kami"</label>
+                {form.aboutImage && (
+                  <div>
+                    <img src={form.aboutImage} alt="About Us" style={{ width: '200px', height: '140px', objectFit: 'cover', borderRadius: '8px', marginBottom: '12px', border: '1px solid #E2E8F0' }} />
+                  </div>
+                )}
+                <label style={{ display: 'inline-flex', padding: '10px 20px', background: '#F1F5F9', border: '1px dashed #94A3B8', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 500, color: '#334155' }}>
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} disabled={isUploading} />
+                  {isUploading ? "Mengunggah..." : (form.aboutImage ? "Ganti Foto" : "Pilih Foto")}
+                </label>
+              </div>
+            </div>
+
+            <div className={styles.card} style={{ marginTop: '1.5rem', marginBottom: '100px' }}>
+              <h3 className={styles.sectionTitle}>Media Sosial & Pembayaran</h3>
+
+              <div className={styles.formRow} style={{ display: 'flex', gap: '16px' }}>
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Instagram Username</label>
+                  <input className={styles.input} value={form.instagram} onChange={e => setForm({...form, instagram: e.target.value})} placeholder="@dapur.arabella" />
+                </div>
+
+                <div className={styles.formGroup} style={{ flex: 1 }}>
+                  <label className={styles.label}>Facebook Page URL</label>
+                  <input className={styles.input} value={form.facebook} onChange={e => setForm({...form, facebook: e.target.value})} placeholder="https://facebook.com/..." />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Metode Pembayaran (Footer)</label>
+                <input className={styles.input} value={form.paymentMethods} onChange={e => setForm({...form, paymentMethods: e.target.value})} placeholder="BCA, Mandiri, GoPay, OVO, ShopeePay" />
+                <span className={styles.helpText}>Pisahkan dengan koma. Ini hanya untuk ikon tampilan.</span>
+              </div>
+            </div>
           </div>
         </div>
 

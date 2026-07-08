@@ -209,117 +209,120 @@ export default function ProductsClient() {
   return (
     <>
     {NotificationBar}
-    <div>
-      <div className={styles.pageHeader}>
-        <h2 className={styles.title}>Manajemen Produk</h2>
-        <button className={styles.addBtn} onClick={() => openModal()}>
-          <Plus size={20} />
-          Tambah Produk
-        </button>
-      </div>
+      <div className={`${styles.pageLayout} ${isModalOpen ? styles.withSidePanel : ''}`}>
+        <div className={styles.mainContent}>
+          <div className={styles.pageHeader}>
+            <h2 className={styles.title}>Manajemen Produk</h2>
+            {!isModalOpen && (
+              <button className={styles.addBtn} onClick={() => openModal()}>
+                <Plus size={20} />
+                Tambah Produk
+              </button>
+            )}
+          </div>
 
-      <div className={styles.tableContainer}>
-        {isLoading ? (
-          <div className={styles.emptyState}>
-            <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
-            <h3>Memuat Data...</h3>
-          </div>
-        ) : products.length === 0 ? (
-          <div className={styles.emptyState}>
-            <PackageSearch size={48} className={styles.emptyIcon} />
-            <h3>Belum ada produk</h3>
-          </div>
-        ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Foto</th>
-                <th>Nama Produk</th>
-                <th>Promo</th>
-                <th>Kategori</th>
-                <th>Harga</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.id}>
-                  <td>
-                    <img src={product.image} alt={product.name} className={styles.productImage} />
-                  </td>
-                  <td>
-                    <div className={styles.productName}>{product.name}</div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <label style={{ position: 'relative', display: 'inline-block', width: '40px', height: '22px' }}>
-                        <input type="checkbox" style={{ opacity: 0, width: 0, height: 0 }} checked={product.isPromo} onChange={async (e) => {
-                          const newStatus = e.target.checked;
-                          // Optimistic update
-                          setProducts(products.map(p => p.id === product.id ? { ...p, isPromo: newStatus } : p));
-                          try {
-                            const res = await fetch(`/api/products/${product.id}/promo`, {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ isPromo: newStatus })
-                            });
-                            if (!res.ok) throw new Error("Gagal");
-                            notify(`Promo ${newStatus ? 'diaktifkan' : 'dimatikan'} untuk ${product.name}`);
-                          } catch (err) {
-                            // Revert on failure
-                            setProducts(products.map(p => p.id === product.id ? { ...p, isPromo: !newStatus } : p));
-                            notify("Gagal merubah status promo", "error");
-                          }
-                        }} />
-                        <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: product.isPromo ? '#10B981' : '#CBD5E1', transition: '.4s', borderRadius: '34px' }}>
-                          <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: product.isPromo ? '21px' : '3px', bottom: '3px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+          <div className={styles.tableContainer}>
+            {isLoading ? (
+              <div className={styles.emptyState}>
+                <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
+                <h3>Memuat Data...</h3>
+              </div>
+            ) : products.length === 0 ? (
+              <div className={styles.emptyState}>
+                <PackageSearch size={48} className={styles.emptyIcon} />
+                <h3>Belum ada produk</h3>
+              </div>
+            ) : (
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nama Produk</th>
+                    <th>Promo</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((product) => (
+                    <tr key={product.id}>
+                      <td>
+                        <img src={product.image} alt={product.name} className={styles.productImage} />
+                      </td>
+                      <td>
+                        <div className={styles.productName}>{product.name}</div>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <label style={{ position: 'relative', display: 'inline-block', width: '40px', height: '22px' }}>
+                            <input type="checkbox" style={{ opacity: 0, width: 0, height: 0 }} checked={product.isPromo} onChange={async (e) => {
+                              const newStatus = e.target.checked;
+                              // Optimistic update
+                              setProducts(products.map(p => p.id === product.id ? { ...p, isPromo: newStatus } : p));
+                              try {
+                                const res = await fetch(`/api/products/${product.id}/promo`, {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ isPromo: newStatus })
+                                });
+                                if (!res.ok) throw new Error("Gagal");
+                                notify(`Promo ${newStatus ? 'diaktifkan' : 'dimatikan'} untuk ${product.name}`);
+                              } catch (err) {
+                                // Revert on failure
+                                setProducts(products.map(p => p.id === product.id ? { ...p, isPromo: !newStatus } : p));
+                                notify("Gagal merubah status promo", "error");
+                              }
+                            }} />
+                            <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: product.isPromo ? '#10B981' : '#CBD5E1', transition: '.4s', borderRadius: '34px' }}>
+                              <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: product.isPromo ? '21px' : '3px', bottom: '3px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                            </span>
+                          </label>
+                          {product.isPromo && <span style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 600 }}>PROMO</span>}
+                        </div>
+                      </td>
+                      <td>
+                        <span className={styles.categoryBadge}>
+                          {product.category?.name || "Tanpa Kategori"}
                         </span>
-                      </label>
-                      {product.isPromo && <span style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 600 }}>PROMO</span>}
-                    </div>
-                  </td>
-                  <td>
-                    <span className={styles.categoryBadge}>
-                      {product.category?.name || "Tanpa Kategori"}
-                    </span>
-                  </td>
-                  <td>
-                    {product.originalPrice ? (
-                      <div>
-                        <span className={styles.strike}>{formatPrice(product.originalPrice)}</span>
-                        <br />
-                        <span className={styles.price}>{formatPrice(product.price)}</span>
-                      </div>
-                    ) : (
-                      <span className={styles.price}>{formatPrice(product.price)}</span>
-                    )}
-                  </td>
-                  <td>
-                    <div className={styles.actionCell}>
-                      <button type="button" className={`${styles.iconBtn} ${styles.edit}`} onClick={() => openModal(product)}>
-                        <Edit2 size={18} />
-                      </button>
-                      <button type="button" className={`${styles.iconBtn} ${styles.delete}`} onClick={() => handleDelete(product.id)}>
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+                      </td>
+                      <td>
+                        {product.originalPrice ? (
+                          <div>
+                            <span className={styles.strike}>{formatPrice(product.originalPrice)}</span>
+                            <br />
+                            <span className={styles.price}>{formatPrice(product.price)}</span>
+                          </div>
+                        ) : (
+                          <span className={styles.price}>{formatPrice(product.price)}</span>
+                        )}
+                      </td>
+                      <td>
+                        <div className={styles.actionCell}>
+                          <button type="button" className={`${styles.iconBtn} ${styles.edit}`} onClick={() => openModal(product)}>
+                            <Edit2 size={18} />
+                          </button>
+                          <button type="button" className={`${styles.iconBtn} ${styles.delete}`} onClick={() => handleDelete(product.id)}>
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
 
-      {isModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent} style={{ maxWidth: '800px', width: '95%' }}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{editingProduct ? "Edit Produk" : "Tambah Produk Baru"}</h3>
+        {isModalOpen && (
+          <div className={styles.sidePanel}>
+            <div className={styles.sidePanelHeader}>
+              <h3 className={styles.sidePanelTitle}>{editingProduct ? "Edit Produk" : "Tambah Produk Baru"}</h3>
               <button type="button" className={styles.closeBtn} onClick={closeModal}><X size={24} /></button>
             </div>
             
-            <form onSubmit={handleSubmit} className={styles.formBody}>
+            <form onSubmit={handleSubmit} className={styles.sidePanelBody}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Nama Produk *</label>
                 <input required type="text" className={styles.input} value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Cth: Cireng Salju Bumbu Rujak" />
@@ -483,15 +486,15 @@ export default function ProductsClient() {
               </div>
 
               <div className={styles.formFooter} style={{ marginTop: '40px' }}>
-                <button type="button" className={styles.cancelBtn} onClick={closeModal}>Batal</button>
+                <button type="button" className={styles.cancelBtn} onClick={closeModal}>Tutup</button>
                 <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
                   {isSubmitting ? "Menyimpan..." : "Simpan Produk"}
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {cropperSrc && (
         <ImageCropper

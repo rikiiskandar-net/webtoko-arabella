@@ -172,98 +172,101 @@ export default function BannersClient() {
   return (
     <>
     {NotificationBar}
-    <div>
-      <div className={styles.pageHeader}>
-        <h2 className={styles.title}>Manajemen Banner</h2>
-        <button className={styles.addBtn} onClick={() => openModal()}>
-          <Plus size={20} />
-          Tambah Banner
-        </button>
-      </div>
-
-      <div className={styles.tableContainer}>
-        {isLoading ? (
-          <div className={styles.emptyState}>
-            <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
-            <h3>Memuat Data...</h3>
+      <div className={`${styles.pageLayout} ${isModalOpen ? styles.withSidePanel : ''}`}>
+        <div className={styles.mainContent}>
+          <div className={styles.pageHeader}>
+            <h2 className={styles.title}>Manajemen Banner</h2>
+            {!isModalOpen && (
+              <button className={styles.addBtn} onClick={() => openModal()}>
+                <Plus size={20} />
+                Tambah Banner
+              </button>
+            )}
           </div>
-        ) : banners.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg>
-            </div>
-            <h3>Belum ada banner</h3>
-            <p>Tambahkan banner hero untuk tampil di halaman utama.</p>
-          </div>
-        ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th style={{ width: "40px" }}>Urut</th>
-                <th style={{ width: "120px" }}>Gambar</th>
-                <th>Judul</th>
-                <th>Badge</th>
-                <th>Status</th>
-                <th style={{ width: "120px", textAlign: "center" }}>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {banners.map((banner, index) => (
-                <tr key={banner.id}>
-                  <td>
-                    <div className={styles.sortBtns}>
-                      <button disabled={index === 0} onClick={() => moveItem(index, -1)} className={styles.sortBtn}>
-                        <ArrowUp size={14} />
-                      </button>
-                      <button disabled={index === banners.length - 1} onClick={() => moveItem(index, 1)} className={styles.sortBtn}>
-                        <ArrowDown size={14} />
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <img src={banner.image} alt="" className={styles.thumb} onError={(e) => { e.target.style.display = "none"; }} />
-                  </td>
-                  <td>
-                    <div className={styles.titleCell}>{banner.title}</div>
-                  </td>
-                  <td>
-                    {banner.badge ? (
-                      <span className={styles.badgeTag}>{banner.badge}</span>
-                    ) : (
-                      <span style={{ color: "#94A3B8" }}>—</span>
-                    )}
-                  </td>
-                  <td>
-                    <span className={`${styles.statusBadge} ${banner.isActive ? styles.active : styles.inactive}`}>
-                      {banner.isActive ? "Aktif" : "Nonaktif"}
-                    </span>
-                  </td>
-                  <td>
-                    <div className={styles.actionCell}>
-                      <button className={`${styles.iconBtn} ${styles.edit}`} title="Edit" onClick={() => openModal(banner)}>
-                        <Edit2 size={18} />
-                      </button>
-                      <button className={`${styles.iconBtn} ${styles.delete}`} title="Hapus" onClick={() => handleDelete(banner.id)}>
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
 
-      {isModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{editingBanner ? "Edit Banner" : "Tambah Banner Baru"}</h3>
+          <div className={styles.tableContainer}>
+            {isLoading ? (
+              <div className={styles.emptyState}>
+                <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
+                <h3>Memuat Data...</h3>
+              </div>
+            ) : banners.length === 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></svg>
+                </div>
+                <h3>Belum ada banner</h3>
+                <p>Tambahkan banner hero untuk tampil di halaman utama.</p>
+              </div>
+            ) : (
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={{ width: "40px" }}>Urut</th>
+                    <th style={{ width: "120px" }}>Gambar</th>
+                    <th>Judul</th>
+                    <th>Badge</th>
+                    <th>Status</th>
+                    <th style={{ width: "120px", textAlign: "center" }}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {banners.map((banner, index) => (
+                    <tr key={banner.id}>
+                      <td>
+                        <div className={styles.sortBtns}>
+                          <button disabled={index === 0} onClick={() => moveItem(index, -1)} className={styles.sortBtn}>
+                            <ArrowUp size={14} />
+                          </button>
+                          <button disabled={index === banners.length - 1} onClick={() => moveItem(index, 1)} className={styles.sortBtn}>
+                            <ArrowDown size={14} />
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <img src={banner.image} alt="" className={styles.thumb} onError={(e) => { e.target.style.display = "none"; }} />
+                      </td>
+                      <td>
+                        <div className={styles.titleCell}>{banner.title}</div>
+                      </td>
+                      <td>
+                        {banner.badge ? (
+                          <span className={styles.badgeTag}>{banner.badge}</span>
+                        ) : (
+                          <span style={{ color: "#94A3B8" }}>—</span>
+                        )}
+                      </td>
+                      <td>
+                        <span className={`${styles.statusBadge} ${banner.isActive ? styles.active : styles.inactive}`}>
+                          {banner.isActive ? "Aktif" : "Nonaktif"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className={styles.actionCell}>
+                          <button className={`${styles.iconBtn} ${styles.edit}`} title="Edit" onClick={() => openModal(banner)}>
+                            <Edit2 size={18} />
+                          </button>
+                          <button className={`${styles.iconBtn} ${styles.delete}`} title="Hapus" onClick={() => handleDelete(banner.id)}>
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+        {isModalOpen && (
+          <div className={styles.sidePanel}>
+            <div className={styles.sidePanelHeader}>
+              <h3 className={styles.sidePanelTitle}>{editingBanner ? "Edit Banner" : "Tambah Banner Baru"}</h3>
               <button className={styles.closeBtn} onClick={closeModal}><X size={24} /></button>
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.formBody}>
+            <form onSubmit={handleSubmit} className={styles.sidePanelBody}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>URL Gambar *</label>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -335,15 +338,15 @@ export default function BannersClient() {
               </div>
 
               <div className={styles.formFooter}>
-                <button type="button" className={styles.cancelBtn} onClick={closeModal}>Batal</button>
+                <button type="button" className={styles.cancelBtn} onClick={closeModal}>Tutup</button>
                 <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
                   {isSubmitting ? "Menyimpan..." : editingBanner ? "Simpan Perubahan" : "Tambah Banner"}
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {isCropperOpen && (
         <ImageCropper

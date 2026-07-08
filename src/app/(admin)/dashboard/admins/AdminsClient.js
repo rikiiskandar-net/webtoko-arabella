@@ -128,128 +128,131 @@ export default function AdminsClient() {
   };
 
   return (
-    <div>
-      <div className={styles.pageHeader}>
-        <h2 className={styles.title}>Manajemen Admin</h2>
-        <button className={styles.addBtn} onClick={() => openModal()}>
-          <Plus size={20} />
-          Tambah Admin
-        </button>
-      </div>
+    <>
+    {NotificationBar}
+    <div className={`${styles.pageLayout} ${isModalOpen ? styles.withSidePanel : ''}`}>
+      <div className={styles.mainContent}>
+        <div className={styles.pageHeader}>
+          {!isModalOpen && (
+            <button className={styles.addBtn} onClick={() => openModal()}>
+              <Plus size={20} />
+              Tambah Admin
+            </button>
+          )}
+        </div>
 
-      <div className={styles.tableContainer}>
-        {isLoading ? (
-          <div className={styles.emptyState}>
-            <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
-            <h3>Memuat Data...</h3>
-          </div>
-        ) : admins.length === 0 ? (
-          <div className={styles.emptyState}>
-            <Shield size={48} className={styles.emptyIcon} />
-            <h3>Belum ada admin</h3>
-            <p>Admin pertama akan otomatis dibuat dari env saat login pertama.</p>
-          </div>
-        ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Nama</th>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th style={{ width: '140px', textAlign: 'center' }}>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {admins.map((admin) => (
-                <tr key={admin.id}>
-                  <td>
-                    <div className={styles.adminName}>
-                      {admin.name}
-                      {admin.role === "superadmin" && (
-                        <span className={styles.badgeSuper}>Super</span>
-                      )}
-                    </div>
-                  </td>
-                  <td><span className={styles.username}>{admin.username}</span></td>
-                  <td>
-                    <span className={`${styles.roleBadge} ${admin.role === "superadmin" ? styles.roleSuper : styles.roleAdmin}`}>
-                      {admin.role === "superadmin" ? "Superadmin" : "Admin"}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`${styles.statusBadge} ${admin.isActive ? styles.active : styles.inactive}`}>
-                      {admin.isActive ? "Aktif" : "Nonaktif"}
-                    </span>
-                  </td>
-                  <td>
-                    <div className={styles.actionCell}>
-                      <button className={`${styles.iconBtn} ${styles.edit}`} title="Edit" onClick={() => openModal(admin)}>
-                        <Edit2 size={18} />
-                      </button>
-                      <button className={`${styles.iconBtn} ${styles.toggle}`} title={admin.isActive ? "Nonaktifkan" : "Aktifkan"} onClick={() => handleToggleActive(admin)}>
-                        {admin.isActive ? <ShieldOff size={18} /> : <Shield size={18} />}
-                      </button>
-                      {admin.role !== "superadmin" && (
-                        <button className={`${styles.iconBtn} ${styles.delete}`} title="Hapus" onClick={() => handleDelete(admin.id)}>
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                    </div>
-                  </td>
+        <div className={styles.tableContainer}>
+          {isLoading ? (
+            <div className={styles.emptyState}>
+              <Loader2 size={48} className={`${styles.emptyIcon} ${styles.spin}`} />
+              <h3>Memuat Data...</h3>
+            </div>
+          ) : admins.length === 0 ? (
+            <div className={styles.emptyState}>
+              <Shield size={48} className={styles.emptyIcon} />
+              <h3>Belum ada admin</h3>
+              <p>Admin pertama akan otomatis dibuat dari env saat login pertama.</p>
+            </div>
+          ) : (
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Username</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th style={{ width: '140px', textAlign: 'center' }}>Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {admins.map((admin) => (
+                  <tr key={admin.id}>
+                    <td>
+                      <div className={styles.adminName}>
+                        {admin.name}
+                        {admin.role === "superadmin" && (
+                          <span className={styles.badgeSuper}>Super</span>
+                        )}
+                      </div>
+                    </td>
+                    <td><span className={styles.username}>{admin.username}</span></td>
+                    <td>
+                      <span className={`${styles.roleBadge} ${admin.role === "superadmin" ? styles.roleSuper : styles.roleAdmin}`}>
+                        {admin.role === "superadmin" ? "Superadmin" : "Admin"}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`${styles.statusBadge} ${admin.isActive ? styles.active : styles.inactive}`}>
+                        {admin.isActive ? "Aktif" : "Nonaktif"}
+                      </span>
+                    </td>
+                    <td>
+                      <div className={styles.actionCell}>
+                        <button className={`${styles.iconBtn} ${styles.edit}`} title="Edit" onClick={() => openModal(admin)}>
+                          <Edit2 size={18} />
+                        </button>
+                        <button className={`${styles.iconBtn} ${styles.toggle}`} title={admin.isActive ? "Nonaktifkan" : "Aktifkan"} onClick={() => handleToggleActive(admin)}>
+                          {admin.isActive ? <ShieldOff size={18} /> : <Shield size={18} />}
+                        </button>
+                        {admin.role !== "superadmin" && (
+                          <button className={`${styles.iconBtn} ${styles.delete}`} title="Hapus" onClick={() => handleDelete(admin.id)}>
+                            <Trash2 size={18} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
 
       {isModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3 className={styles.modalTitle}>{editingAdmin ? "Edit Admin" : "Tambah Admin Baru"}</h3>
-              <button className={styles.closeBtn} onClick={closeModal}><X size={24} /></button>
+        <div className={styles.sidePanel}>
+          <div className={styles.sidePanelHeader}>
+            <h3 className={styles.sidePanelTitle}>{editingAdmin ? "Edit Admin" : "Tambah Admin Baru"}</h3>
+            <button className={styles.closeBtn} onClick={closeModal}><X size={24} /></button>
+          </div>
+
+          <form onSubmit={handleSubmit} className={styles.sidePanelBody}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Nama Lengkap *</label>
+              <input required type="text" className={styles.input} value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Cth: Budi Santoso" />
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.formBody}>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Nama Lengkap *</label>
-                <input required type="text" className={styles.input} value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Cth: Budi Santoso" />
-              </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Username *</label>
+              <input required type="text" className={styles.input} value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} placeholder="Cth: budiadmin" disabled={!!editingAdmin} />
+            </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Username *</label>
-                <input required type="text" className={styles.input} value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} placeholder="Cth: budiadmin" disabled={!!editingAdmin} />
-              </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>{editingAdmin ? "Password Baru (kosongkan jika tidak diubah)" : "Password *"}</label>
+              <input type="password" className={styles.input} value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} placeholder={editingAdmin ? "Biarkan kosong" : "Minimal 6 karakter"} required={!editingAdmin} />
+            </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.label}>{editingAdmin ? "Password Baru (kosongkan jika tidak diubah)" : "Password *"}</label>
-                <input type="password" className={styles.input} value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} placeholder={editingAdmin ? "Biarkan kosong" : "Minimal 6 karakter"} required={!editingAdmin} />
-              </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Role</label>
+              <select className={styles.input} value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})}>
+                <option value="admin">Admin</option>
+                <option value="superadmin">Superadmin</option>
+              </select>
+              <span className={styles.helpText}>
+                {formData.role === "superadmin" ? "Superadmin bisa manage admin lain." : "Admin bisa kelola produk & kategori."}
+              </span>
+            </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Role</label>
-                <select className={styles.input} value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})}>
-                  <option value="admin">Admin</option>
-                  <option value="superadmin">Superadmin</option>
-                </select>
-                <span className={styles.helpText}>
-                  {formData.role === "superadmin" ? "Superadmin bisa manage admin lain." : "Admin bisa kelola produk & kategori."}
-                </span>
-              </div>
-
-              <div className={styles.formFooter}>
-                <button type="button" className={styles.cancelBtn} onClick={closeModal}>Batal</button>
-                <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
-                  {isSubmitting ? "Menyimpan..." : editingAdmin ? "Simpan Perubahan" : "Tambah Admin"}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className={styles.formFooter}>
+              <button type="button" className={styles.cancelBtn} onClick={closeModal}>Tutup</button>
+              <button type="submit" className={styles.saveBtn} disabled={isSubmitting}>
+                {isSubmitting ? "Menyimpan..." : editingAdmin ? "Simpan Perubahan" : "Tambah Admin"}
+              </button>
+            </div>
+          </form>
         </div>
       )}
-      {NotificationBar}
     </div>
+    </>
   );
 }
