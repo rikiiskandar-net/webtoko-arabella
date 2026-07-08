@@ -74,6 +74,12 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
           </div>
           <span className={styles.divider}>|</span>
           <span className={styles.soldCount}>Terjual {product.sold || '1k+'}</span>
+          {(product.variants && product.variants.length > 0) && (
+            <>
+              <span className={styles.divider}>|</span>
+              <span className={styles.variantCount}>{product.variants.length} Varian</span>
+            </>
+          )}
         </div>
 
         <p className={`${styles.description} ${isSmall ? styles.descriptionSmall : ''}`}>{stripHtml(product.description)}</p>
@@ -87,10 +93,17 @@ export default function ProductCard({ product, cartQuantity, onUpdateQuantity, o
         
         <div className={`${styles.actions} ${isSmall ? styles.actionsSmall : ''}`}>
           {(product.variants && product.variants.length > 0) ? (
-            <Link href={`/product/${product.slug}`} style={{ width: '100%', textDecoration: 'none' }}>
-              <button className={`${styles.buyNowBtn} ${isSmall ? styles.buyNowBtnSmall : ''}`} style={{ width: '100%' }}>
-                Pilih Varian
+            <Link href={`/product/${product.slug}`} style={{ width: '100%', textDecoration: 'none', display: 'flex', gap: '0.25rem', height: '100%' }}>
+              <button className={`${styles.buyNowBtn} ${isSmall ? styles.buyNowBtnSmall : ''}`}>
+                Pesan
               </button>
+              <div className={`${styles.cartIconBtn} ${isSmall ? styles.cartIconBtnSmall : ''}`} title="Pilih Varian">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+              </div>
             </Link>
           ) : cartQuantity === 0 ? (
             <>
