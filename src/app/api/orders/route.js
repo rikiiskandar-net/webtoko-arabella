@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { verifyToken } from "@/lib/auth";
 
 const RATE_LIMIT = 5; // 5 pesanan
 const RATE_WINDOW = 15 * 60 * 1000; // per 15 menit
@@ -34,8 +35,35 @@ export async function POST(request) {
     const body = await request.json();
     const { customerName, customerPhone, address, notes, items, userId } = body;
 
-    if (!customerName || !address || !items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: "Nama, alamat, dan keranjang belanja wajib diisi dengan benar" }, { status: 400 });
+    let finalCustomerName = customerName;
+    let finalAddress = address;
+    let finalPhone = customerPhone;
+    let finalUserId = userId;
+
+    // Check if there's a token to auto-fill user data
+    const token = request.cookies.get("user_token")?.value;
+    if (token) {
+      try {
+        const payload = await verifyToken(token);
+        if (payload) {
+          const user = await prisma.user.findUnique({ where: { id: payload.id } });
+          if (user) {
+            finalCustomerName = user.name;
+            finalAddress = user.address || finalAddress || "Detail via WhatsApp";
+            finalPhone = user.phone || finalPhone || "";
+            finalUserId = user.id;
+          }
+        }
+      } catch (err) {
+        console.error("Token verification failed in order creation:", err);
+      }
+    }
+
+    if (!finalCustomerName) finalCustomerName = "Pelanggan Baru (Guest)";
+    if (!finalAddress) finalAddress = "Detail via WhatsApp";
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json({ error: "Keranjang belanja wajib diisi" }, { status: 400 });
     }
 
     // Ambil ID produk unik dari keranjang

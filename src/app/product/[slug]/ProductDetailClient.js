@@ -22,6 +22,7 @@ export default function ProductDetailClient({ product, config }) {
 
   const [selectedVariants, setSelectedVariants] = useState(getInitialVariants);
   const [activeImage, setActiveImage] = useState(product?.image || "");
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   if (!product) return null;
 
@@ -36,9 +37,39 @@ export default function ProductDetailClient({ product, config }) {
     setSelectedVariants(prev => ({ ...prev, [groupName]: option }));
   };
 
-  const handleDirectBuy = () => {
+  const handleDirectBuy = async () => {
+    setIsCheckingOut(true);
+    let orderId = null;
     const variantsArray = Object.entries(selectedVariants).map(([groupName, option]) => ({ groupName, optionName: option.name, priceMod: option.priceMod }));
     
+    try {
+      // Create order via API first
+      const payload = {
+        items: [{
+          id: product.id,
+          qty: 1,
+          variants: variantsArray
+        }]
+      };
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        orderId = data.orderId;
+      } else {
+        console.error("Gagal menyimpan pesanan langsung ke database");
+      }
+    } catch (err) {
+      console.error("Error saving direct order:", err);
+    } finally {
+      setIsCheckingOut(false);
+    }
+
     let variantText = "";
     if (variantsArray && variantsArray.length > 0) {
       variantText = " (" + variantsArray.map(v => `${v.groupName}: ${v.optionName}`).join(", ") + ")";
@@ -46,7 +77,13 @@ export default function ProductDetailClient({ product, config }) {
 
     let message = "Halo Dapur Arabella, saya mau pesan:\n\n";
     message += `- 1x ${product.name}${variantText} (@ ${formatPrice(finalPrice)})\n`;
-    message += `\n*Total: ${formatPrice(finalPrice)}*\n\nMohon info untuk pembayaran dan pengiriman ya. Terima kasih!`;
+    message += `\n*Total: ${formatPrice(finalPrice)}*\n`;
+    
+    if (orderId) {
+      message += `\nRef: #${orderId.split('-')[0].toUpperCase()}\n`;
+    }
+    
+    message += `\nMohon info untuk pembayaran dan pengiriman ya. Terima kasih!`;
     
     const encodedMessage = encodeURIComponent(message);
     const phoneNumber = config?.waNumber || "6281234567890";

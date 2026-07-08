@@ -32,6 +32,7 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
   // Toast State
   const [toastMessage, setToastMessage] = useState("");
   const [isToastVisible, setIsToastVisible] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
 
 
@@ -78,9 +79,42 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
     }).format(price);
   };
 
-  const handleBuyNow = (productId, selectedVariants = []) => {
+  const handleBuyNow = async (productId, selectedVariants = []) => {
+    setIsCheckingOut(true);
+    let orderId = null;
     const product = initialProducts.find(p => p.id === productId);
-    if (!product) return;
+    
+    if (product) {
+      try {
+        const payload = {
+          items: [{
+            id: product.id,
+            qty: 1,
+            variants: selectedVariants
+          }]
+        };
+
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          orderId = data.orderId;
+        } else {
+          console.error("Gagal menyimpan pesanan dari beranda ke database");
+        }
+      } catch (err) {
+        console.error("Error saving order from storefront:", err);
+      } finally {
+        setIsCheckingOut(false);
+      }
+    } else {
+      setIsCheckingOut(false);
+      return;
+    }
 
     let variantText = "";
     let extraPrice = 0;
@@ -94,7 +128,13 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
 
     let message = "Halo Dapur Arabella, saya mau pesan:\n\n";
     message += `- 1x ${product.name}${variantText} (@ ${formatPrice(finalPrice)})\n`;
-    message += `\n*Total: ${formatPrice(finalPrice)}*\n\nMohon info untuk pembayaran dan pengiriman ya. Terima kasih!`;
+    message += `\n*Total: ${formatPrice(finalPrice)}*\n`;
+    
+    if (orderId) {
+      message += `\nRef: #${orderId.split('-')[0].toUpperCase()}\n`;
+    }
+    
+    message += `\nMohon info untuk pembayaran dan pengiriman ya. Terima kasih!`;
     
     const encodedMessage = encodeURIComponent(message);
     const phoneNumber = storeConfig?.waNumber || "6281234567890";
