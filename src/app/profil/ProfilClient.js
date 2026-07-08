@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { User, Pencil, Lock, ShoppingCart, LogOut, Camera, Loader2, ChevronLeft, Eye, EyeOff, ShieldCheck, MapPin, Phone, Mail, CalendarDays } from "lucide-react";
 import styles from "./Profil.module.css";
 
@@ -148,7 +149,7 @@ export default function ProfilClient() {
             <div className={styles.sidebarAvatar}>
               <div className={styles.avatarWrap} onClick={() => fileInputRef.current?.click()}>
                 {user?.avatar ? (
-                  <img src={user.avatar} alt="Avatar" className={styles.avatarImg} />
+                  <Image src={user.avatar || "/images/placeholder.png"} alt="Avatar" className={styles.avatarImg} width={80} height={80} style={{ objectFit: 'cover' }} />
                 ) : (
                   <div className={styles.avatarInitials}>{getInitials(user?.name)}</div>
                 )}
@@ -188,7 +189,7 @@ export default function ProfilClient() {
           <div className={styles.mobileProfileHeader}>
             <div className={styles.mobileAvatarWrap} onClick={() => fileInputRef.current?.click()}>
               {user?.avatar ? (
-                <img src={user.avatar} alt="Avatar" className={styles.mobileAvatarImg} />
+                <Image src={user.avatar || "/images/placeholder.png"} alt="Avatar" className={styles.mobileAvatarImg} width={64} height={64} style={{ objectFit: 'cover' }} />
               ) : (
                 <div className={styles.mobileAvatarInitials}>{getInitials(user?.name)}</div>
               )}

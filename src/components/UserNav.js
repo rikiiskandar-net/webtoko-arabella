@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, User } from "lucide-react";
+import Image from "next/image";
 import styles from "./UserNav.module.css";
 
 function getInitials(name) {
@@ -102,7 +103,7 @@ export default function UserNav() {
               <div className={styles.cartPopupList}>
                 {cartItems.slice(0, 4).map(item => (
                   <div key={item.id} className={styles.cartPopupItem}>
-                    <img src={item.product?.image || "/images/placeholder.png"} alt={item.product?.name} className={styles.cartPopupImg} />
+                    <Image src={item.product?.image || "/images/placeholder.png"} alt={item.product?.name} className={styles.cartPopupImg} width={48} height={48} style={{ objectFit: 'cover' }} />
                     <div className={styles.cartPopupInfo}>
                       <span className={styles.cartPopupName}>{item.product?.name}</span>
                       <span className={styles.cartPopupMeta}>{item.quantity}x {formatRp(item.product?.price || 0)}</span>
@@ -147,7 +148,7 @@ export default function UserNav() {
       {/* User Avatar Dropdown */}
       <button className={styles.avatarBtn} onClick={() => setDropdownOpen(!dropdownOpen)}>
         {user.avatar ? (
-          <img src={user.avatar} alt={user.name} className={styles.avatarImg} />
+          <Image src={user.avatar || "/images/placeholder.png"} alt={user.name} className={styles.avatarImg} width={34} height={34} style={{ objectFit: 'cover' }} />
         ) : (
           <div className={styles.avatarInitials}>{getInitials(user.name)}</div>
         )}

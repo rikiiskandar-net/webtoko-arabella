@@ -1,10 +1,9 @@
 import prisma from "@/lib/prisma";
 import StorefrontClient from "@/components/StorefrontClient";
 
-// Pastikan halaman ini dinamis (tidak di-cache secara statis oleh Next.js)
-// agar setiap penambahan produk di admin langsung muncul.
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Gunakan ISR (Incremental Static Regeneration) dengan revalidate 60 detik.
+// Halaman akan sangat cepat karena di-cache, namun data tetap diperbarui di belakang layar tiap menit.
+export const revalidate = 60;
 
 export default async function HomePage() {
   const products = await prisma.product.findMany({

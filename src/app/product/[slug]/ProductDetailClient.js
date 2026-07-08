@@ -4,6 +4,7 @@ import { useState } from "react";
 import styles from "./ProductDetail.module.css";
 import { Star, MessageCircle, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import ProductReviews from "@/components/ProductReviews";
 
 export default function ProductDetailClient({ product, config }) {
@@ -82,13 +83,19 @@ export default function ProductDetailClient({ product, config }) {
           {product.badge && (
             <div className={styles.badge}>{product.badge}</div>
           )}
-          <img src={activeImage} alt={product.name} className={styles.image} />
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
+            <Image src={activeImage || "/images/placeholder.png"} alt={product.name} fill style={{ objectFit: 'cover', borderRadius: 'var(--radius-md)' }} sizes="(max-width: 768px) 100vw, 450px" priority />
+          </div>
           
           {product.images && product.images.length > 0 && (
             <div style={{ display: 'flex', gap: '8px', padding: '12px 0', overflowX: 'auto' }}>
-              <img src={product.image} onClick={() => setActiveImage(product.image)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === product.image ? '2px solid var(--primary)' : '1px solid transparent', borderRadius: 'var(--radius-sm)' }} alt="Main" />
+              <div style={{ position: 'relative', width: '80px', height: '80px', flexShrink: 0, cursor: 'pointer', border: activeImage === product.image ? '2px solid var(--primary)' : '1px solid transparent', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }} onClick={() => setActiveImage(product.image)}>
+                <Image src={product.image} alt="Main" fill style={{ objectFit: 'cover' }} sizes="80px" />
+              </div>
               {product.images.map((img, idx) => (
-                <img key={idx} src={img} onClick={() => setActiveImage(img)} style={{ width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer', border: activeImage === img ? '2px solid var(--primary)' : '1px solid transparent', borderRadius: 'var(--radius-sm)' }} alt="Gallery" />
+                <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', flexShrink: 0, cursor: 'pointer', border: activeImage === img ? '2px solid var(--primary)' : '1px solid transparent', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }} onClick={() => setActiveImage(img)}>
+                  <Image src={img} alt="Gallery" fill style={{ objectFit: 'cover' }} sizes="80px" />
+                </div>
               ))}
             </div>
           )}

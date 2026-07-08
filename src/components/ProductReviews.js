@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/SessionContext';
 import { Star, UserCircle2 } from 'lucide-react';
+import Image from 'next/image';
 import styles from './ProductReviews.module.css';
 import Toast from './Toast';
 
@@ -123,7 +124,7 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
             <div key={review.id} className={styles.reviewCard}>
               <div className={styles.userAvatar}>
                 {review.user?.avatar ? (
-                  <img src={review.user.avatar} alt={review.user.name} />
+                  <Image src={review.user.avatar || "/images/placeholder.png"} alt={review.user.name} width={40} height={40} style={{ objectFit: 'cover', borderRadius: '50%' }} />
                 ) : (
                   <UserCircle2 size={40} color="#94A3B8" />
                 )}
@@ -167,7 +168,7 @@ export default function ProductReviews({ product, reviews: initialReviews }) {
             <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
               <div className={styles.userAvatar} style={{ marginTop: '5px' }}>
                 {session.user?.avatar ? (
-                  <img src={session.user.avatar} alt={session.user.name} />
+                  <Image src={session.user.avatar || "/images/placeholder.png"} alt={session.user.name} width={40} height={40} style={{ objectFit: 'cover', borderRadius: '50%' }} />
                 ) : (
                   <UserCircle2 size={40} color="var(--text-muted)" />
                 )}

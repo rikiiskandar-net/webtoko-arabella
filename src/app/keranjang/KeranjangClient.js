@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShoppingCart, Tag, ChevronLeft, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
+import Image from "next/image";
 import styles from "./Keranjang.module.css";
 
 const formatPrice = (price) =>
@@ -175,7 +176,7 @@ export default function KeranjangClient({ storeWaNumber }) {
                     const isPromo = item.product.isPromo && item.product.promoPrice;
                     return (
                       <div key={item.id} className={styles.itemCard}>
-                        <img src={item.product.image} alt={item.product.name} className={styles.itemImg} />
+                        <Image src={item.product.image || "/images/placeholder.png"} alt={item.product.name} className={styles.itemImg} width={80} height={80} style={{ objectFit: 'cover' }} />
                         <div className={styles.itemInfo}>
                           <h3 className={styles.itemName}>{item.product.name}</h3>
                           {item.variants && item.variants.length > 0 && (
@@ -270,7 +271,7 @@ export default function KeranjangClient({ storeWaNumber }) {
                   {promoProducts.map(product => (
                     <div key={product.id} className={styles.promoCard}>
                       <div className={styles.promoImgWrap}>
-                        <img src={product.image} alt={product.name} className={styles.promoImg} />
+                        <Image src={product.image || "/images/placeholder.png"} alt={product.name} className={styles.promoImg} width={120} height={120} style={{ objectFit: 'cover' }} />
                         <div className={styles.promoBadge}><Tag size={12} /> PROMO</div>
                       </div>
                       <div className={styles.promoCardBody}>
