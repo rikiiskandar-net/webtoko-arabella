@@ -151,28 +151,40 @@ export default function UserNav() {
         ) : (
           <div className={styles.avatarInitials}>{getInitials(user.name)}</div>
         )}
-        <span className={styles.userName}>{user.name.split(" ")[0]}</span>
-        <span className={styles.chevron}>{dropdownOpen ? "▲" : "▼"}</span>
       </button>
 
       {dropdownOpen && (
         <div className={styles.dropdown}>
           <div className={styles.dropdownHeader}>
-            <strong>{user.name}</strong>
-            <span>{user.email}</span>
-          </div>
-          <Link href="/profil" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
-            👤 Profil Saya
-          </Link>
-          <Link href="/keranjang" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <ShoppingCart size={16} /> Keranjang Belanja
+            <div className={styles.dropdownUserInfo}>
+              <strong className={styles.dropdownName}>{user.name}</strong>
+              <span className={styles.dropdownEmail}>{user.email}</span>
             </div>
-            {dbCartCount > 0 && <span className={styles.itemBadge}>{dbCartCount}</span>}
-          </Link>
-          <button className={styles.dropdownLogout} onClick={handleLogout}>
-            🚪 Keluar
-          </button>
+          </div>
+          
+          <div className={styles.dropdownBody}>
+            <Link href="/profil" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+              <div className={styles.dropdownIconWrap}>
+                <User size={16} className={styles.dropdownIcon} />
+              </div>
+              <span className={styles.dropdownItemText}>Profil Saya</span>
+            </Link>
+            
+            <Link href="/keranjang" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+              <div className={styles.dropdownIconWrap}>
+                <ShoppingCart size={16} className={styles.dropdownIcon} />
+              </div>
+              <span className={styles.dropdownItemText}>Keranjang Belanja</span>
+              {dbCartCount > 0 && <span className={styles.itemBadge}>{dbCartCount}</span>}
+            </Link>
+          </div>
+          
+          <div className={styles.dropdownFooter}>
+            <button className={styles.dropdownLogout} onClick={handleLogout}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.dropdownIcon}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              Keluar
+            </button>
+          </div>
         </div>
       )}
     </div>
