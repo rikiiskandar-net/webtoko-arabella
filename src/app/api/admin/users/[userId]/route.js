@@ -3,14 +3,14 @@ import prisma from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 
-function getSession(request) {
+async function await getSession(request) {
   const token = request.cookies.get("auth_token")?.value;
   if (!token) return null;
-  return verifyToken(token);
+  return await verifyToken(token);
 }
 
 export async function PATCH(request, { params }) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
@@ -43,7 +43,7 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {

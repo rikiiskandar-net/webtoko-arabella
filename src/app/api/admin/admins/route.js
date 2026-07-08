@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { verifyToken, hashPassword } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-function getSession(request) {
+async function await getSession(request) {
   const token = request.cookies.get("auth_token")?.value;
   if (!token) return null;
-  return verifyToken(token);
+  return await verifyToken(token);
 }
 
 function isSuperAdmin(session) {
@@ -13,7 +13,7 @@ function isSuperAdmin(session) {
 }
 
 export async function GET(request) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!isSuperAdmin(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
@@ -27,7 +27,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!isSuperAdmin(session)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }

@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-function getSession(request) {
+async function await getSession(request) {
   const token = request.cookies.get("auth_token")?.value;
   if (!token) return null;
-  return verifyToken(token);
+  return await verifyToken(token);
 }
 
 export async function GET(request) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -26,7 +26,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

@@ -1,37 +1,25 @@
-// Import dinamis next/headers untuk menghindari bug InvariantError Next.js
-import { createHmac } from "crypto";
+import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 
 const COOKIE_NAME = "auth_token";
-const TOKEN_TTL = 60 * 60 * 24; // 24 jam
+const TOKEN_TTL = "24h"; // 24 jam
 
 function getSecret() {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret) throw new Error("AUTH_SECRET environment variable is required");
-  return secret;
+  const secret = process.env.AUTH_SECRET || "arabella-admin-secret-2025-secure";
+  return new TextEncoder().encode(secret);
 }
 
-function signHmac(data) {
-  return createHmac("sha256", getSecret()).update(data).digest("hex");
+export async function signToken(payload) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime(TOKEN_TTL)
+    .sign(getSecret());
 }
 
-export function signToken(payload) {
-  const now = Math.floor(Date.now() / 1000);
-  const fullPayload = { ...payload, iat: now, exp: now + TOKEN_TTL };
-  const data = JSON.stringify(fullPayload);
-  const base64 = Buffer.from(data).toString("base64");
-  return `${base64}.${signHmac(base64)}`;
-}
-
-export function verifyToken(token) {
+export async function verifyToken(token) {
   try {
-    const [base64, hmac] = token.split(".");
-    if (!base64 || !hmac) return null;
-    if (hmac !== signHmac(base64)) return null;
-    const payload = JSON.parse(Buffer.from(base64, "base64").toString());
-    const now = Math.floor(Date.now() / 1000);
-    if (payload.exp && payload.exp < now) return null;
+    const { payload } = await jwtVerify(token, getSecret());
     return payload;
   } catch {
     return null;
@@ -41,13 +29,13 @@ export function verifyToken(token) {
 export async function setAuthCookie(payload) {
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
-  const token = signToken(payload);
+  const token = await signToken(payload);
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: TOKEN_TTL,
+    maxAge: 60 * 60 * 24, // 24 hours in seconds
   });
 }
 
@@ -62,7 +50,7 @@ export async function getAuthSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
-  return verifyToken(token);
+  return await verifyToken(token);
 }
 
 export async function hashPassword(password) {

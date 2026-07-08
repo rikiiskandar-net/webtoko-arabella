@@ -2,15 +2,15 @@ import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-function getSession(request) {
+async function await getSession(request) {
   const token = request.cookies.get("auth_token")?.value;
   if (!token) return null;
-  return verifyToken(token);
+  return await verifyToken(token);
 }
 
 // PUT /api/categories/[id]
 export async function PUT(request, { params }) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -36,7 +36,7 @@ export async function PUT(request, { params }) {
 
 // DELETE /api/categories/[id]
 export async function DELETE(request, { params }) {
-  const session = getSession(request);
+  const session = await getSession(request);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 
 export async function GET(request) {
   const token = request.cookies.get("auth_token")?.value;
-  if (!token || !verifyToken(token)) {
+  if (!token || !(await verifyToken(token))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -21,7 +21,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   const token = request.cookies.get("auth_token")?.value;
-  if (!token || !verifyToken(token)) {
+  if (!token || !(await verifyToken(token))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

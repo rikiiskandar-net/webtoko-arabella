@@ -6,7 +6,7 @@ export async function GET(request) {
   if (!token) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
-  const session = verifyToken(token);
+  const session = await verifyToken(token);
   if (!session) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
