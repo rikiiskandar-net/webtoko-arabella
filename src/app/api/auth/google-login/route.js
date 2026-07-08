@@ -48,7 +48,7 @@ export async function POST(request) {
     }
 
     // Buat JWT token kustom kita sendiri (seamless authentication)
-    const token = signToken({
+    const token = await signToken({
       id: admin.id,
       username: admin.username,
       name: payload.name || admin.name,
