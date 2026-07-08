@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { verifyToken } from "@/lib/auth";
+import { verifyUserToken } from "@/lib/userAuth";
 
 const RATE_LIMIT = 5; // 5 pesanan
 const RATE_WINDOW = 15 * 60 * 1000; // per 15 menit
@@ -44,7 +44,7 @@ export async function POST(request) {
     const token = request.cookies.get("user_token")?.value;
     if (token) {
       try {
-        const payload = await verifyToken(token);
+        const payload = await verifyUserToken(token);
         if (payload) {
           const user = await prisma.user.findUnique({ where: { id: payload.id } });
           if (user) {
@@ -119,14 +119,14 @@ export async function POST(request) {
 
     const order = await prisma.order.create({
       data: {
-        customerName,
-        customerPhone: customerPhone || "",
-        address,
+        customerName: finalCustomerName,
+        customerPhone: finalPhone || "",
+        address: finalAddress,
         notes: notes || "",
         items: validatedItems, // Simpan item yang sudah divalidasi server
         totalPrice: calculatedTotal, // Simpan total hasil hitungan server
         status: "pending",
-        userId: userId || null, // Hubungkan ke user jika ada
+        userId: finalUserId || null, // Hubungkan ke user jika ada
       },
     });
 
