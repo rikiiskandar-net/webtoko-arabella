@@ -21,6 +21,14 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
   
+  const promoProducts = initialProducts.filter(p => p.isPromo);
+  const bestsellerProducts = initialProducts.slice(0, 4);
+  const newProducts = initialProducts.slice(-4).reverse();
+  
+  const [activeRekomendasiTab, setActiveRekomendasiTab] = useState(
+    promoProducts.length > 0 ? "promo" : (bestsellerProducts.length > 0 ? "terlaris" : "terbaru")
+  );
+  
   // Toast State
   const [toastMessage, setToastMessage] = useState("");
   const [isToastVisible, setIsToastVisible] = useState(false);
@@ -119,23 +127,18 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
 
   const isDefaultView = searchQuery === "" && activeCategory === "Semua";
 
-  // Sections (Bisa disesuaikan dengan field di database nanti, misal isPromo)
-  const promoProducts = initialProducts.filter(p => p.isPromo);
-  // Untuk Bestseller & Baru, sementara kita ambil beberapa produk pertama atau terakhir
-  const bestsellerProducts = initialProducts.slice(0, 4);
-  const newProducts = initialProducts.slice(-4).reverse();
-
-  const renderProductGrid = (items, isSmall = false) => (
-    <div className={isSmall ? styles.smallProductGrid : styles.productGrid}>
+  const renderProductGrid = (items, isSmall = false, isCarousel = false) => (
+    <div className={isCarousel ? styles.rekomendasiCarousel : (isSmall ? styles.smallProductGrid : styles.productGrid)}>
       {items.map(product => (
-        <ProductCard 
-          key={product.id} 
-          product={product} 
-          cartQuantity={0}
-          onUpdateQuantity={handleUpdateQuantity}
-          onBuyNow={handleBuyNow}
-          isSmall={isSmall}
-        />
+        <div key={product.id}>
+          <ProductCard 
+            product={product} 
+            cartQuantity={0}
+            onUpdateQuantity={handleUpdateQuantity}
+            onBuyNow={handleBuyNow}
+            isSmall={isSmall}
+          />
+        </div>
       ))}
     </div>
   );
@@ -207,36 +210,47 @@ export default function StorefrontClient({ initialProducts = [], initialCategori
             </section>
             
             {initialProducts.length > 0 && <div className={styles.divider}></div>}
-            {initialProducts.length > 0 && <h2 className={styles.subHeading}>Rekomendasi Pilihan</h2>}
             
-            {promoProducts.length > 0 && (
-              <section id="promo-section" className={styles.smallSection}>
-                <h3 className={styles.smallSectionTitle}>
-                  <Flame size={20} strokeWidth={2} color="#DC2626" style={{ marginRight: '6px', verticalAlign: 'text-bottom' }} />
-                  Sedang Promo
-                </h3>
-                {renderProductGrid(promoProducts, true)}
-              </section>
-            )}
-            
-            {bestsellerProducts.length > 0 && (
-              <section className={styles.smallSection}>
-                <h3 className={styles.smallSectionTitle}>
-                  <Star size={20} strokeWidth={2} color="var(--accent)" fill="var(--accent)" style={{ marginRight: '6px', verticalAlign: 'text-bottom' }} />
-                  Terlaris
-                </h3>
-                {renderProductGrid(bestsellerProducts, true)}
-              </section>
-            )}
-            
-            {newProducts.length > 0 && (
-              <section className={styles.smallSection}>
-                <h3 className={styles.smallSectionTitle}>
-                  <Sparkles size={20} strokeWidth={2} color="var(--primary)" style={{ marginRight: '6px', verticalAlign: 'text-bottom' }} />
-                  Produk Terbaru
-                </h3>
-                {renderProductGrid(newProducts, true)}
-              </section>
+            {(promoProducts.length > 0 || bestsellerProducts.length > 0 || newProducts.length > 0) && (
+              <div className={styles.rekomendasiWrapper}>
+                <h2 className={styles.subHeading} style={{ marginBottom: '1rem' }}>Rekomendasi Pilihan</h2>
+                
+                <div className={`${styles.rekomendasiTabs} hide-scrollbar`}>
+                  {promoProducts.length > 0 && (
+                    <button 
+                      className={`${styles.rekomTab} ${activeRekomendasiTab === 'promo' ? styles.rekomTabActive : ''}`}
+                      onClick={() => setActiveRekomendasiTab('promo')}
+                    >
+                      <Flame size={16} strokeWidth={2.5} color={activeRekomendasiTab === 'promo' ? "#FFF" : "#DC2626"} />
+                      Sedang Promo
+                    </button>
+                  )}
+                  {bestsellerProducts.length > 0 && (
+                    <button 
+                      className={`${styles.rekomTab} ${activeRekomendasiTab === 'terlaris' ? styles.rekomTabActive : ''}`}
+                      onClick={() => setActiveRekomendasiTab('terlaris')}
+                    >
+                      <Star size={16} strokeWidth={2.5} color={activeRekomendasiTab === 'terlaris' ? "#FFF" : "var(--accent)"} fill={activeRekomendasiTab === 'terlaris' ? "#FFF" : "var(--accent)"} />
+                      Terlaris
+                    </button>
+                  )}
+                  {newProducts.length > 0 && (
+                    <button 
+                      className={`${styles.rekomTab} ${activeRekomendasiTab === 'terbaru' ? styles.rekomTabActive : ''}`}
+                      onClick={() => setActiveRekomendasiTab('terbaru')}
+                    >
+                      <Sparkles size={16} strokeWidth={2.5} color={activeRekomendasiTab === 'terbaru' ? "#FFF" : "var(--primary)"} />
+                      Terbaru
+                    </button>
+                  )}
+                </div>
+
+                <div className="rekomendasiContent">
+                  {activeRekomendasiTab === 'promo' && promoProducts.length > 0 && renderProductGrid(promoProducts, true, true)}
+                  {activeRekomendasiTab === 'terlaris' && bestsellerProducts.length > 0 && renderProductGrid(bestsellerProducts, true, true)}
+                  {activeRekomendasiTab === 'terbaru' && newProducts.length > 0 && renderProductGrid(newProducts, true, true)}
+                </div>
+              </div>
             )}
             
             <AboutUs config={storeConfig} />
