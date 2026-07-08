@@ -1,13 +1,24 @@
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { Pool } = require('pg');
+const { PrismaPg } = require('@prisma/adapter-pg');
+require('dotenv').config();
 
-async function checkOrders() {
-  const count = await prisma.order.count();
-  console.log('Total Orders in DB:', count);
-  if (count > 0) {
-    const orders = await prisma.order.findMany();
-    console.log(orders);
-  }
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({ 
+  connectionString,
+  ssl: { rejectUnauthorized: false }
+});
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
+
+async function check() {
+  const dbSizeResult = await prisma.$queryRawUnsafe(`
+      SELECT pg_database_size(current_database()) as size_bytes;
+    `);
+  console.log("Result:", dbSizeResult);
+  console.log("size_bytes:", dbSizeResult[0].size_bytes);
+  console.log("type:", typeof dbSizeResult[0].size_bytes);
 }
 
-checkOrders().catch(console.error).finally(() => prisma.$disconnect());
+check().catch(console.error).finally(() => { prisma.$disconnect(); pool.end(); });
