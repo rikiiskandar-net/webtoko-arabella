@@ -134,7 +134,13 @@ export default function ProfilClient() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <Link href="/" className={styles.backLink}><ChevronLeft size={16} /> Kembali ke Toko</Link>
+        <div className={styles.topNav}>
+          <Link href="/" className={styles.backBtn}>
+            <ChevronLeft size={24} />
+          </Link>
+          <h1 className={styles.pageTitle}>Profil Saya</h1>
+          <div style={{ width: 24 }}></div>
+        </div>
 
         <div className={styles.layout}>
           {/* ===== SIDEBAR ===== */}
@@ -177,6 +183,24 @@ export default function ProfilClient() {
               </button>
             </nav>
           </aside>
+
+          {/* ===== MOBILE HEADER (NEW) ===== */}
+          <div className={styles.mobileProfileHeader}>
+            <div className={styles.mobileAvatarWrap} onClick={() => fileInputRef.current?.click()}>
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Avatar" className={styles.mobileAvatarImg} />
+              ) : (
+                <div className={styles.mobileAvatarInitials}>{getInitials(user?.name)}</div>
+              )}
+              <div className={styles.avatarOverlayMobile}>
+                {uploadingAvatar ? <Loader2 size={12} className={styles.spin} /> : <Camera size={12} />}
+              </div>
+            </div>
+            <div className={styles.mobileUserInfo}>
+              <h2 className={styles.mobileUserName}>{user?.name}</h2>
+              <p className={styles.mobileUserEmail}>{user?.email}</p>
+            </div>
+          </div>
 
           {/* ===== Mobile Tab Bar ===== */}
           <div className={styles.mobileTabBar}>
