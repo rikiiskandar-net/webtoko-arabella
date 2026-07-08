@@ -5,7 +5,7 @@ const USER_JWT_SECRET = new TextEncoder().encode(
   process.env.USER_JWT_SECRET || "user-secret-key-arabella-2025-secure"
 );
 
-const COOKIE_NAME = "user_token";
+export const USER_COOKIE_NAME = "user_token";
 const EXPIRES_IN = "7d"; // Token berlaku 7 hari
 
 export async function signUserToken(payload) {
@@ -25,7 +25,7 @@ export async function verifyUserToken(token) {
 }
 
 export async function getUserFromRequest(request) {
-  const token = request.cookies.get(COOKIE_NAME)?.value;
+  const token = request.cookies.get(USER_COOKIE_NAME)?.value;
   if (!token) return null;
   
   const payload = await verifyUserToken(token);
