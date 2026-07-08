@@ -32,7 +32,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { customerName, customerPhone, address, notes, items } = body;
+    const { customerName, customerPhone, address, notes, items, userId } = body;
 
     if (!customerName || !address || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "Nama, alamat, dan keranjang belanja wajib diisi dengan benar" }, { status: 400 });
@@ -56,7 +56,14 @@ export async function POST(request) {
       
       const dbProduct = dbProducts.find(p => p.id === item.id);
       if (dbProduct) {
-        const activePrice = dbProduct.price;
+        // Gunakan promoPrice jika ada
+        const basePrice = dbProduct.isPromo && dbProduct.promoPrice ? dbProduct.promoPrice : dbProduct.price;
+        
+        // Kalkulasi harga varian
+        const variants = item.variants || [];
+        const extraPrice = variants.reduce((sum, v) => sum + (v.priceMod || 0), 0);
+        
+        const activePrice = basePrice + extraPrice;
         const lineTotal = activePrice * item.qty;
         
         subtotal += lineTotal;
@@ -68,7 +75,8 @@ export async function POST(request) {
           id: dbProduct.id,
           name: dbProduct.name,
           qty: item.qty,
-          price: activePrice
+          price: activePrice,
+          variants: variants
         });
       }
     }
@@ -90,6 +98,7 @@ export async function POST(request) {
         items: validatedItems, // Simpan item yang sudah divalidasi server
         totalPrice: calculatedTotal, // Simpan total hasil hitungan server
         status: "pending",
+        userId: userId || null, // Hubungkan ke user jika ada
       },
     });
 

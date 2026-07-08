@@ -4,13 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { User, Pencil, Lock, ShoppingCart, LogOut, Camera, Loader2, ChevronLeft, Eye, EyeOff, ShieldCheck, MapPin, Phone, Mail, CalendarDays } from "lucide-react";
+import { User, Pencil, Lock, ShoppingCart, LogOut, Camera, Loader2, ChevronLeft, Eye, EyeOff, ShieldCheck, MapPin, Phone, Mail, CalendarDays, Package, Clock, CheckCircle2, XCircle, FileText } from "lucide-react";
 import styles from "./Profil.module.css";
 
 const TABS = [
   { id: "info", label: "Info Akun", icon: User },
   { id: "edit", label: "Edit Profil", icon: Pencil },
   { id: "password", label: "Ganti Password", icon: Lock },
+  { id: "orders", label: "Riwayat Pesanan", icon: Package },
   { id: "cart", label: "Keranjang", icon: ShoppingCart, href: "/keranjang" },
 ];
 
@@ -33,6 +34,10 @@ export default function ProfilClient() {
   const [pwMessage, setPwMessage] = useState({ type: "", text: "" });
   const [showCurrentPw, setShowCurrentPw] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
+
+  // Orders state
+  const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   useEffect(() => {
     fetch("/api/user/profile")
@@ -117,9 +122,30 @@ export default function ProfilClient() {
     return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   };
 
+  const fetchOrders = async () => {
+    setLoadingOrders(true);
+    try {
+      const res = await fetch("/api/user/orders");
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
   const handleTabClick = (tab) => {
-    if (tab.href) { router.push(tab.href); return; }
-    setActiveTab(tab.id);
+    if (tab.href) {
+      router.push(tab.href);
+    } else {
+      setActiveTab(tab.id);
+      if (tab.id === "orders") {
+        fetchOrders();
+      }
+    }
     setMessage({ type: "", text: "" });
     setPwMessage({ type: "", text: "" });
   };
@@ -359,6 +385,106 @@ export default function ProfilClient() {
                 </form>
               </div>
             )}
+
+            {/* ---- ORDERS TAB ---- */}
+            {activeTab === "orders" && (
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <h2 className={styles.cardTitle}>Riwayat Pesanan</h2>
+                  <p className={styles.cardSubtitle}>Lacak pesanan terbaru dan riwayat belanja Anda</p>
+                </div>
+                
+                <div className={styles.cardBody}>
+                  {loadingOrders ? (
+                    <div className={styles.loadingState}>
+                      <Loader2 className={styles.spin} size={24} />
+                      <p>Memuat pesanan...</p>
+                    </div>
+                  ) : orders.length === 0 ? (
+                    <div className={styles.emptyState}>
+                      <div className={styles.emptyIconWrap}>
+                        <Package size={48} className={styles.emptyIcon} />
+                      </div>
+                      <h3 className={styles.emptyTitle}>Belum Ada Pesanan</h3>
+                      <p className={styles.emptyText}>Anda belum pernah melakukan pesanan. Yuk belanja sekarang!</p>
+                      <Link href="/" className={styles.btnPrimary}>Mulai Belanja</Link>
+                    </div>
+                  ) : (
+                    <div className={styles.ordersList}>
+                      {orders.map(order => {
+                        // Format date
+                        const orderDate = new Date(order.createdAt).toLocaleDateString('id-ID', {
+                          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+                        
+                        // Parse status
+                        let StatusIcon = Clock;
+                        let statusText = "Menunggu Proses";
+                        let statusClass = styles.statusPending;
+                        
+                        if (order.status === 'confirmed' || order.status === 'preparing') {
+                          StatusIcon = Loader2;
+                          statusText = "Sedang Diproses";
+                          statusClass = styles.statusProcessing;
+                        } else if (order.status === 'ready' || order.status === 'completed') {
+                          StatusIcon = CheckCircle2;
+                          statusText = "Selesai";
+                          statusClass = styles.statusCompleted;
+                        } else if (order.status === 'cancelled') {
+                          StatusIcon = XCircle;
+                          statusText = "Dibatalkan";
+                          statusClass = styles.statusCancelled;
+                        }
+
+                        // Get first item for preview
+                        const items = Array.isArray(order.items) ? order.items : [];
+                        const firstItem = items[0];
+                        const moreItemsCount = items.length - 1;
+                        
+                        return (
+                          <div key={order.id} className={styles.orderCard}>
+                            <div className={styles.orderHeader}>
+                              <div className={styles.orderMeta}>
+                                <span className={styles.orderId}><FileText size={14} /> #{order.id.split('-')[0].toUpperCase()}</span>
+                                <span className={styles.orderDate}>{orderDate}</span>
+                              </div>
+                              <div className={`${styles.orderStatusBadge} ${statusClass}`}>
+                                <StatusIcon size={14} className={order.status === 'confirmed' || order.status === 'preparing' ? styles.spin : ''} />
+                                {statusText}
+                              </div>
+                            </div>
+                            
+                            <div className={styles.orderBody}>
+                              {firstItem && (
+                                <div className={styles.orderItemPreview}>
+                                  <div className={styles.orderItemDetails}>
+                                    <span className={styles.orderItemQty}>{firstItem.qty}x</span>
+                                    <span className={styles.orderItemName}>{firstItem.name}</span>
+                                  </div>
+                                  {moreItemsCount > 0 && (
+                                    <div className={styles.orderMoreItems}>
+                                      + {moreItemsCount} item lainnya
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              
+                              <div className={styles.orderTotal}>
+                                <span>Total Belanja</span>
+                                <span className={styles.orderTotalAmount}>
+                                  Rp {order.totalPrice.toLocaleString('id-ID')}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
           </main>
         </div>
       </div>

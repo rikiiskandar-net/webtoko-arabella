@@ -19,6 +19,7 @@ export default function KeranjangClient({ storeWaNumber }) {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState({});
   const [addingToCart, setAddingToCart] = useState({});
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   useEffect(() => {
     // Load keranjang, profil user, dan promo sekaligus
@@ -111,7 +112,47 @@ export default function KeranjangClient({ storeWaNumber }) {
   const totalPrice = items.reduce((acc, item) => acc + getItemPrice(item) * item.quantity, 0);
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleCheckoutWA = () => {
+  const handleCheckoutWA = async () => {
+    setIsCheckingOut(true);
+    let orderId = null;
+
+    try {
+      // 1. Simpan ke Database Pesanan
+      const customerName = user?.name || "Pelanggan Baru (Guest)";
+      const customerPhone = user?.phone || "";
+      const address = user?.address || "Detail via WhatsApp";
+      
+      const payload = {
+        customerName,
+        customerPhone,
+        address,
+        userId: user?.id || null,
+        items: items.map(i => ({
+          id: i.productId,
+          qty: i.quantity,
+          variants: i.variants
+        }))
+      };
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        orderId = data.orderId;
+      } else {
+        console.error("Gagal menyimpan pesanan ke database");
+      }
+    } catch (err) {
+      console.error("Error saving order:", err);
+    } finally {
+      setIsCheckingOut(false);
+    }
+
+    // 2. Format Pesan WhatsApp
     let message = `Halo Dapur Arabella! 👋\n\nSaya ingin memesan:\n\n`;
     items.forEach(item => {
       const price = getItemPrice(item);
@@ -119,9 +160,15 @@ export default function KeranjangClient({ storeWaNumber }) {
       message += `• ${item.quantity}x ${item.product.name}${varText} — ${formatPrice(price * item.quantity)}\n`;
     });
     message += `\n*Total: ${formatPrice(totalPrice)}*\n\n`;
+    
     if (user?.name) message += `Nama: ${user.name}\n`;
     if (user?.address) message += `Alamat: ${user.address}\n`;
     if (user?.phone) message += `No. HP: ${user.phone}\n`;
+    
+    if (orderId) {
+      message += `\nRef: #${orderId.split('-')[0].toUpperCase()}\n`;
+    }
+    
     message += `\nMohon info untuk pembayaran dan pengiriman. Terima kasih! 🙏`;
 
     const encoded = encodeURIComponent(message);
@@ -245,8 +292,8 @@ export default function KeranjangClient({ storeWaNumber }) {
                   <span className={styles.summaryTotalAmount}>{formatPrice(totalPrice)}</span>
                 </div>
                 
-                <button className={styles.btnCheckoutWa} onClick={handleCheckoutWA}>
-                  <span className={styles.waIcon}>📱</span> Beli via WhatsApp
+                <button className={styles.btnCheckoutWa} onClick={handleCheckoutWA} disabled={isCheckingOut}>
+                  <span className={styles.waIcon}>📱</span> {isCheckingOut ? "Memproses..." : "Beli via WhatsApp"}
                 </button>
                 
                 {!user?.address && (
