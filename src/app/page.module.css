@@ -91,13 +91,20 @@
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
+  font-size: 1.25rem; /* Reduced from 1.5rem */
   font-weight: 800;
   color: var(--foreground);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .sectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 }
 
 .productGrid {
@@ -122,11 +129,18 @@
 }
 
 .subHeading {
-  font-size: 1.8rem;
+  font-size: 1.4rem; /* Reduced from 1.8rem */
   font-weight: 800;
   color: var(--foreground);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem; /* Reduced from 2rem */
   text-align: center;
+}
+
+@media (min-width: 768px) {
+  .subHeading {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
 }
 
 .smallSection {

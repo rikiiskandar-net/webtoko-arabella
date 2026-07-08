@@ -6,7 +6,7 @@
   margin-top: 1rem;
   box-shadow: var(--shadow-xl);
   display: flex;
-  min-height: 260px;
+  min-height: 210px; /* Reduced from 260px */
   background-color: #1e3a8a; /* fallback */
 }
 
@@ -95,10 +95,10 @@
 
 .title {
   color: white;
-  font-size: 1.6rem;
+  font-size: 1.3rem; /* Reduced from 1.6rem */
   font-weight: 800;
   line-height: 1.2;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
@@ -110,9 +110,9 @@
 
 .subtitle {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
+  font-size: 0.8rem; /* Reduced from 0.9rem */
+  line-height: 1.4;
+  margin-bottom: 1.25rem;
   max-width: 400px;
 }
 
@@ -126,9 +126,9 @@
   background-color: var(--accent);
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem;
+  padding: 0.6rem 1.25rem; /* Reduced from 0.8rem 1.5rem */
   border-radius: var(--radius-pill);
-  font-size: 0.9rem;
+  font-size: 0.8rem; /* Reduced from 0.9rem */
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
