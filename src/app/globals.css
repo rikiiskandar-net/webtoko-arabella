@@ -58,11 +58,23 @@ html, body {
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
+  
+  /* App-Ready CSS */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Allow text selection in inputs and textareas */
+input, textarea {
+  user-select: auto;
+  -webkit-user-select: auto;
 }
 
 * { box-sizing: border-box; padding: 0; margin: 0; }
 a { color: inherit; text-decoration: none; }
-button { font-family: inherit; border: none; cursor: pointer; }
+button { font-family: inherit; border: none; cursor: pointer; user-select: none; }
 
 /* Custom Scrollbar for hiding horizontal scroll but allowing it */
 .hide-scrollbar::-webkit-scrollbar {
