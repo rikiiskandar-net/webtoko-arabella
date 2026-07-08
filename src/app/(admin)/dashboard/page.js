@@ -60,7 +60,12 @@ export default async function DashboardPage() {
             <div className={styles.heroValue}>{totalViews} <span style={{fontSize: '1rem', fontWeight: '400'}}>Pengunjung</span></div>
           </div>
           <div className={styles.heroChart}>
-            <AreaChart data={viewChartData} categories={viewChartCategories} height={180} color="#FFFFFF" />
+            <AreaChart 
+              data={viewChartData}
+              categories={viewChartCategories}
+              height={180} 
+              color="#FFFFFF" 
+            />
           </div>
         </div>
 
@@ -154,7 +159,10 @@ export default async function DashboardPage() {
             {browserStats.length === 0 ? (
               <p className={styles.noData}>Belum ada data kunjungan.</p>
             ) : (
-              <DonutChart data={browserChartSeries} labels={browserChartLabels} />
+              <DonutChart 
+                data={browserChartSeries} 
+                labels={browserChartLabels} 
+              />
             )}
           </div>
         </div>
