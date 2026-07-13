@@ -150,42 +150,83 @@
 }
 
 @media (max-width: 640px) {
+  .page {
+    padding: 1rem 0.75rem 2rem;
+  }
+  .backLink {
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .heroIcon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.75rem;
+  }
+  .heroIcon svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .content {
+    gap: 1.25rem;
+  }
+  .section {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  .sectionTitle {
+    font-size: 1.05rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+  .text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
   .visiGrid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
-  
-  .title {
-    font-size: 1.5rem;
+  .visiCard {
+    padding: 0;
   }
-  
-  .subtitle {
-    font-size: 0.95rem;
+  .visiLabel {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
   }
-  
-  .heroIcon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 1rem;
+  .valuesGrid {
+    gap: 0.75rem;
   }
-  
-  .content {
-    gap: 1.5rem;
-  }
-  
-  .section {
-    padding: 1.25rem;
-  }
-  
-  .sectionTitle {
-    font-size: 1.15rem;
-  }
-  
   .valueCard {
-    padding: 1.25rem;
+    padding: 1rem;
+    border-radius: 12px;
   }
-  
   .valueIcon {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+  }
+  .valueIcon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .valueTitle {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+  .valueText {
+    font-size: 0.75rem;
+    line-height: 1.4;
   }
 }
