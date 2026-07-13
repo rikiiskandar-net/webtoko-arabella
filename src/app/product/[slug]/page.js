@@ -31,27 +31,18 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${product.name} - Dapur Arabella`,
       description: product.description.replace(/<[^>]*>?/gm, '').substring(0, 150),
-      url: `${baseUrl}/product/${product.slug}`,
+      url: `/product/${product.slug}`,
       siteName: 'Dapur Arabella',
       locale: 'id_ID',
       type: 'website',
-      images: [
-        {
-          url: product.image,
-          width: 800,
-          height: 800,
-          alt: product.name,
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${product.name} - Dapur Arabella`,
       description: product.description.replace(/<[^>]*>?/gm, '').substring(0, 150),
-      images: [product.image],
     },
     alternates: {
-      canonical: `${baseUrl}/product/${product.slug}`,
+      canonical: `/product/${product.slug}`,
     },
   };
 }
