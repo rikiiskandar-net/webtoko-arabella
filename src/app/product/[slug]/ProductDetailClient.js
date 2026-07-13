@@ -140,9 +140,6 @@ export default function ProductDetailClient({ product, config }) {
 
         <div className={styles.infoSection}>
           <h1 className={styles.name}>
-            <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '4px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginRight: '8px', verticalAlign: 'middle', boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)' }}>
-              <Star size={14} fill="white" color="white" />
-            </span>
             {product.name}
           </h1>
 
@@ -170,26 +167,31 @@ export default function ProductDetailClient({ product, config }) {
           {product.variants && product.variants.length > 0 && (
             <div style={{ marginTop: '24px', marginBottom: '24px' }}>
               {product.variants.map((v, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-                  <div style={{ width: '100px', color: '#64748B', fontSize: '0.875rem', fontWeight: 500 }}>{v.name}</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', flex: 1 }}>
+                <div key={idx} style={{ marginBottom: '20px' }}>
+                  <div style={{ color: 'var(--foreground)', fontSize: '1rem', fontWeight: 600, marginBottom: '12px' }}>Pilih {v.name}:</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                     {v.options.map((opt, oIdx) => (
                       <button 
                         key={oIdx} 
                         onClick={() => handleVariantSelect(v.name, opt)}
                         style={{ 
-                          padding: '8px 16px', 
-                          border: selectedVariants[v.name]?.name === opt.name ? '1px solid var(--primary)' : '1px solid var(--border-color)',
-                          color: selectedVariants[v.name]?.name === opt.name ? 'var(--primary)' : 'var(--foreground)',
-                          background: selectedVariants[v.name]?.name === opt.name ? 'rgba(37, 99, 235, 0.05)' : '#fff',
-                          borderRadius: 'var(--radius-md)',
+                          padding: '10px 20px', 
+                          border: selectedVariants[v.name]?.name === opt.name ? '2px solid var(--primary)' : '1px solid #E2E8F0',
+                          color: selectedVariants[v.name]?.name === opt.name ? 'var(--primary)' : '#475569',
+                          background: selectedVariants[v.name]?.name === opt.name ? 'rgba(37, 99, 235, 0.05)' : '#F8FAFC',
+                          borderRadius: '50px',
                           cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          fontWeight: selectedVariants[v.name]?.name === opt.name ? 600 : 400,
-                          transition: 'all 0.2s ease'
+                          fontSize: '0.9rem',
+                          fontWeight: selectedVariants[v.name]?.name === opt.name ? 700 : 500,
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center'
                         }}
                       >
-                        {opt.name}
+                        <span>{opt.name}</span>
+                        {opt.priceMod > 0 && <span style={{ fontSize: '0.75rem', marginTop: '2px', opacity: 0.8 }}>+{formatPrice(opt.priceMod)}</span>}
                       </button>
                     ))}
                   </div>
@@ -198,36 +200,22 @@ export default function ProductDetailClient({ product, config }) {
             </div>
           )}
 
-          <div className={styles.actions} style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
-            <button onClick={handleAddToCart} style={{ flex: 1, padding: '12px', background: 'rgba(37, 99, 235, 0.1)', color: 'var(--primary)', border: '1px solid var(--primary)', borderRadius: 'var(--radius-md)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s ease' }}>
+          <div style={{ marginTop: '24px', marginBottom: '24px', padding: '16px', background: '#FFF7ED', borderRadius: '12px', borderLeft: '4px solid var(--accent)' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#9A3412', marginBottom: '8px' }}>Deskripsi Kelezatan</h3>
+            <div className={styles.descriptionText} dangerouslySetInnerHTML={{ __html: product.description || '' }} style={{ color: '#431407', fontSize: '0.95rem', lineHeight: '1.6' }}></div>
+          </div>
+
+          <div className={styles.stickyActions}>
+            <button onClick={handleAddToCart} className={styles.cartBtn}>
               <ShoppingCart size={20} /> Masukkan Keranjang
             </button>
             {config?.waNumber && (
-              <button onClick={handleDirectBuy} style={{ flex: 1, padding: '12px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', transition: 'all 0.2s ease' }}>
+              <button onClick={handleDirectBuy} className={styles.buyBtn}>
                 Beli Sekarang
               </button>
             )}
           </div>
         </div>
-      </div>
-
-      <div className={styles.sectionCard}>
-        <div className={styles.sectionHeader}>Spesifikasi Produk</div>
-        <div style={{ display: 'flex', marginBottom: '15px', fontSize: '0.875rem' }}>
-          <div style={{ width: '140px', color: 'rgba(0,0,0,.4)' }}>Kategori</div>
-          <div><Link href="/#menu-section" style={{ color: '#05a' }}>Jajanan & Minuman</Link></div>
-        </div>
-        <div style={{ display: 'flex', marginBottom: '15px', fontSize: '0.875rem' }}>
-          <div style={{ width: '140px', color: 'rgba(0,0,0,.4)' }}>Stok</div>
-          <div>Selalu Fresh</div>
-        </div>
-        <div style={{ display: 'flex', marginBottom: '25px', fontSize: '0.875rem' }}>
-          <div style={{ width: '140px', color: 'rgba(0,0,0,.4)' }}>Dikirim Dari</div>
-          <div>KAB. JEMBER</div>
-        </div>
-
-        <div className={styles.sectionHeader}>Deskripsi Produk</div>
-        <div className={styles.description} dangerouslySetInnerHTML={{ __html: product.description || '' }}></div>
       </div>
 
       <div className={styles.sectionCard}>
