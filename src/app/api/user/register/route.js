@@ -3,23 +3,24 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signUserToken, USER_COOKIE_NAME } from "@/lib/userAuth";
 
+import { z } from "zod";
+
+const registerSchema = z.object({
+  name: z.string().min(1, "Nama wajib diisi"),
+  email: z.string().email("Format email tidak valid"),
+  password: z.string().min(6, "Password minimal 6 karakter")
+});
+
 export async function POST(request) {
   try {
-    const { name, email, password } = await request.json();
+    const body = await request.json();
+    const result = registerSchema.safeParse(body);
 
-    // Validasi field wajib
-    if (!name || !email || !password) {
-      return NextResponse.json({ error: "Nama, email, dan password wajib diisi" }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 });
     }
 
-    if (password.length < 6) {
-      return NextResponse.json({ error: "Password minimal 6 karakter" }, { status: 400 });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Format email tidak valid" }, { status: 400 });
-    }
+    const { name, email, password } = result.data;
 
     // Cek apakah email sudah terdaftar
     const existing = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });

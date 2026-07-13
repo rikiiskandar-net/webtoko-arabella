@@ -4,13 +4,23 @@ import prisma from "@/lib/prisma";
 import rateLimit from "@/lib/rateLimit";
 
 
+import { z } from "zod";
+
+const loginSchema = z.object({
+  username: z.string().min(1, "Username wajib diisi"),
+  password: z.string().min(1, "Password wajib diisi")
+});
+
 export async function POST(request) {
   try {
-    const { username, password } = await request.json();
+    const body = await request.json();
+    const result = loginSchema.safeParse(body);
 
-    if (!username || !password) {
-      return NextResponse.json({ error: "Username dan password wajib diisi" }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 });
     }
+
+    const { username, password } = result.data;
 
     const rateLimitResult = rateLimit(request, { limit: 5, windowMs: 15 * 60 * 1000 });
     if (!rateLimitResult.success) {

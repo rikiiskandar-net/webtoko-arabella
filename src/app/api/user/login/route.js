@@ -3,13 +3,23 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signUserToken, USER_COOKIE_NAME } from "@/lib/userAuth";
 
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Format email tidak valid"),
+  password: z.string().min(1, "Password wajib diisi")
+});
+
 export async function POST(request) {
   try {
-    const { email, password } = await request.json();
+    const body = await request.json();
+    const result = loginSchema.safeParse(body);
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email dan password wajib diisi" }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 });
     }
+
+    const { email, password } = result.data;
 
     // Cari user
     const user = await prisma.user.findUnique({
