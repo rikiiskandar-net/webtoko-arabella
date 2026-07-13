@@ -16,7 +16,7 @@ export async function GET(request) {
     }
 
     const orders = await prisma.order.findMany({
-      where: { userId: payload.id },
+      where: { userId: payload.userId },
       orderBy: { createdAt: 'desc' }
     });
 

@@ -22,10 +22,12 @@ export async function uploadProductImage(file) {
     .replace(/[^a-zA-Z0-9._-]/g, '');
   const filename = `${Date.now()}-${safeName}`;
 
+  const arrayBuffer = await file.arrayBuffer();
+
   const { data, error } = await getClient()
     .storage
     .from('product-images')
-    .upload(filename, file, {
+    .upload(filename, arrayBuffer, {
       contentType: file.type,
       cacheControl: '3600',
       upsert: false,

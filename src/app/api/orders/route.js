@@ -46,7 +46,7 @@ export async function POST(request) {
       try {
         const payload = await verifyUserToken(token);
         if (payload) {
-          const user = await prisma.user.findUnique({ where: { id: payload.id } });
+          const user = await prisma.user.findUnique({ where: { id: payload.userId } });
           if (user) {
             finalCustomerName = user.name;
             finalAddress = user.address || finalAddress || "Detail via WhatsApp";
