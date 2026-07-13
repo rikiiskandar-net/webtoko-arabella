@@ -15,6 +15,7 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  serverExternalPackages: ['pg', '@prisma/adapter-pg', 'bcryptjs'],
   async headers() {
     return [
       {
