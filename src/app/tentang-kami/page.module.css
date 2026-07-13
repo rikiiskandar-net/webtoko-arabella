@@ -136,12 +136,6 @@
   gap: 1.25rem;
 }
 
-@media (max-width: 640px) {
-  .visiGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .visiCard {
   padding: 0.5rem 0;
 }
@@ -153,4 +147,45 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .visiGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .heroIcon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+  }
+  
+  .content {
+    gap: 1.5rem;
+  }
+  
+  .section {
+    padding: 1.25rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.15rem;
+  }
+  
+  .valueCard {
+    padding: 1.25rem;
+  }
+  
+  .valueIcon {
+    width: 44px;
+    height: 44px;
+  }
 }
