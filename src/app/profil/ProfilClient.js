@@ -113,8 +113,7 @@ export default function ProfilClient() {
 
   const handleLogout = async () => {
     await fetch("/api/user/logout", { method: "POST" });
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
   };
 
   const getInitials = (name) => {

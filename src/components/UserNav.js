@@ -72,9 +72,10 @@ export default function UserNav() {
   const handleLogout = async () => {
     await fetch("/api/user/logout", { method: "POST" });
     setUser(null);
+    setCartItems([]);
+    setDbCartCount(0);
     setDropdownOpen(false);
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
   };
 
   if (user === undefined) return <div className={styles.skeleton}></div>;
