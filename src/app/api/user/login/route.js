@@ -48,7 +48,7 @@ export async function POST(request) {
 
     return response;
   } catch (error) {
-    console.error("Login Error:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 });
   }
 }
