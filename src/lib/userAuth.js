@@ -48,5 +48,3 @@ export async function getUserFromRequest(request) {
 
   return payload;
 }
-
-export { COOKIE_NAME as USER_COOKIE_NAME };
