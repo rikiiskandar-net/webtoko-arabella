@@ -117,7 +117,7 @@ function AdminContent({ children, onToggleSidebar, router }) {
   const handleLogout = async (e) => {
     e.stopPropagation();
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    window.location.href = "/login";
   };
 
   return (

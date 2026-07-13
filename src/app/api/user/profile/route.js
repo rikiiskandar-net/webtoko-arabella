@@ -19,7 +19,7 @@ export async function GET(request) {
     return NextResponse.json(user);
   } catch (error) {
     console.error("Profile GET Error:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 });
   }
 }
 
@@ -75,6 +75,6 @@ export async function PATCH(request) {
     return NextResponse.json(updatedUser);
   } catch (error) {
     console.error("Profile PATCH Error:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 });
   }
 }

@@ -29,9 +29,8 @@ export default function LoginForm() {
         return;
       }
 
-      // Reload agar server component (Navbar) baca ulang cookie
-      router.push("/");
-      router.refresh();
+      // Reload agar seluruh client state ter-refresh bersih
+      window.location.href = "/";
     } catch {
       setError("Terjadi kesalahan jaringan");
     } finally {

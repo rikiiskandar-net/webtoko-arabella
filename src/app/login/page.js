@@ -38,7 +38,7 @@ function LoginForm() {
         return;
       }
 
-      router.push(searchParams.get("redirect") || "/dashboard");
+      window.location.href = searchParams.get("redirect") || "/dashboard";
     } catch {
       setError("Terjadi kesalahan. Coba lagi.");
     } finally {
@@ -60,7 +60,7 @@ function LoginForm() {
         setError(data.error || "Login Google gagal");
         return;
       }
-      router.push(searchParams.get("redirect") || "/dashboard");
+      window.location.href = searchParams.get("redirect") || "/dashboard";
     } catch {
       setError("Terjadi kesalahan komunikasi dengan server.");
     } finally {

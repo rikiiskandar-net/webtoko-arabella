@@ -34,8 +34,7 @@ export default function RegisterForm() {
         return;
       }
 
-      router.push("/profil");
-      router.refresh();
+      window.location.href = "/profil";
     } catch {
       setError("Terjadi kesalahan jaringan");
     } finally {

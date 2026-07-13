@@ -38,6 +38,6 @@ export async function POST(request) {
     return NextResponse.json({ success: true, message: "Password berhasil diubah!" });
   } catch (error) {
     console.error("Change Password Error:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 });
   }
 }
