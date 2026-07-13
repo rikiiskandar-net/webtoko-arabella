@@ -47,7 +47,15 @@ export default function UserNav() {
       })
       .catch(() => setUser(null));
 
-    const handleCartUpdate = () => fetchCart();
+    const handleCartUpdate = (e) => {
+      if (e.detail && Array.isArray(e.detail.items)) {
+        const items = e.detail.items;
+        setCartItems(items);
+        setDbCartCount(items.reduce((a, i) => a + i.quantity, 0));
+      } else {
+        fetchCart();
+      }
+    };
     window.addEventListener('cartUpdated', handleCartUpdate);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, []);

@@ -45,33 +45,46 @@ export default function KeranjangClient({ storeWaNumber }) {
   }, [router]);
 
   const updateQty = async (itemId, newQty) => {
-    if (newQty < 1) {
-      return removeItem(itemId);
-    }
+    if (newQty < 1) return removeItem(itemId);
+    
+    // Optimistic Update
+    const previousItems = [...items];
+    const newItems = items.map(item => item.id === itemId ? { ...item, quantity: newQty } : item);
+    setItems(newItems);
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: newItems } }));
     setUpdating(prev => ({ ...prev, [itemId]: true }));
+
     try {
       const res = await fetch(`/api/cart/${itemId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity: newQty }),
       });
-      if (res.ok) {
-        setItems(prev => prev.map(item => item.id === itemId ? { ...item, quantity: newQty } : item));
-        window.dispatchEvent(new Event('cartUpdated'));
-      }
+      if (!res.ok) throw new Error("Failed to update");
+    } catch {
+      // Revert on error
+      setItems(previousItems);
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: previousItems } }));
     } finally {
       setUpdating(prev => ({ ...prev, [itemId]: false }));
     }
   };
 
   const removeItem = async (itemId) => {
+    // Optimistic Update
+    const previousItems = [...items];
+    const newItems = items.filter(item => item.id !== itemId);
+    setItems(newItems);
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: newItems } }));
     setUpdating(prev => ({ ...prev, [itemId]: true }));
+
     try {
       const res = await fetch(`/api/cart?itemId=${itemId}`, { method: "DELETE" });
-      if (res.ok) {
-        setItems(prev => prev.filter(item => item.id !== itemId));
-        window.dispatchEvent(new Event('cartUpdated'));
-      }
+      if (!res.ok) throw new Error("Failed to delete");
+    } catch {
+      // Revert on error
+      setItems(previousItems);
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: previousItems } }));
     } finally {
       setUpdating(prev => ({ ...prev, [itemId]: false }));
     }
@@ -79,6 +92,17 @@ export default function KeranjangClient({ storeWaNumber }) {
 
   const addPromoToCart = async (product) => {
     setAddingToCart(prev => ({ ...prev, [product.id]: true }));
+    
+    // Optimistic Update if item already exists
+    const previousItems = [...items];
+    const existing = items.find(item => item.productId === product.id && (!item.variants || item.variants.length === 0));
+    
+    if (existing) {
+      const newItems = items.map(item => item.id === existing.id ? { ...item, quantity: item.quantity + 1 } : item);
+      setItems(newItems);
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: newItems } }));
+    }
+
     try {
       const res = await fetch("/api/cart", {
         method: "POST",
@@ -87,15 +111,18 @@ export default function KeranjangClient({ storeWaNumber }) {
       });
       if (res.ok) {
         const newItem = await res.json();
-        // Cek apakah item sudah ada di keranjang
-        setItems(prev => {
-          const existing = prev.find(item => item.productId === product.id && (!item.variants || item.variants.length === 0));
-          if (existing) {
-            return prev.map(item => item.id === existing.id ? { ...item, quantity: item.quantity + 1 } : item);
-          }
-          return [...prev, newItem];
-        });
-        window.dispatchEvent(new Event('cartUpdated'));
+        if (!existing) {
+          const newItems = [...previousItems, newItem];
+          setItems(newItems);
+          window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: newItems } }));
+        }
+      } else {
+        throw new Error("Failed");
+      }
+    } catch {
+      if (existing) {
+        setItems(previousItems);
+        window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { items: previousItems } }));
       }
     } finally {
       setAddingToCart(prev => ({ ...prev, [product.id]: false }));
@@ -178,9 +205,34 @@ export default function KeranjangClient({ storeWaNumber }) {
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <div className={styles.loadingWrapper}><div className={styles.spinner}></div></div>
-      </div>
+      <>
+        <Header 
+          searchQuery="" 
+          onSearchChange={() => {}} 
+          categories={[]} 
+          onCategoryClick={() => {}} 
+        />
+        <div className={styles.page}>
+          <div className={styles.container}>
+            <div className={styles.pageHeader} style={{ opacity: 0.5 }}>
+              <h1 className={styles.title}>Memuat Keranjang...</h1>
+              <p className={styles.subtitle}>Sedang mengambil data pesanan Anda</p>
+            </div>
+            <div className={styles.layout}>
+              <div className={styles.leftCol}>
+                <div className={styles.card} style={{ height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className={styles.spinner}></div>
+                </div>
+              </div>
+              <div className={styles.rightCol}>
+                <div className={styles.summaryCard} style={{ height: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className={styles.spinner}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 
