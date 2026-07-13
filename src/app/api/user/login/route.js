@@ -49,6 +49,9 @@ export async function POST(request) {
     return response;
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: error.message || "Terjadi kesalahan server" }, { status: 500 });
+    const errorDetails = typeof error === 'object' && error !== null 
+      ? JSON.stringify(error, Object.getOwnPropertyNames(error))
+      : String(error);
+    return NextResponse.json({ error: errorDetails }, { status: 500 });
   }
 }
