@@ -22,12 +22,12 @@
 .title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--foreground);
   margin: 0 0 0.5rem 0;
 }
 
 .subtitle {
-  color: #6B7280;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -36,10 +36,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: white;
-  border: 1px solid #D1D5DB;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  color: #374151;
+  color: var(--foreground);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -82,17 +82,17 @@
 }
 
 .panel {
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--border-color);
 }
 
 .panelTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--foreground);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -109,7 +109,7 @@
 }
 
 .dateText {
-  color: #6B7280;
+  color: var(--text-muted);
   font-size: 0.95rem;
   margin-bottom: 1.5rem;
 }
@@ -133,15 +133,17 @@
 .formGroup label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--foreground);
 }
 
 .input {
   padding: 0.75rem;
-  border: 1px solid #D1D5DB;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.95rem;
   outline: none;
+  background: var(--background);
+  color: var(--foreground);
   transition: border-color 0.2s;
 }
 
@@ -151,8 +153,8 @@
 }
 
 .summaryBox {
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background: var(--background);
+  border: 1px solid var(--border-color);
   padding: 1rem;
   border-radius: 8px;
   display: flex;
@@ -214,10 +216,10 @@
 }
 
 .statBox {
-  background: #F9FAFB;
+  background: var(--background);
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -225,7 +227,7 @@
 
 .statLabel {
   font-size: 0.85rem;
-  color: #6B7280;
+  color: var(--text-muted);
   text-transform: uppercase;
   font-weight: 600;
 }
@@ -233,7 +235,7 @@
 .statValue {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--foreground);
 }
 
 .statValueHighlight {
@@ -245,10 +247,10 @@
 .listTitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--foreground);
   margin: 0 0 1rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .tableWrapper {
@@ -263,17 +265,17 @@
 
 .table th {
   padding: 0.75rem 1rem;
-  background: #F3F4F6;
+  background: var(--background);
   font-size: 0.85rem;
-  color: #4B5563;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
 .table td {
   padding: 1rem;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid var(--border-color);
   font-size: 0.95rem;
-  color: #111827;
+  color: var(--foreground);
 }
 
 .badge {
@@ -309,7 +311,7 @@
 }
 
 .emptyText {
-  color: #6B7280;
+  color: var(--text-muted);
   text-align: center;
   padding: 2rem 0;
   font-style: italic;
@@ -383,13 +385,16 @@
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
   .container {
-    padding: 1rem 0.75rem;
+    padding: 0;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   
   .header {
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
+    margin-bottom: 1.25rem;
   }
 
   .headerActions {
@@ -404,7 +409,7 @@
 
   .panelHeaderRow {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
   .btnCloseBook {
@@ -417,15 +422,9 @@
     gap: 0.75rem;
   }
 
-  .tableWrapper {
-    margin: 0 -1.5rem;
-    padding: 0 1.5rem;
-  }
-
   .table th, .table td {
     padding: 0.75rem 0.5rem;
     font-size: 0.85rem;
-    white-space: nowrap;
   }
 
   .summaryBox {
@@ -439,6 +438,9 @@
   }
 
   .panel {
-    padding: 1.25rem;
+    padding: 1.25rem 1rem;
+    border-radius: 8px;
+    border-left: none;
+    border-right: none;
   }
 }
