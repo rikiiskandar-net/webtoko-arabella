@@ -20,22 +20,22 @@ export async function POST(req) {
 
     const totalPay = Math.round((Number(baseWage) * Number(multiplier)) + Number(extraPay));
 
-    // Check if attendance for this date already exists for this admin
-    const existing = await prisma.attendance.findUnique({
+    const attendance = await prisma.attendance.upsert({
       where: {
         adminId_date: {
           adminId: session.id,
           date: recordDate
         }
-      }
-    });
-
-    if (existing) {
-      return NextResponse.json({ error: "Anda sudah absen untuk hari ini." }, { status: 400 });
-    }
-
-    const attendance = await prisma.attendance.create({
-      data: {
+      },
+      update: {
+        status: status,
+        baseWage: Number(baseWage),
+        multiplier: Number(multiplier),
+        extraPay: Number(extraPay),
+        totalPay: totalPay,
+        notes: notes || ""
+      },
+      create: {
         payrollPeriodId: periodId,
         adminId: session.id,
         date: recordDate,

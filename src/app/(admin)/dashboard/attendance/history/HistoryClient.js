@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, ChevronDown, ChevronUp, Loader2, Wallet } from "lucide-react";
+import { ArrowLeft, CalendarDays, ChevronDown, ChevronUp, Loader2, Wallet, Trash2 } from "lucide-react";
 import styles from "../Attendance.module.css";
 
 export default function HistoryClient() {
@@ -26,6 +26,25 @@ export default function HistoryClient() {
     };
     fetchHistory();
   }, []);
+
+  const handleDeletePeriod = async (e, id) => {
+    e.stopPropagation();
+    if (!confirm("Peringatan: Anda akan menghapus seluruh riwayat absen dan gaji pada periode ini secara permanen. Lanjutkan?")) return;
+
+    try {
+      const res = await fetch(`/api/admin/attendance/period/${id}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        setPeriods(periods.filter(p => p.id !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Gagal menghapus riwayat");
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan");
+    }
+  };
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(number);
@@ -89,8 +108,18 @@ export default function HistoryClient() {
                     <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, textTransform: "uppercase" }}>Total Dibayarkan</div>
                     <div style={{ fontSize: "1.25rem", color: "#047857", fontWeight: 700 }}>{formatRupiah(period.totalAmount)}</div>
                   </div>
-                  <div style={{ color: "#9CA3AF" }}>
-                    {expandedId === period.id ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                  <div style={{ display: "flex", gap: "0.5rem", color: "#9CA3AF" }}>
+                    <button 
+                      onClick={(e) => handleDeletePeriod(e, period.id)} 
+                      className={styles.btnDeleteSm}
+                      title="Hapus Riwayat"
+                      style={{ padding: "0.5rem" }}
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      {expandedId === period.id ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+                    </div>
                   </div>
                 </div>
               </div>

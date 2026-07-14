@@ -1,0 +1,34 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getAuthSession as getAdminSession } from "@/lib/auth";
+
+export async function DELETE(req, { params }) {
+  try {
+    const session = await getAdminSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const periodId = params.id;
+
+    const period = await prisma.payrollPeriod.findUnique({
+      where: { id: periodId }
+    });
+
+    if (!period) {
+      return NextResponse.json({ error: "Buku gaji tidak ditemukan" }, { status: 404 });
+    }
+
+    if (period.adminId !== session.id) {
+      return NextResponse.json({ error: "Bukan milik Anda" }, { status: 403 });
+    }
+
+    // Cascade delete is active in schema (attendances will be deleted automatically)
+    await prisma.payrollPeriod.delete({
+      where: { id: periodId }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting history period:", error);
+    return NextResponse.json({ error: "Gagal menghapus riwayat gaji" }, { status: 500 });
+  }
+}
