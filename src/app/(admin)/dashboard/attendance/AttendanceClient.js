@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, CheckCircle2, Wallet, CalendarRange, AlertCircle, Loader2, Save } from "lucide-react";
+import { Clock, CheckCircle2, Wallet, CalendarRange, AlertCircle, Loader2, Save, Trash2, History } from "lucide-react";
+import Link from "next/link";
 import styles from "./Attendance.module.css";
 
 export default function AttendanceClient({ adminId, adminName }) {
@@ -107,6 +108,26 @@ export default function AttendanceClient({ adminId, adminName }) {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!confirm("Hapus catatan absen ini? Anda bisa mengisinya ulang nanti.")) return;
+
+    try {
+      const res = await fetch(`/api/admin/attendance/${id}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        fetchPeriod();
+        setSuccess("Data absen berhasil dihapus.");
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        const data = await res.json();
+        alert(data.error || "Gagal menghapus");
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan");
+    }
+  };
+
   const handleClosePeriod = async () => {
     if (!confirm("Tutup Buku sekarang? Sesi ini akan ditutup dan Anda bisa mulai periode baru esok hari.")) return;
     
@@ -149,9 +170,14 @@ export default function AttendanceClient({ adminId, adminName }) {
           <h1 className={styles.title}>Absensi & Gaji</h1>
           <p className={styles.subtitle}>Catat kehadiran dan kelola gaji harian Anda dengan fleksibel.</p>
         </div>
-        <button onClick={handleUpdateBaseWage} className={styles.btnOutline}>
-          <Wallet size={16} /> Standar Gaji: {formatRupiah(baseWage)}/hari
-        </button>
+        <div className={styles.headerActions}>
+          <Link href="/dashboard/attendance/history" className={styles.btnOutlineSecondary}>
+            <History size={16} /> Riwayat Gaji
+          </Link>
+          <button onClick={handleUpdateBaseWage} className={styles.btnOutline}>
+            <Wallet size={16} /> Standar Gaji: {formatRupiah(baseWage)}/hari
+          </button>
+        </div>
       </div>
 
       <div className={styles.grid}>
@@ -257,6 +283,7 @@ export default function AttendanceClient({ adminId, adminName }) {
                     <th>Gaji Pokok</th>
                     <th>Tambahan</th>
                     <th>Total</th>
+                    <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -269,6 +296,15 @@ export default function AttendanceClient({ adminId, adminName }) {
                       <td>{formatRupiah(att.baseWage * att.multiplier)}</td>
                       <td>{att.extraPay > 0 ? formatRupiah(att.extraPay) : '-'}</td>
                       <td className={styles.bold}>{formatRupiah(att.totalPay)}</td>
+                      <td>
+                        <button 
+                          onClick={() => handleDelete(att.id)}
+                          className={styles.btnDeleteSm}
+                          title="Hapus"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

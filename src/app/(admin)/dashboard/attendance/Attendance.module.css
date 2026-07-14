@@ -13,6 +13,12 @@
   gap: 1rem;
 }
 
+.headerActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 .title {
   font-size: 1.75rem;
   font-weight: 700;
@@ -42,6 +48,25 @@
 .btnOutline:hover {
   background: #F3F4F6;
   border-color: #9CA3AF;
+}
+
+.btnOutlineSecondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  color: #4B5563;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btnOutlineSecondary:hover {
+  background: #E5E7EB;
+  color: #111827;
 }
 
 .grid {
@@ -263,6 +288,24 @@
 
 .bold {
   font-weight: 700;
+}
+
+.btnDeleteSm {
+  background: transparent;
+  border: none;
+  color: #EF4444;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnDeleteSm:hover {
+  background: #FEE2E2;
+  color: #B91C1C;
 }
 
 .emptyText {
