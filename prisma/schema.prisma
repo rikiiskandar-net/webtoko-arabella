@@ -47,14 +47,17 @@ model Category {
 }
 
 model Admin {
-  id        String    @id @default(uuid())
-  username  String    @unique
-  password  String
-  name      String
-  role      AdminRole @default(admin)
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id             String          @id @default(uuid())
+  username       String          @unique
+  password       String
+  name           String
+  role           AdminRole       @default(admin)
+  isActive       Boolean         @default(true)
+  baseWage       Int             @default(120000)
+  payrollPeriods PayrollPeriod[]
+  attendances    Attendance[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model StoreConfig {
@@ -225,4 +228,41 @@ model CashEntry {
 
   @@index([date])
   @@index([type])
+}
+
+model PayrollPeriod {
+  id          String       @id @default(uuid())
+  adminId     String
+  admin       Admin        @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  startDate   DateTime
+  endDate     DateTime?
+  isClosed    Boolean      @default(false)
+  totalAmount Int          @default(0)
+  attendances Attendance[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([adminId])
+  @@index([isClosed])
+}
+
+model Attendance {
+  id              String        @id @default(uuid())
+  payrollPeriodId String
+  payrollPeriod   PayrollPeriod @relation(fields: [payrollPeriodId], references: [id], onDelete: Cascade)
+  adminId         String
+  admin           Admin         @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  date            DateTime      @db.Date
+  status          String
+  baseWage        Int           @default(120000)
+  multiplier      Float         @default(1.0)
+  extraPay        Int           @default(0)
+  totalPay        Int
+  notes           String        @default("")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([adminId, date])
+  @@index([payrollPeriodId])
+  @@index([date])
 }

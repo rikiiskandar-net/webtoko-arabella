@@ -40,6 +40,7 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
       label: "MANAJEMEN",
       items: [
         { name: "Pengguna", href: "/dashboard/users", icon: Users },
+        { name: "Absensi & Gaji", href: "/dashboard/attendance", icon: BookOpen },
         { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
         { name: "Admin", href: "/dashboard/admins", icon: Shield, superadminOnly: true },
       ]
