@@ -21,7 +21,11 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Bukan milik Anda" }, { status: 403 });
     }
 
-    // Cascade delete is active in schema (attendances will be deleted automatically)
+    // Delete attendances first to avoid foreign key constraint errors
+    await prisma.attendance.deleteMany({
+      where: { payrollPeriodId: periodId }
+    });
+
     await prisma.payrollPeriod.delete({
       where: { id: periodId }
     });
