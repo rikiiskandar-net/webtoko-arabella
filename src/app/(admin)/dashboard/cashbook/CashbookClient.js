@@ -13,6 +13,11 @@ const toLocalDateString = (d) => {
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
 };
 
+const toLocalDateTimeString = (d) => {
+  const date = new Date(d);
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}T${String(date.getHours()).padStart(2,"0")}:${String(date.getMinutes()).padStart(2,"0")}`;
+};
+
 export default function CashbookClient() {
   const [activeTab, setActiveTab] = useState("daily");
   const [entries, setEntries] = useState([]);
@@ -33,7 +38,7 @@ export default function CashbookClient() {
   const [formType, setFormType] = useState("income");
   const [formAmount, setFormAmount] = useState("");
   const [formDescription, setFormDescription] = useState("");
-  const [formDate, setFormDate] = useState(toLocalDateString(new Date()));
+  const [formDate, setFormDate] = useState(toLocalDateTimeString(new Date()));
 
   // Fetch daily entries
   useEffect(() => {
@@ -74,7 +79,8 @@ export default function CashbookClient() {
     setFormType("income");
     setFormAmount("");
     setFormDescription("");
-    setFormDate(selectedDate);
+    const now = new Date();
+    setFormDate(`${selectedDate}T${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`);
     setShowModal(true);
   };
 
@@ -83,7 +89,7 @@ export default function CashbookClient() {
     setFormType(entry.type);
     setFormAmount(String(entry.amount));
     setFormDescription(entry.description);
-    setFormDate(toLocalDateString(entry.date));
+    setFormDate(toLocalDateTimeString(entry.date));
     setShowModal(true);
   };
 
@@ -410,7 +416,7 @@ export default function CashbookClient() {
               <div className={styles.formGroup}>
                 <label className={styles.label}>Tanggal</label>
                 <input
-                  type="date"
+                  type="datetime-local"
                   className={styles.input}
                   value={formDate}
                   onChange={(e) => setFormDate(e.target.value)}
