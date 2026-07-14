@@ -14,6 +14,13 @@ export default function AttendanceClient({ adminId, adminName }) {
   const [success, setSuccess] = useState("");
 
   // Form State
+  const getLocalToday = () => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+  };
+
+  const [selectedDate, setSelectedDate] = useState(getLocalToday());
   const [status, setStatus] = useState("Kerja Normal");
   const [multiplier, setMultiplier] = useState(1);
   const [extraPay, setExtraPay] = useState(0);
@@ -82,7 +89,7 @@ export default function AttendanceClient({ adminId, adminName }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           periodId: period.id,
-          date: new Date().toISOString(),
+          date: selectedDate,
           status,
           baseWage,
           multiplier,
@@ -154,11 +161,9 @@ export default function AttendanceClient({ adminId, adminName }) {
   }
 
   // Cek apakah hari ini sudah absen
-  const todayDate = new Date();
-  todayDate.setUTCHours(0,0,0,0);
   const alreadyCheckedIn = period?.attendances?.some(att => {
-    const attDate = new Date(att.date);
-    return attDate.getTime() === todayDate.getTime();
+    // att.date comes as 'YYYY-MM-DDT00:00:00.000Z', so the first 10 chars are perfectly 'YYYY-MM-DD'
+    return att.date.substring(0, 10) === selectedDate;
   });
 
   const totalPeriodPay = period?.attendances?.reduce((sum, att) => sum + att.totalPay, 0) || 0;
@@ -184,24 +189,25 @@ export default function AttendanceClient({ adminId, adminName }) {
         {/* Panel Kiri: Form Absen */}
         <div className={styles.panel}>
           <h2 className={styles.panelTitle}>
-            <Clock size={20} className={styles.iconBlue} /> Form Absen Hari Ini
+            <Clock size={20} className={styles.iconBlue} /> Catat Kehadiran
           </h2>
-          <p className={styles.dateText}>
-            {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          </p>
-
-          {alreadyCheckedIn ? (
-            <div className={styles.successState}>
-              <CheckCircle2 size={48} className={styles.iconGreen} />
-              <h3>Anda sudah absen hari ini!</h3>
-              <p>Selamat beristirahat atau lanjutkan pekerjaan dengan semangat.</p>
+          
+          <form onSubmit={handleCheckIn} className={styles.form}>
+            {error && <div className={styles.errorBox}><AlertCircle size={16}/> {error}</div>}
+            {success && <div className={styles.successBox}><CheckCircle2 size={16}/> {success}</div>}
+            
+            <div className={styles.formGroup}>
+              <label>Pilih Tanggal</label>
+              <input 
+                type="date" 
+                value={selectedDate} 
+                onChange={(e) => setSelectedDate(e.target.value)} 
+                className={styles.input} 
+                required 
+              />
             </div>
-          ) : (
-            <form onSubmit={handleCheckIn} className={styles.form}>
-              {error && <div className={styles.errorBox}><AlertCircle size={16}/> {error}</div>}
-              {success && <div className={styles.successBox}><CheckCircle2 size={16}/> {success}</div>}
-              
-              <div className={styles.formGroup}>
+
+            <div className={styles.formGroup}>
                 <label>Status Kehadiran</label>
                 <select value={status} onChange={handleStatusChange} className={styles.input}>
                   <option value="Kerja Normal">Kerja Normal (1x Gaji)</option>
@@ -212,38 +218,36 @@ export default function AttendanceClient({ adminId, adminName }) {
               </div>
 
               {status === "Kustom" && (
-                <div className={styles.formGroup}>
-                  <label>Pengali Gaji (Multiplier)</label>
-                  <input type="number" step="0.1" value={multiplier} onChange={e => setMultiplier(e.target.value)} className={styles.input} />
-                </div>
-              )}
-
               <div className={styles.formGroup}>
-                <label>Nominal Gaji Pokok (Bisa Diedit)</label>
-                <input type="number" value={baseWage} onChange={e => setBaseWage(Number(e.target.value))} className={styles.input} />
+                <label>Pengali Gaji (Multiplier)</label>
+                <input type="number" step="0.1" min="0" value={multiplier} onChange={e => setMultiplier(e.target.value)} className={styles.input} />
               </div>
+            )}
 
-              <div className={styles.formGroup}>
-                <label>Tambahan Lembur Ekstra (Rp)</label>
-                <input type="number" value={extraPay} onChange={e => setExtraPay(Number(e.target.value))} className={styles.input} placeholder="Contoh: 50000" />
-              </div>
+            <div className={styles.formGroup}>
+              <label>Nominal Gaji Pokok (Bisa Diedit)</label>
+              <input type="number" min="0" value={baseWage} onChange={e => setBaseWage(Number(e.target.value))} className={styles.input} />
+            </div>
 
-              <div className={styles.formGroup}>
-                <label>Catatan (Opsional)</label>
-                <input type="text" value={notes} onChange={e => setNotes(e.target.value)} className={styles.input} placeholder="Bongkar muat barang..." />
-              </div>
+            <div className={styles.formGroup}>
+              <label>Tambahan Lembur Ekstra (Rp)</label>
+              <input type="number" min="0" value={extraPay} onChange={e => setExtraPay(Number(e.target.value))} className={styles.input} placeholder="Contoh: 50000" />
+            </div>
 
-              <div className={styles.summaryBox}>
+            <div className={styles.formGroup}>
+              <label>Catatan (Opsional)</label>
+              <input type="text" value={notes} onChange={e => setNotes(e.target.value)} className={styles.input} placeholder="Bongkar muat barang..." />
+            </div>
+
+            <div className={styles.summaryBox}>
                 <span>Total Gaji Hari Ini:</span>
                 <strong>{formatRupiah((baseWage * multiplier) + extraPay)}</strong>
               </div>
 
-              <button type="submit" disabled={submitting} className={styles.btnPrimary}>
-                {submitting ? <Loader2 size={18} className={styles.spinner} /> : <Save size={18} />}
-                Simpan Absen
-              </button>
-            </form>
-          )}
+            <button type="submit" disabled={submitting} className={styles.btnPrimary}>
+              {submitting ? <><Loader2 size={16} className={styles.spinner} /> Menyimpan...</> : (alreadyCheckedIn ? <><CheckCircle2 size={16} /> Update Absensi</> : <><Save size={16} /> Simpan Absensi</>)}
+            </button>
+          </form>
         </div>
 
         {/* Panel Kanan: Ringkasan Periode */}

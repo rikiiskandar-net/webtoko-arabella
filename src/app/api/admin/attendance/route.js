@@ -14,6 +14,10 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    if (Number(baseWage) < 0 || Number(multiplier) < 0 || Number(extraPay) < 0) {
+      return NextResponse.json({ error: "Angka tidak boleh negatif" }, { status: 400 });
+    }
+
     // Convert string to Date (start of day to prevent timezone issues)
     const recordDate = new Date(date);
     recordDate.setUTCHours(0, 0, 0, 0);
