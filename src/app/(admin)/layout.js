@@ -146,8 +146,8 @@ function AdminContent({ children, onToggleSidebar, router }) {
             ref={dropdownRef}
           >
           <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: "0.9rem", color: "#0F172A", fontWeight: 600 }}>{session?.name}</div>
-            <div style={{ fontSize: "0.75rem", color: "#64748B" }}>
+            <div style={{ fontSize: "0.9rem", color: "var(--foreground)", fontWeight: 600 }}>{session?.name}</div>
+            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
               {session?.role === "superadmin" ? "Superadmin" : "Admin"}
             </div>
           </div>
