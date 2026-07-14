@@ -379,3 +379,66 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .headerActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .headerActions a, .headerActions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .panelHeaderRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btnCloseBook {
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+
+  .periodStats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .tableWrapper {
+    margin: 0 -1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .table th, .table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .summaryBox {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .panel {
+    padding: 1.25rem;
+  }
+}
