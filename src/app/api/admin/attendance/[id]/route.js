@@ -7,7 +7,7 @@ export async function DELETE(req, { params }) {
     const session = await getAdminSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const attendanceId = params.id;
+    const { id: attendanceId } = await params;
 
     const attendance = await prisma.attendance.findUnique({
       where: { id: attendanceId },
