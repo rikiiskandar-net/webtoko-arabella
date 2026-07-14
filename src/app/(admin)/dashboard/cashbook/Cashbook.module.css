@@ -17,6 +17,35 @@
   letter-spacing: -0.02em;
 }
 
+/* ===== MARQUEE ===== */
+.marqueeContainer {
+  background: linear-gradient(90deg, #db2777 0%, #ec4899 50%, #db2777 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 0.6rem 0;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  display: flex;
+  white-space: nowrap;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25);
+}
+
+.marqueeContent {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  animation: scrollText 15s linear infinite;
+  padding-right: 1.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+@keyframes scrollText {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
 /* ===== TAB SWITCHER ===== */
 .tabContainer {
   display: flex;

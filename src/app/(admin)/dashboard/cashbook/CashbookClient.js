@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BookOpen, Plus, Pencil, Trash2, Loader2, TrendingUp, TrendingDown, Wallet, X, ArrowUpCircle, ArrowDownCircle, SlidersHorizontal } from "lucide-react";
+import { BookOpen, Plus, Pencil, Trash2, Loader2, TrendingUp, TrendingDown, Wallet, X, ArrowUpCircle, ArrowDownCircle, SlidersHorizontal, Calendar, BarChart3 } from "lucide-react";
 import styles from "./Cashbook.module.css";
 
 const MONTHS = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
@@ -162,13 +162,35 @@ export default function CashbookClient() {
         <h2 className={styles.title}>📒 Buku Kas</h2>
       </div>
 
+      {/* Marquee Semangat */}
+      <div className={styles.marqueeContainer}>
+        <div className={styles.marqueeContent}>
+          ✨ SEMANGAT JUALANNYA ISTRIKU 😘 ✨ 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          ✨ SEMANGAT JUALANNYA ISTRIKU 😘 ✨
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          ✨ SEMANGAT JUALANNYA ISTRIKU 😘 ✨
+        </div>
+        <div className={styles.marqueeContent} aria-hidden="true">
+          ✨ SEMANGAT JUALANNYA ISTRIKU 😘 ✨ 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          ✨ SEMANGAT JUALANNYA ISTRIKU 😘 ✨
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          ✨ SEMANGAT JUALANNYA ISTRIKU 😘 ✨
+        </div>
+      </div>
+
       {/* Tab Switcher */}
       <div className={styles.tabContainer}>
         <button className={`${styles.tab} ${activeTab === "daily" ? styles.tabActive : ""}`} onClick={() => setActiveTab("daily")}>
-          📅 Harian
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <Calendar size={18} /> Harian
+          </div>
         </button>
         <button className={`${styles.tab} ${activeTab === "monthly" ? styles.tabActive : ""}`} onClick={() => setActiveTab("monthly")}>
-          📊 Bulanan
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <BarChart3 size={18} /> Bulanan
+          </div>
         </button>
       </div>
 
