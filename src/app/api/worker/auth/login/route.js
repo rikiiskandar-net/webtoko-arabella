@@ -37,12 +37,12 @@ export async function POST(request) {
 
     const valid = await verifyWorkerPassword(password, worker.password);
     if (!valid) {
-      return NextResponse.json({ error: "Nama atau PIN salah" }, { status: 401 });
+      return NextResponse.json({ error: "Email atau password salah" }, { status: 401 });
     }
 
     await setWorkerAuthCookie({
       id: worker.id,
-      username: worker.username,
+      email: worker.email,
       name: worker.name,
       role: worker.role,
     });
