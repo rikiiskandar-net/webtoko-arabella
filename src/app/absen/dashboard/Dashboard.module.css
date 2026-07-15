@@ -446,6 +446,12 @@ select.input:focus {
   color: #065F46;
 }
 
+.statusPill15Active {
+  background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+  border-color: #60A5FA;
+  color: #1E3A8A;
+}
+
 .statusPillLemburActive {
   background: linear-gradient(135deg, #EDE9FE, #DDD6FE);
   border-color: #8B5CF6;
@@ -458,22 +464,16 @@ select.input:focus {
   color: #78350F;
 }
 
-.statusPillSakitActive {
-  background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
-  border-color: #60A5FA;
-  color: #1E3A8A;
+.statusPillLiburActive {
+  background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+  border-color: #9CA3AF;
+  color: #374151;
 }
 
-.statusPillIzinActive {
-  background: linear-gradient(135deg, #FFEDD5, #FED7AA);
-  border-color: #FB923C;
-  color: #7C2D12;
-}
-
-.statusPillAbsenActive {
-  background: linear-gradient(135deg, #FEE2E2, #FECACA);
-  border-color: #F87171;
-  color: #7F1D1D;
+.statusPillCustomActive {
+  background: linear-gradient(135deg, #E5E7EB, #D1D5DB);
+  border-color: #6B7280;
+  color: #1F2937;
 }
 
 /* =============================================

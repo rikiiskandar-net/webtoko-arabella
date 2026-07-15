@@ -8,7 +8,7 @@ import {
   User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
   BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
   CheckSquareOffset
-, Lightning, CloudSun, Pill, Receipt, XCircle } from "@phosphor-icons/react";
+, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear } from "@phosphor-icons/react";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
@@ -90,11 +90,11 @@ export default function WorkerDashboard() {
   // Status config
   const STATUS_OPTIONS = [
     { value: "Kerja Normal",   emoji: <CheckCircle weight="duotone" size={24} color="#059669" />, label: "Kerja Normal",  mult: "1x Gaji",   multiplierVal: 1,   activeClass: styles.statusPillNormalActive },
-    { value: "Lembur Penuh",   emoji: <Lightning weight="duotone" size={24} color="#7C3AED" />, label: "Lembur Penuh",  mult: "2x Gaji",   multiplierVal: 2,   activeClass: styles.statusPillLemburActive },
-    { value: "Setengah Hari",  emoji: <CloudSun weight="duotone" size={24} color="#D97706" />, label: "Setengah Hari", mult: "0.5x Gaji", multiplierVal: 0.5, activeClass: styles.statusPillSetengahActive },
-    { value: "Sakit",          emoji: <Pill weight="duotone" size={24} color="#2563EB" />, label: "Sakit",         mult: "0x Gaji",   multiplierVal: 0,   activeClass: styles.statusPillSakitActive },
-    { value: "Izin",           emoji: <Receipt weight="duotone" size={24} color="#EA580C" />, label: "Izin",          mult: "0x Gaji",   multiplierVal: 0,   activeClass: styles.statusPillIzinActive },
-    { value: "Absen",          emoji: <XCircle weight="duotone" size={24} color="#DC2626" />, label: "Absen",         mult: "0x Gaji",   multiplierVal: 0,   activeClass: styles.statusPillAbsenActive },
+    { value: "Kerja 1.5 Hari", emoji: <Timer weight="duotone" size={24} color="#2563EB" />,       label: "Kerja 1.5 Hari",mult: "1.5x",      multiplierVal: 1.5, activeClass: styles.statusPill15Active },
+    { value: "Kerja Lembur",   emoji: <Lightning weight="duotone" size={24} color="#7C3AED" />,   label: "Kerja Lembur",  mult: "2x Gaji",   multiplierVal: 2,   activeClass: styles.statusPillLemburActive },
+    { value: "Setengah Hari",  emoji: <CloudSun weight="duotone" size={24} color="#D97706" />,    label: "Setengah Hari", mult: "0.5x Gaji", multiplierVal: 0.5, activeClass: styles.statusPillSetengahActive },
+    { value: "Libur",          emoji: <Coffee weight="duotone" size={24} color="#6B7280" />,      label: "Libur",         mult: "0x Gaji",   multiplierVal: 0,   activeClass: styles.statusPillLiburActive },
+    { value: "Custom",         emoji: <Gear weight="duotone" size={24} color="#4B5563" />,        label: "Custom",        mult: "Atur Sendiri", multiplierVal: 1,   activeClass: styles.statusPillCustomActive },
   ];
 
   const handleStatusSelect = (opt) => {
