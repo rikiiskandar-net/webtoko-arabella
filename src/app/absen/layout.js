@@ -3,7 +3,13 @@ import "../globals.css";
 export const metadata = {
   title: "Absensi Proyek",
   description: "Portal Kehadiran Khusus Karyawan Proyek",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   themeColor: "#2563EB",
 };
 
