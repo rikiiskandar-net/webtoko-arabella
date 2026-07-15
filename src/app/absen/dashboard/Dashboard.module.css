@@ -371,20 +371,4 @@
   to { transform: rotate(360deg); }
 }
 
-@media (min-width: 768px) {
-  .grid {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-  .panel {
-    flex: 1;
-  }
-  .header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .headerActions {
-    width: auto;
-  }
-}
+/* Mobile-only app layout, no media queries for multi-column needed since it's wrapped in 480px max-width */
