@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { 
   Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut, 
   CheckCircle2, Home, History, AlertTriangle, ChevronDown, ChevronUp, Droplet,
-  HardHat, User, Phone, MapPin, Briefcase, FileText, Frown, PackageOpen
+  HardHat, User, Phone, MapPin, Briefcase, FileText, Frown, PackageOpen, Trash2
 } from "lucide-react";
 import styles from "./Dashboard.module.css";
 
@@ -192,6 +192,32 @@ export default function WorkerDashboard() {
     } finally {
       setProfileSubmitting(false);
     }
+  };
+
+  const handleDeleteArchive = (periodId) => {
+    setModalConfig({
+      isOpen: true,
+      type: "warning",
+      title: "Hapus Arsip Gajian",
+      message: "Apakah Anda yakin ingin menghapus arsip gaji ini? Seluruh data absen di dalamnya akan hilang permanen.",
+      onConfirm: async () => {
+        setModalConfig({ ...modalConfig, isOpen: false });
+        try {
+          const res = await fetch(`/api/worker/attendance/period?id=${periodId}`, {
+            method: "DELETE"
+          });
+          if (res.ok) {
+            showToast("Arsip gajian berhasil dihapus", "success");
+            fetchData();
+          } else {
+            const errData = await res.json();
+            showToast(errData.error || "Gagal menghapus arsip", "error");
+          }
+        } catch (err) {
+          showToast("Terjadi kesalahan jaringan", "error");
+        }
+      }
+    });
   };
 
   const handleCloseBook = () => {
@@ -533,6 +559,17 @@ export default function WorkerDashboard() {
                               </div>
                               <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
                                 <span className={styles.archiveTotal}>{formatRupiah(periodTotal)}</span>
+                                <button 
+                                  className={styles.deleteBtn}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteArchive(period.id);
+                                  }}
+                                  title="Hapus Arsip"
+                                  style={{ background: 'transparent', border: 'none', color: '#ef4444', padding: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                >
+                                  <Trash2 size={18} />
+                                </button>
                                 {isExpanded ? <ChevronUp size={18} color="#94a3b8" /> : <ChevronDown size={18} color="#94a3b8" />}
                               </div>
                             </div>

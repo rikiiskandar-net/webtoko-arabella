@@ -31,30 +31,15 @@ export async function POST(req) {
     
     const totalPay = Math.round(calcBaseWage * calcMultiplier) + calcExtraPay;
 
-    // Check if an attendance already exists for today
-    const existingAttendance = await prisma.workerAttendance.findUnique({
-      where: {
-        workerId_date: {
-          workerId: session.id,
-          date: recordDate
-        }
-      },
-      include: { payrollPeriod: true }
-    });
-
-    if (existingAttendance && existingAttendance.payrollPeriod.isClosed) {
-      return NextResponse.json({ error: "Absensi hari ini sudah masuk buku yang ditutup (Arsip). Tidak bisa diubah." }, { status: 400 });
-    }
-
     const attendance = await prisma.workerAttendance.upsert({
       where: {
-        workerId_date: {
+        workerId_date_payrollPeriodId: {
           workerId: session.id,
-          date: recordDate
+          date: recordDate,
+          payrollPeriodId: periodId
         }
       },
       update: {
-        payrollPeriodId: periodId, // ensure it updates to the active period if needed
         status: status,
         baseWage: calcBaseWage,
         multiplier: calcMultiplier,

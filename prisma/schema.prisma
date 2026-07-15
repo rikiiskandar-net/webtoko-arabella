@@ -319,7 +319,7 @@ model WorkerAttendance {
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
-  @@unique([workerId, date])
+  @@unique([workerId, date, payrollPeriodId])
   @@index([payrollPeriodId])
   @@index([date])
 }
