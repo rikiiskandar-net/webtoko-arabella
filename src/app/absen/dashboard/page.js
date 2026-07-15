@@ -694,8 +694,8 @@ export default function WorkerDashboard() {
             <div className={styles.tabContentWrapper}>
               {/* Profile Hero */}
               <div className={styles.profileHero}>
-                <div className={styles.profileAvatar}>
-                  {getInitials(user?.name)}
+                <div className={styles.profileAvatar} style={{ padding: 0, overflow: 'hidden' }}>
+                  <img src="/worker-avatar.png" alt="Avatar Pekerja" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                 </div>
                 <div className={styles.profileHeroName}>{user?.name || 'Nama Pekerja'}</div>
                 <div className={styles.profileHeroRole}>{user?.role || 'Pekerja'}</div>
