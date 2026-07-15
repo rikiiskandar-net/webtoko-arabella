@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Timer, WarningCircle, FloppyDisk, SignOut, CheckCircle,
-  ListDashes, Warning, CaretDown, CaretUp,
-  User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
-  BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
-  CheckSquareOffset
-} from "@phosphor-icons/react";
+  Clock, AlertCircle, Save, LogOut, CheckCircle2,
+  List, AlertTriangle, ChevronDown, ChevronUp,
+  User, Phone, MapPin, Briefcase, FileText, Package, Trash, Home,
+  BookOpen, TrendingUp, UserCircle, Loader2, BadgeCheck,
+  CheckSquare
+} from "lucide-react";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
@@ -262,7 +262,7 @@ export default function WorkerDashboard() {
                   <Trash size={16} weight="duotone" />
                 </button>
               )}
-              {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="bold" /> : <CaretDown size={16} color="#94a3b8" weight="bold" />}
+              {isExpanded ? <ChevronUp size={16} color="#94a3b8" weight="bold" /> : <ChevronDown size={16} color="#94a3b8" weight="bold" />}
             </div>
           </div>
         </div>
@@ -333,7 +333,7 @@ export default function WorkerDashboard() {
       {toast.visible && (
         <div className={styles.toastContainer}>
           <div className={`${styles.toast} ${toast.type === 'error' ? styles.toastError : styles.toastSuccess}`}>
-            {toast.type === 'error' ? <WarningCircle size={18} weight="fill" /> : <SealCheck size={18} weight="fill" />}
+            {toast.type === 'error' ? <AlertCircle size={18} weight="fill" /> : <BadgeCheck size={18} weight="fill" />}
             <span>{toast.message}</span>
           </div>
         </div>
@@ -344,7 +344,7 @@ export default function WorkerDashboard() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={`${styles.modalIcon} ${modalConfig.type === 'success' ? styles.modalIconSuccess : styles.modalIconWarning}`}>
-              {modalConfig.type === 'success' ? <CheckCircle size={32} weight="duotone" /> : <Warning size={32} weight="duotone" />}
+              {modalConfig.type === 'success' ? <CheckCircle2 size={32} weight="duotone" /> : <AlertTriangle size={32} weight="duotone" />}
             </div>
             <h3 className={styles.modalTitle}>{modalConfig.title}</h3>
             <p className={styles.modalMessage}>{modalConfig.message}</p>
@@ -370,7 +370,7 @@ export default function WorkerDashboard() {
       <header className={styles.topHeader}>
         <div className={styles.headerLogo}>
           <div className={styles.headerLogoIcon}>
-            <BookOpenText size={20} color="white" weight="fill" />
+            <BookOpen size={20} color="white" weight="fill" />
           </div>
           <div>
             <span className={styles.headerLogoText}>ABSENKU</span>
@@ -429,14 +429,14 @@ export default function WorkerDashboard() {
               <div className={styles.miniStatsGrid}>
                 <div className={styles.miniCard + ' ' + styles.miniCardGreen}>
                   <div className={styles.miniCardIcon}>
-                    <CheckSquareOffset size={20} weight="duotone" />
+                    <CheckSquare size={20} weight="duotone" />
                   </div>
                   <div className={styles.miniCardValue}>{totalAbsen}</div>
                   <div className={styles.miniCardLabel}>Total Absen</div>
                 </div>
                 <div className={styles.miniCard + ' ' + styles.miniCardOrange}>
                   <div className={styles.miniCardIcon}>
-                    <TrendUp size={20} weight="duotone" />
+                    <TrendingUp size={20} weight="duotone" />
                   </div>
                   <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
                     {formatRupiah(currentTotal).replace('Rp\u00a0', 'Rp')}
@@ -448,7 +448,7 @@ export default function WorkerDashboard() {
               {/* Form Kehadiran */}
               <div className={styles.panel}>
                 <h2 className={styles.panelTitle}>
-                  <Timer size={22} weight="duotone" className={styles.iconBlue} />
+                  <Clock size={22} weight="duotone" className={styles.iconBlue} />
                   Catat Kehadiran
                 </h2>
 
@@ -530,7 +530,7 @@ export default function WorkerDashboard() {
                   </div>
 
                   <button type="submit" className={styles.btnPrimary} disabled={submitting}>
-                    {submitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />}
+                    {submitting ? <Loader2 size={20} className={styles.spinner} weight="bold" /> : <Save size={20} weight="fill" />}
                     Simpan Absensi
                   </button>
                 </form>
@@ -620,7 +620,7 @@ export default function WorkerDashboard() {
                                 >
                                   <Trash size={16} weight="duotone" />
                                 </button>
-                                {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="bold" /> : <CaretDown size={16} color="#94a3b8" weight="bold" />}
+                                {isExpanded ? <ChevronUp size={16} color="#94a3b8" weight="bold" /> : <ChevronDown size={16} color="#94a3b8" weight="bold" />}
                               </div>
                             </div>
                             {isExpanded && (
@@ -690,13 +690,13 @@ export default function WorkerDashboard() {
                       style={{ minHeight: '80px', resize: 'vertical' }} />
                   </div>
                   <button type="submit" className={styles.btnPrimary} disabled={profileSubmitting}>
-                    {profileSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />}
+                    {profileSubmitting ? <Loader2 size={20} className={styles.spinner} weight="bold" /> : <Save size={20} weight="fill" />}
                     Simpan Profil
                   </button>
                 </form>
 
                 <button className={styles.btnDanger} onClick={handleLogout}>
-                  <SignOut size={18} weight="bold" />
+                  <LogOut size={18} weight="bold" />
                   Keluar dari Akun
                 </button>
               </div>
@@ -713,7 +713,7 @@ export default function WorkerDashboard() {
           onClick={() => setActiveTab('home')}
         >
           <div className={styles.navIconBg}>
-            <House size={22} weight={activeTab === 'home' ? 'fill' : 'regular'} className={styles.navIcon} />
+            <Home size={22} weight={activeTab === 'home' ? 'fill' : 'regular'} className={styles.navIcon} />
           </div>
           <span>Beranda</span>
         </button>
@@ -722,7 +722,7 @@ export default function WorkerDashboard() {
           onClick={() => setActiveTab('history')}
         >
           <div className={styles.navIconBg}>
-            <ListDashes size={22} weight={activeTab === 'history' ? 'fill' : 'regular'} className={styles.navIcon} />
+            <List size={22} weight={activeTab === 'history' ? 'fill' : 'regular'} className={styles.navIcon} />
           </div>
           <span>Riwayat</span>
         </button>

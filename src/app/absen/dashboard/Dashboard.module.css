@@ -124,7 +124,7 @@
 .grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
 }
 
 .panel {
@@ -257,7 +257,7 @@
 .miniStatsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 18px;
 }
 
 .miniCard {
@@ -725,7 +725,7 @@ select.input:focus {
 .historyList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
 .historyCardWrapper {
