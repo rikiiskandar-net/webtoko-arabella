@@ -713,6 +713,7 @@ export default function WorkerDashboard() {
         )}
 
       </div>
+      </div>
 
       {/* Bottom Navigation */}
       <nav className={styles.bottomNav}>
