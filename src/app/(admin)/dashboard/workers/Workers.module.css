@@ -1,0 +1,194 @@
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.btnAdd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btnAdd:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.tableContainer {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--hover-bg);
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--foreground);
+}
+
+.badgeActive {
+  background: rgba(22, 163, 74, 0.1);
+  color: var(--green);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badgeInactive {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--red);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.btnEdit, .btnDelete {
+  padding: 6px;
+  border-radius: 6px;
+  background: var(--hover-bg);
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.btnEdit:hover { color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+.btnDelete:hover { color: var(--red); background: rgba(239, 68, 68, 0.1); }
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modalContent {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 500px;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-xl);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.btnClose {
+  background: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="number"],
+.formGroup input[type="password"] {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.formGroupCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  color: var(--foreground);
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btnCancel {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  background: var(--hover-bg);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.btnSave {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.errorAlert {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--red);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--primary);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

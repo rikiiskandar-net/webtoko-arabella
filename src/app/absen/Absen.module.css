@@ -1,0 +1,345 @@
+/* Mobile-First CSS for Worker Subdomain */
+.loginPage {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: #3b82f6;
+}
+
+.spinnerSmall {
+  animation: spin 1s linear infinite;
+  color: #ffffff;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loginHeader {
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+.iconCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+}
+
+.loginTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+}
+
+.loginSubtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.loginForm {
+  background: #ffffff;
+  padding: 2rem 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.errorAlert {
+  background: #fef2f2;
+  color: #ef4444;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #fca5a5;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1rem;
+  color: #94a3b8;
+}
+
+.selectInput, .textInput {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  font-size: 1rem;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+}
+
+.selectInput:focus, .textInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  padding: 1.1rem;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.submitBtn:active {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Dashboard Styles */
+.dashboardPage {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8fafc;
+  padding-bottom: 6rem;
+}
+
+.dashHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.dashGreeting {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.logoutBtn {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.statsCard {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 20px;
+  padding: 1.5rem;
+  color: white;
+  margin-bottom: 2rem;
+  box-shadow: 0 15px 30px rgba(15, 23, 42, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.statsCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+.statsLabel {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+}
+
+.statsValue {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.statsFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.actionSection {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+  margin-bottom: 2rem;
+}
+
+.actionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.buttonGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.absenBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  border-radius: 16px;
+  font-weight: 600;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btnHadir {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+.btnHadir:hover { background: #dbeafe; }
+
+.btnSetengah {
+  background: #fefce8;
+  color: #ca8a04;
+  border: 1px solid #fef08a;
+}
+.btnSetengah:hover { background: #fef9c3; }
+
+.historySection {
+  margin-top: 1rem;
+}
+
+.historyTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.historyCard {
+  background: white;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #f1f5f9;
+}
+
+.historyDate {
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.25rem;
+}
+
+.historyStatus {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.statusHadir { background: #dcfce7; color: #16a34a; }
+.statusSetengah { background: #fef9c3; color: #ca8a04; }
+
+.historyPay {
+  font-weight: 800;
+  color: #0f172a;
+  text-align: right;
+}

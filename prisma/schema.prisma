@@ -266,3 +266,58 @@ model Attendance {
   @@index([payrollPeriodId])
   @@index([date])
 }
+
+// ==========================================
+// PROJECT WORKER ATTENDANCE SYSTEM
+// ==========================================
+
+model Worker {
+  id             String                @id @default(uuid())
+  username       String                @unique // Can be used for login (or PIN)
+  password       String                // Can be a PIN hash
+  name           String
+  role           String                @default("Pekerja")
+  isActive       Boolean               @default(true)
+  baseWage       Int                   @default(100000)
+  payrollPeriods WorkerPayrollPeriod[]
+  attendances    WorkerAttendance[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+}
+
+model WorkerPayrollPeriod {
+  id          String             @id @default(uuid())
+  workerId    String
+  worker      Worker             @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  startDate   DateTime
+  endDate     DateTime?
+  isClosed    Boolean            @default(false)
+  totalAmount Int                @default(0)
+  attendances WorkerAttendance[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([workerId])
+  @@index([isClosed])
+}
+
+model WorkerAttendance {
+  id              String              @id @default(uuid())
+  payrollPeriodId String
+  payrollPeriod   WorkerPayrollPeriod @relation(fields: [payrollPeriodId], references: [id], onDelete: Cascade)
+  workerId        String
+  worker          Worker              @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  date            DateTime            @db.Date
+  status          String
+  baseWage        Int                 @default(100000)
+  multiplier      Float               @default(1.0)
+  extraPay        Int                 @default(0)
+  totalPay        Int
+  notes           String              @default("")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@unique([workerId, date])
+  @@index([payrollPeriodId])
+  @@index([date])
+}

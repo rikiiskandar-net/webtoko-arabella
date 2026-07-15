@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users, User, HelpCircle, ChevronLeft, ChevronRight, Moon, Sun, BookOpen } from "lucide-react";
+import { LayoutDashboard, Package, Tags, LogOut, Settings, Shield, ImageIcon, ClipboardList, Menu, X, Info, FolderOpen, Users, User, HelpCircle, ChevronLeft, ChevronRight, Moon, Sun, BookOpen, HardHat } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { useSession } from "@/lib/SessionContext";
 import { useTheme } from "@/components/ThemeProvider";
@@ -39,6 +39,7 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
     {
       label: "MANAJEMEN",
       items: [
+        { name: "Pekerja Proyek", href: "/dashboard/workers", icon: HardHat },
         { name: "Pengguna", href: "/dashboard/users", icon: Users },
         { name: "Absensi & Gaji", href: "/dashboard/attendance", icon: BookOpen },
         { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
