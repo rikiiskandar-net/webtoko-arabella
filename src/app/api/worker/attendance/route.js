@@ -88,6 +88,20 @@ export async function GET(req) {
           startDate: new Date(),
         }
       });
+
+      // Race condition protection: clean up accidental duplicate active periods
+      const allActive = await prisma.workerPayrollPeriod.findMany({
+        where: { workerId: session.id, isClosed: false },
+        orderBy: { createdAt: 'asc' }
+      });
+
+      if (allActive.length > 1) {
+        const toDelete = allActive.slice(1).map(p => p.id);
+        await prisma.workerPayrollPeriod.deleteMany({
+          where: { id: { in: toDelete } }
+        });
+        activePeriod = allActive[0];
+      }
     }
 
     // Get active attendances
