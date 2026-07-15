@@ -1394,3 +1394,39 @@ select.input:focus {
 .detailRow { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-mid); }
 .detailRow span:last-child { font-weight: 700; color: var(--text-dark); }
 .detailTotal { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 800; color: var(--text-dark); margin-top: 6px; padding-top: 8px; border-top: 1.5px solid #EEF2FF; }
+
+/* =============================================
+   PROFILE INFO CLASSES
+   ============================================= */
+.profileInfoList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #F8FAFC;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid #E2E8F0;
+}
+
+.profileInfoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profileInfoLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.profileInfoValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}

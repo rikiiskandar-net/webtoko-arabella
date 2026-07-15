@@ -45,6 +45,9 @@ export default function WorkerDashboard() {
   // Form State (Profile)
   const [profileForm, setProfileForm] = useState({ name: "", phone: "", address: "", role: "" });
   const [profileSubmitting, setProfileSubmitting] = useState(false);
+  const [profileViewMode, setProfileViewMode] = useState("info");
+  const [settingsForm, setSettingsForm] = useState({ email: "", password: "", passwordConfirm: "" });
+  const [settingsSubmitting, setSettingsSubmitting] = useState(false);
 
   const formatRupiah = (number) =>
     new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
@@ -75,6 +78,7 @@ export default function WorkerDashboard() {
         address: meData.user.address || "",
         role: meData.user.role || ""
       });
+      setSettingsForm(prev => ({ ...prev, email: meData.user.email || "" }));
       if (attendRes.ok) {
         const attData = await attendRes.json();
         setData(attData);
@@ -148,6 +152,7 @@ export default function WorkerDashboard() {
       if (res.ok) {
         const result = await res.json();
         setUser(result.user);
+        setProfileViewMode("info");
         showToast("Profil berhasil disimpan! ✨");
       } else {
         const errData = await res.json();
@@ -157,6 +162,36 @@ export default function WorkerDashboard() {
       showToast("Terjadi kesalahan saat menyimpan", "error");
     } finally {
       setProfileSubmitting(false);
+    }
+  };
+
+  const handleSettingsSave = async (e) => {
+    e.preventDefault();
+    if (settingsForm.password && settingsForm.password !== settingsForm.passwordConfirm) {
+      showToast("Konfirmasi password tidak cocok", "error");
+      return;
+    }
+    setSettingsSubmitting(true);
+    try {
+      const res = await fetch("/api/worker/auth/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: settingsForm.email, password: settingsForm.password })
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setUser(result.user);
+        setProfileViewMode("info");
+        setSettingsForm(prev => ({ ...prev, password: "", passwordConfirm: "" }));
+        showToast("Pengaturan akun berhasil disimpan! 🔐");
+      } else {
+        const errData = await res.json();
+        showToast(errData.error || "Gagal menyimpan pengaturan", "error");
+      }
+    } catch {
+      showToast("Terjadi kesalahan jaringan", "error");
+    } finally {
+      setSettingsSubmitting(false);
     }
   };
 
@@ -665,49 +700,114 @@ export default function WorkerDashboard() {
                 <div className={styles.profileHeroEmail}>{user?.email}</div>
               </div>
 
-              {/* Profile Form */}
-              <div className={styles.panel}>
-                <h2 className={styles.panelTitle}>
-                  <UserCircle size={22} weight="duotone" className={styles.iconBlue} />
-                  Edit Profil
-                </h2>
-                <form className={styles.form} onSubmit={handleProfileSave}>
-                  <div className={styles.formGroup}>
-                    <label><User size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nama Lengkap</label>
-                    <input type="text" className={styles.input} value={profileForm.name}
-                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                      placeholder="Nama pekerja" />
+              {/* Profile Views */}
+              {profileViewMode === "info" && (
+                <div className={styles.panel}>
+                  <h2 className={styles.panelTitle}>
+                    <UserCircle size={22} weight="duotone" className={styles.iconBlue} />
+                    Informasi Profil
+                  </h2>
+                  <div className={styles.profileInfoList}>
+                    <div className={styles.profileInfoItem}>
+                      <span className={styles.profileInfoLabel}><Phone size={14} weight="bold" /> No. HP</span>
+                      <span className={styles.profileInfoValue}>{user?.phone || '-'}</span>
+                    </div>
+                    <div className={styles.profileInfoItem}>
+                      <span className={styles.profileInfoLabel}><MapPin size={14} weight="bold" /> Alamat</span>
+                      <span className={styles.profileInfoValue}>{user?.address || '-'}</span>
+                    </div>
                   </div>
-                  <div className={styles.formGroup}>
-                    <label><Phone size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nomor HP / WA</label>
-                    <input type="tel" className={styles.input} value={profileForm.phone}
-                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                      placeholder="08123456789" />
+                  
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                    <button className={styles.btnPrimary} style={{ flex: 1 }} onClick={() => setProfileViewMode("edit")}>
+                      <User size={18} weight="bold" /> Edit Profil
+                    </button>
+                    <button className={styles.btnSecondary} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onClick={() => setProfileViewMode("settings")}>
+                      <Gear size={18} weight="bold" /> Setting
+                    </button>
                   </div>
-                  <div className={styles.formGroup}>
-                    <label><Briefcase size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Jabatan</label>
-                    <input type="text" className={styles.input} value={profileForm.role}
-                      onChange={(e) => setProfileForm({ ...profileForm, role: e.target.value })}
-                      placeholder="Misal: Mandor, Tukang, Kenek" />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label><MapPin size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Alamat Domisili</label>
-                    <textarea className={styles.input} value={profileForm.address}
-                      onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
-                      placeholder="Alamat lengkap (opsional)"
-                      style={{ minHeight: '80px', resize: 'vertical' }} />
-                  </div>
-                  <button type="submit" className={styles.btnPrimary} disabled={profileSubmitting}>
-                    {profileSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />}
-                    Simpan Profil
+                  <button className={styles.btnDanger} style={{ marginTop: '10px' }} onClick={handleLogout}>
+                    <SignOut size={18} weight="bold" /> Keluar dari Akun
                   </button>
-                </form>
+                </div>
+              )}
 
-                <button className={styles.btnDanger} onClick={handleLogout}>
-                  <SignOut size={18} weight="bold" />
-                  Keluar dari Akun
-                </button>
-              </div>
+              {profileViewMode === "edit" && (
+                <div className={styles.panel}>
+                  <h2 className={styles.panelTitle}>
+                    <UserCircle size={22} weight="duotone" className={styles.iconBlue} />
+                    Edit Profil
+                  </h2>
+                  <form className={styles.form} onSubmit={handleProfileSave}>
+                    <div className={styles.formGroup}>
+                      <label><User size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nama Lengkap</label>
+                      <input type="text" className={styles.input} value={profileForm.name}
+                        onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                        placeholder="Nama pekerja" />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label><Phone size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nomor HP / WA</label>
+                      <input type="tel" className={styles.input} value={profileForm.phone}
+                        onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                        placeholder="08123456789" />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label><Briefcase size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Jabatan</label>
+                      <input type="text" className={styles.input} value={profileForm.role}
+                        onChange={(e) => setProfileForm({ ...profileForm, role: e.target.value })}
+                        placeholder="Misal: Mandor, Tukang, Kenek" />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label><MapPin size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Alamat Domisili</label>
+                      <textarea className={styles.input} value={profileForm.address}
+                        onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
+                        placeholder="Alamat lengkap (opsional)"
+                        style={{ minHeight: '80px', resize: 'vertical' }} />
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                      <button type="button" className={styles.btnSecondary} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onClick={() => setProfileViewMode("info")}>
+                        Batal
+                      </button>
+                      <button type="submit" className={styles.btnPrimary} style={{ flex: 1 }} disabled={profileSubmitting}>
+                        {profileSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />} Simpan
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {profileViewMode === "settings" && (
+                <div className={styles.panel}>
+                  <h2 className={styles.panelTitle}>
+                    <Gear size={22} weight="duotone" className={styles.iconBlue} />
+                    Setting Akun
+                  </h2>
+                  <form className={styles.form} onSubmit={handleSettingsSave}>
+                    <div className={styles.formGroup}>
+                      <label>Email Login</label>
+                      <input type="email" className={styles.input} value={settingsForm.email} onChange={e => setSettingsForm({...settingsForm, email: e.target.value})} required />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Password Baru (kosongkan jika tidak diubah)</label>
+                      <input type="password" className={styles.input} value={settingsForm.password} onChange={e => setSettingsForm({...settingsForm, password: e.target.value})} placeholder="******" />
+                    </div>
+                    {settingsForm.password && (
+                      <div className={styles.formGroup}>
+                        <label>Konfirmasi Password Baru</label>
+                        <input type="password" className={styles.input} value={settingsForm.passwordConfirm} onChange={e => setSettingsForm({...settingsForm, passwordConfirm: e.target.value})} placeholder="******" required />
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                      <button type="button" className={styles.btnSecondary} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onClick={() => setProfileViewMode("info")}>
+                        Batal
+                      </button>
+                      <button type="submit" className={styles.btnPrimary} style={{ flex: 1 }} disabled={settingsSubmitting}>
+                        {settingsSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />} Simpan
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           )}
 
