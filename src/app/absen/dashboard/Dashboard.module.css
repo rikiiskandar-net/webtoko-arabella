@@ -127,6 +127,12 @@
   gap: 32px;
 }
 
+.tabContentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .panel {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
