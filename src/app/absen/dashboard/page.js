@@ -109,7 +109,15 @@ export default function WorkerDashboard() {
       const res = await fetch("/api/worker/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: selectedDate, status, baseWage: Number(baseWage), multiplier: Number(multiplier), extraPay: Number(extraPay), notes })
+        body: JSON.stringify({ 
+          periodId: data?.activePeriod?.id,
+          date: selectedDate, 
+          status, 
+          baseWage: Number(baseWage), 
+          multiplier: Number(multiplier), 
+          extraPay: Number(extraPay), 
+          notes 
+        })
       });
       const result = await res.json();
       if (res.ok) {
