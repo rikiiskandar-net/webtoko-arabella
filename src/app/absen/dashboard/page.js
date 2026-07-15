@@ -57,11 +57,7 @@ export default function WorkerDashboard() {
     setTimeout(() => setToast({ visible: false, message: "", type: "success" }), 3000);
   };
 
-  useEffect(() => {
-    fetchData();
-    const splashTimer = setTimeout(() => setShowSplash(false), 1200);
-    return () => clearTimeout(splashTimer);
-  }, []);
+
 
   const fetchData = async () => {
     try {
@@ -90,6 +86,12 @@ export default function WorkerDashboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+    const splashTimer = setTimeout(() => setShowSplash(false), 1200);
+    return () => clearTimeout(splashTimer);
+  }, []);
 
   // Status config
   const STATUS_OPTIONS = [
