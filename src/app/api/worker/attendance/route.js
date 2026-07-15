@@ -8,13 +8,12 @@ export async function POST(req) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { periodId, date, status, notes } = body;
+    const { periodId, date, status, notes, baseWage, multiplier, extraPay } = body;
 
     if (!periodId || !date || !status) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Get worker's current base wage
     const worker = await prisma.worker.findUnique({
       where: { id: session.id },
       select: { baseWage: true }
@@ -26,9 +25,11 @@ export async function POST(req) {
     const recordDate = new Date(date);
     recordDate.setUTCHours(0, 0, 0, 0);
 
-    // If they clock in (Hadir), they get their base wage. Otherwise 0.
-    const multiplier = status === "Hadir" ? 1.0 : (status === "Setengah Hari" ? 0.5 : 0.0);
-    const totalPay = Math.round(Number(worker.baseWage) * multiplier);
+    const calcBaseWage = baseWage !== undefined ? Number(baseWage) : Number(worker.baseWage);
+    const calcMultiplier = multiplier !== undefined ? Number(multiplier) : (status === "Kerja Normal" || status === "Hadir" ? 1.0 : (status === "Setengah Hari" ? 0.5 : (status === "Lembur Penuh" ? 2.0 : 0.0)));
+    const calcExtraPay = extraPay !== undefined ? Number(extraPay) : 0;
+    
+    const totalPay = Math.round(calcBaseWage * calcMultiplier) + calcExtraPay;
 
     const attendance = await prisma.workerAttendance.upsert({
       where: {
@@ -39,9 +40,9 @@ export async function POST(req) {
       },
       update: {
         status: status,
-        baseWage: Number(worker.baseWage),
-        multiplier: multiplier,
-        extraPay: 0,
+        baseWage: calcBaseWage,
+        multiplier: calcMultiplier,
+        extraPay: calcExtraPay,
         totalPay: totalPay,
         notes: notes || ""
       },
@@ -50,9 +51,9 @@ export async function POST(req) {
         workerId: session.id,
         date: recordDate,
         status: status,
-        baseWage: Number(worker.baseWage),
-        multiplier: multiplier,
-        extraPay: 0,
+        baseWage: calcBaseWage,
+        multiplier: calcMultiplier,
+        extraPay: calcExtraPay,
         totalPay: totalPay,
         notes: notes || ""
       }
@@ -105,9 +106,15 @@ export async function GET(req) {
       orderBy: { date: 'asc' }
     });
 
+    const worker = await prisma.worker.findUnique({
+      where: { id: session.id },
+      select: { baseWage: true }
+    });
+
     return NextResponse.json({
       activePeriod,
-      attendances
+      attendances,
+      baseWage: worker?.baseWage || 0
     });
   } catch (error) {
     console.error("Error fetching worker attendance:", error);

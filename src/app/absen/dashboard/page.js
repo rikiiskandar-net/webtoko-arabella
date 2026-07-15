@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Loader2, CalendarCheck, CalendarMinus, Wallet } from "lucide-react";
-import styles from "../Absen.module.css";
-
-const formatRp = (n) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(n);
+import { Clock, CheckCircle2, Wallet, CalendarRange, AlertCircle, Loader2, Save, History, LogOut } from "lucide-react";
+import styles from "../../(admin)/dashboard/attendance/Attendance.module.css";
+import localStyles from "../Absen.module.css";
 
 export default function WorkerDashboard() {
   const router = useRouter();
@@ -13,6 +12,25 @@ export default function WorkerDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const getLocalToday = () => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+  };
+
+  const [selectedDate, setSelectedDate] = useState(getLocalToday());
+  const [status, setStatus] = useState("Kerja Normal");
+  const [baseWage, setBaseWage] = useState(100000); // Temporary default
+  const [multiplier, setMultiplier] = useState(1);
+  const [extraPay, setExtraPay] = useState(0);
+  const [notes, setNotes] = useState("");
+
+  const formatRupiah = (number) => {
+    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(number);
+  };
 
   useEffect(() => {
     fetchData();
@@ -32,6 +50,7 @@ export default function WorkerDashboard() {
       if (resAtt.ok) {
         const attData = await resAtt.json();
         setData(attData);
+        setBaseWage(attData.baseWage || 100000);
       }
     } catch (err) {
       console.error(err);
@@ -45,118 +64,247 @@ export default function WorkerDashboard() {
     router.push("/absen");
   };
 
-  const handleAbsen = async (status) => {
-    if (!confirm(`Anda yakin ingin absen "${status}" hari ini?`)) return;
+  const handleStatusChange = (e) => {
+    const val = e.target.value;
+    setStatus(val);
+    if (val === "Kerja Normal") setMultiplier(1);
+    else if (val === "Lembur Penuh") setMultiplier(2);
+    else if (val === "Setengah Hari") setMultiplier(0.5);
+    else setMultiplier(1); // Custom or others
+  };
+
+  const handleCheckIn = async (e) => {
+    e.preventDefault();
     setSubmitting(true);
-    
+    setError("");
+    setSuccess("");
+
     try {
-      const today = new Date().toISOString().split('T')[0];
       const res = await fetch("/api/worker/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          periodId: data.activePeriod.id,
-          date: today,
-          status: status,
-          notes: ""
+          periodId: data?.activePeriod?.id,
+          date: selectedDate,
+          status,
+          baseWage: Number(baseWage),
+          multiplier: Number(multiplier),
+          extraPay: Number(extraPay),
+          notes
         })
       });
 
       if (res.ok) {
-        alert("Berhasil absen!");
+        setSuccess("Absensi hari ini berhasil disimpan!");
+        setNotes("");
+        setExtraPay(0);
         fetchData();
+        setTimeout(() => setSuccess(""), 3000);
       } else {
         const errData = await res.json();
-        alert(errData.error || "Gagal absen");
+        setError(errData.error || "Gagal menyimpan absensi");
       }
     } catch (err) {
-      alert("Terjadi kesalahan sistem");
+      setError("Terjadi kesalahan jaringan");
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleCloseBook = async () => {
+    if (!confirm("Anda yakin ingin tutup buku? Ini akan mereset hitungan gaji untuk periode baru dan tidak dapat dibatalkan.")) return;
+    
+    try {
+      const res = await fetch("/api/worker/attendance/period/close", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ periodId: data?.activePeriod?.id })
+      });
+      if (res.ok) {
+        alert("Buku gaji berhasil ditutup! Memulai periode baru.");
+        fetchData();
+      } else {
+        const errData = await res.json();
+        alert(errData.error || "Gagal menutup buku");
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan jaringan");
+    }
+  };
+
   if (loading) {
     return (
-      <div className={styles.loadingContainer}>
-        <Loader2 className={styles.spinner} size={40} />
+      <div className={localStyles.loadingContainer}>
+        <Loader2 className={localStyles.spinner} size={40} />
       </div>
     );
   }
 
-  // Calculate total period pay
-  const totalPeriodPay = data?.attendances?.reduce((sum, att) => sum + att.totalPay, 0) || 0;
-  const todayStr = new Date().toISOString().split('T')[0];
-  const hasClockedInToday = data?.attendances?.some(a => a.date.startsWith(todayStr));
+  const periodPay = data?.attendances?.reduce((sum, item) => sum + item.totalPay, 0) || 0;
+  const currentTotal = Math.round(Number(baseWage) * Number(multiplier)) + Number(extraPay);
 
   return (
-    <div className={styles.dashboardPage}>
-      <div className={styles.dashHeader}>
+    <div className={styles.container}>
+      {/* Header section identical to admin */}
+      <div className={styles.header}>
         <div>
-          <h1 className={styles.dashTitle}>Halo, {user?.name}</h1>
-          <p className={styles.dashGreeting}>{user?.role} Proyek</p>
+          <h1 className={styles.title}>Absensi & Gaji</h1>
+          <p className={styles.subtitle}>Catat kehadiran dan kelola gaji harian Anda dengan fleksibel.</p>
         </div>
-        <button className={styles.logoutBtn} onClick={handleLogout} title="Keluar">
-          <LogOut size={18} />
-        </button>
-      </div>
-
-      <div className={styles.statsCard}>
-        <div className={styles.statsLabel}>Total Gaji / Kasbon (Periode Ini)</div>
-        <div className={styles.statsValue}>{formatRp(totalPeriodPay)}</div>
-        <div className={styles.statsFooter}>
-          <span>Dari {data?.activePeriod?.startDate ? new Date(data.activePeriod.startDate).toLocaleDateString('id-ID') : '-'}</span>
-          <Wallet size={16} color="#94a3b8" />
+        <div className={styles.headerActions}>
+          <div className={styles.btnOutline}>
+            <Wallet size={18} />
+            Standar Gaji: {formatRupiah(baseWage)}/hari
+          </div>
+          <button className={localStyles.logoutBtn} onClick={handleLogout} title="Keluar">
+            <LogOut size={18} />
+          </button>
         </div>
       </div>
 
-      <div className={styles.actionSection}>
-        <h2 className={styles.actionTitle}>Absen Hari Ini</h2>
-        {hasClockedInToday ? (
-          <div style={{ textAlign: 'center', padding: '1rem', color: '#16a34a', fontWeight: 'bold' }}>
-            ✓ Anda sudah absen hari ini
-          </div>
-        ) : (
-          <div className={styles.buttonGrid}>
-            <button 
-              className={`${styles.absenBtn} ${styles.btnHadir}`} 
-              onClick={() => handleAbsen("Hadir")}
-              disabled={submitting}
-            >
-              {submitting ? <Loader2 className={styles.spinner} size={24} /> : <CalendarCheck size={28} />}
-              <span>Hadir Penuh</span>
-            </button>
-            <button 
-              className={`${styles.absenBtn} ${styles.btnSetengah}`}
-              onClick={() => handleAbsen("Setengah Hari")}
-              disabled={submitting}
-            >
-              {submitting ? <Loader2 className={styles.spinner} size={24} /> : <CalendarMinus size={28} />}
-              <span>Setengah Hari</span>
-            </button>
-          </div>
-        )}
-      </div>
+      {error && (
+        <div className={styles.errorBox} style={{marginBottom: '1rem'}}>
+          <AlertCircle size={20} /> {error}
+        </div>
+      )}
 
-      <div className={styles.historySection}>
-        <h2 className={styles.historyTitle}>Riwayat Kehadiran</h2>
-        <div className={styles.historyList}>
+      {success && (
+        <div className={styles.successBox} style={{marginBottom: '1rem'}}>
+          <CheckCircle2 size={20} /> {success}
+        </div>
+      )}
+
+      <div className={styles.grid}>
+        {/* FORM PANEL */}
+        <div className={styles.panel}>
+          <h2 className={styles.panelTitle}>
+            <Clock size={20} className={styles.iconBlue} /> Catat Kehadiran
+          </h2>
+          
+          <form className={styles.form} onSubmit={handleCheckIn}>
+            <div className={styles.formGroup}>
+              <label>Pilih Tanggal</label>
+              <input 
+                type="date" 
+                className={styles.input} 
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Status Kehadiran</label>
+              <select className={styles.input} value={status} onChange={handleStatusChange}>
+                <option value="Kerja Normal">Kerja Normal (1x Gaji)</option>
+                <option value="Setengah Hari">Setengah Hari (0.5x Gaji)</option>
+                <option value="Lembur Penuh">Lembur Penuh (2x Gaji)</option>
+                <option value="Sakit">Sakit (0x Gaji)</option>
+                <option value="Izin">Izin (0x Gaji)</option>
+                <option value="Absen">Absen (0x Gaji)</option>
+              </select>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Nominal Gaji Pokok (Bisa Diedit)</label>
+              <input 
+                type="number" 
+                className={styles.input} 
+                value={baseWage}
+                onChange={(e) => setBaseWage(e.target.value)}
+                min="0"
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Tambahan Lembur Ekstra (Rp)</label>
+              <input 
+                type="number" 
+                className={styles.input} 
+                value={extraPay}
+                onChange={(e) => setExtraPay(e.target.value)}
+                min="0"
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Catatan (Opsional)</label>
+              <input 
+                type="text" 
+                className={styles.input} 
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Bongkar muat barang..."
+              />
+            </div>
+
+            <div className={styles.summaryBox}>
+              Total Gaji Hari Ini:
+              <strong>{formatRupiah(currentTotal)}</strong>
+            </div>
+
+            <button type="submit" className={styles.btnPrimary} disabled={submitting}>
+              {submitting ? <Loader2 size={18} className={styles.spinner} /> : <Save size={18} />}
+              Simpan Absensi
+            </button>
+          </form>
+        </div>
+
+        {/* RIGHT PANEL: STATS & HISTORY */}
+        <div className={styles.panel}>
+          <div className={styles.panelHeaderRow}>
+            <h2 className={styles.panelTitle}>
+              <CalendarRange size={20} className={styles.iconOrange} /> Buku Gaji Aktif
+            </h2>
+            <button className={styles.btnCloseBook} onClick={handleCloseBook}>
+              Tutup Buku & Gajian
+            </button>
+          </div>
+
+          <div className={styles.periodStats}>
+            <div className={styles.statBox}>
+              <span className={styles.statLabel}>Mulai Periode</span>
+              <span className={styles.statValue}>
+                {data?.activePeriod ? new Date(data.activePeriod.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
+              </span>
+            </div>
+            <div className={styles.statBox}>
+              <span className={styles.statLabel}>Total Terkumpul</span>
+              <span className={styles.statValueHighlight}>{formatRupiah(periodPay)}</span>
+            </div>
+          </div>
+
+          <h3 className={styles.listTitle}>Riwayat Kehadiran (Periode Ini)</h3>
+          
           {data?.attendances?.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#94a3b8', padding: '1rem' }}>Belum ada absen</div>
+            <p className={styles.emptyText}>Belum ada data absen di periode ini.</p>
           ) : (
-            data?.attendances?.map(att => (
-              <div key={att.id} className={styles.historyCard}>
-                <div>
-                  <div className={styles.historyDate}>{new Date(att.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' })}</div>
-                  <span className={`${styles.historyStatus} ${att.status === 'Hadir' ? styles.statusHadir : styles.statusSetengah}`}>
-                    {att.status}
-                  </span>
-                </div>
-                <div className={styles.historyPay}>
-                  +{formatRp(att.totalPay)}
-                </div>
-              </div>
-            ))
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Tanggal</th>
+                    <th>Status</th>
+                    <th>Gaji</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data?.attendances?.map((att) => (
+                    <tr key={att.id}>
+                      <td>
+                        <div className={styles.bold}>{new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</div>
+                        {att.notes && <div style={{fontSize: '0.8rem', color: '#6B7280'}}>{att.notes}</div>}
+                      </td>
+                      <td>
+                        <span className={styles.badge}>{att.status}</span>
+                      </td>
+                      <td className={styles.bold}>{formatRupiah(att.totalPay)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
