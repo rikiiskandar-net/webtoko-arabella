@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getWorkerUser } from "@/lib/workerAuth";
+import { getWorkerAuthSession } from "@/lib/workerAuth";
 import prisma from "@/lib/prisma";
 
 export async function PUT(req) {
   try {
-    const user = await getWorkerUser();
+    const user = await getWorkerAuthSession();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
