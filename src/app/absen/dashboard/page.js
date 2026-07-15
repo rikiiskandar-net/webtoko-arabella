@@ -693,92 +693,111 @@ export default function WorkerDashboard() {
           {activeTab === "profile" && (
             <div className={styles.tabContentWrapper}>
               {/* Profile Hero */}
-              <div className={styles.profileHero}>
-                <div className={styles.profileAvatar} style={{ padding: 0, overflow: 'hidden' }}>
-                  <img src="/worker-avatar.png" alt="Avatar Pekerja" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                </div>
-                <div className={styles.profileHeroName}>{user?.name || 'Nama Pekerja'}</div>
-                <div className={styles.profileHeroRole}>{user?.role || 'Pekerja'}</div>
-                <div className={styles.profileHeroEmail}>{user?.email}</div>
-              </div>
-
-              {/* Profile Views */}
               {profileViewMode === "info" && (
-                <div className={styles.panel}>
-                  <h2 className={styles.panelTitle}>
-                    <UserCircle size={22} weight="duotone" className={styles.iconBlue} />
-                    Informasi Profil
-                  </h2>
-                  <div className={styles.profileInfoList}>
-                    <div className={styles.profileInfoItem}>
-                      <span className={styles.profileInfoLabel}><User size={14} weight="bold" /> Nama Lengkap</span>
-                      <span className={styles.profileInfoValue}>{user?.name || '-'}</span>
+                <>
+                  <div className={styles.profileHero2026}>
+                    <div className={styles.profileAvatarContainer2026}>
+                      <div className={styles.profileAvatarInner2026}>
+                        <img src="/worker-avatar.png" alt="Avatar Pekerja" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
                     </div>
-                    <div className={styles.profileInfoItem}>
-                      <span className={styles.profileInfoLabel}><Briefcase size={14} weight="bold" /> Jabatan</span>
-                      <span className={styles.profileInfoValue}>{user?.role || '-'}</span>
+                    <div className={styles.profileName2026}>{user?.name || 'Nama Pekerja'}</div>
+                    <div className={styles.profileRole2026}>{user?.role || 'Pekerja'}</div>
+                  </div>
+
+                  <div className={styles.profileList2026}>
+                    <div className={styles.profileItem2026}>
+                      <div className={`${styles.profileItemIcon2026} ${styles.bgBlue}`}>
+                        <User size={20} weight="duotone" />
+                      </div>
+                      <div className={styles.profileItemText2026}>
+                        <div className={styles.profileItemLabel2026}>Nama Lengkap</div>
+                        <div className={styles.profileItemValue2026}>{user?.name || '-'}</div>
+                      </div>
                     </div>
-                    <div className={styles.profileInfoItem}>
-                      <span className={styles.profileInfoLabel}><Phone size={14} weight="bold" /> No. HP</span>
-                      <span className={styles.profileInfoValue}>{user?.phone || '-'}</span>
+                    
+                    <div className={styles.profileItem2026}>
+                      <div className={`${styles.profileItemIcon2026} ${styles.bgPurple}`}>
+                        <Briefcase size={20} weight="duotone" />
+                      </div>
+                      <div className={styles.profileItemText2026}>
+                        <div className={styles.profileItemLabel2026}>Jabatan</div>
+                        <div className={styles.profileItemValue2026}>{user?.role || '-'}</div>
+                      </div>
                     </div>
-                    <div className={styles.profileInfoItem}>
-                      <span className={styles.profileInfoLabel}><MapPin size={14} weight="bold" /> Alamat</span>
-                      <span className={styles.profileInfoValue}>{user?.address || '-'}</span>
+                    
+                    <div className={styles.profileItem2026}>
+                      <div className={`${styles.profileItemIcon2026} ${styles.bgOrange}`}>
+                        <Phone size={20} weight="duotone" />
+                      </div>
+                      <div className={styles.profileItemText2026}>
+                        <div className={styles.profileItemLabel2026}>No. HP</div>
+                        <div className={styles.profileItemValue2026}>{user?.phone || '-'}</div>
+                      </div>
+                    </div>
+                    
+                    <div className={styles.profileItem2026}>
+                      <div className={`${styles.profileItemIcon2026} ${styles.bgGreen}`}>
+                        <MapPin size={20} weight="duotone" />
+                      </div>
+                      <div className={styles.profileItemText2026}>
+                        <div className={styles.profileItemLabel2026}>Alamat</div>
+                        <div className={styles.profileItemValue2026}>{user?.address || '-'}</div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                    <button className={styles.btnPrimary} style={{ flex: 1 }} onClick={() => setProfileViewMode("edit")}>
-                      <User size={18} weight="bold" /> Edit Profil
+
+                  <div className={styles.actionRow2026}>
+                    <button className={styles.btnPrimary2026} onClick={() => setProfileViewMode("edit")}>
+                      <User size={20} weight="bold" /> Edit Profil
                     </button>
-                    <button className={styles.btnSecondary} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onClick={() => setProfileViewMode("settings")}>
-                      <Gear size={18} weight="bold" /> Setting
+                    <button className={styles.btnSecondary2026} onClick={() => setProfileViewMode("settings")}>
+                      <Gear size={20} weight="bold" /> Setting Keamanan
+                    </button>
+                    <button className={styles.btnDanger2026} onClick={handleLogout}>
+                      <SignOut size={20} weight="bold" /> Keluar dari Akun
                     </button>
                   </div>
-                  <button className={styles.btnDanger} style={{ marginTop: '10px' }} onClick={handleLogout}>
-                    <SignOut size={18} weight="bold" /> Keluar dari Akun
-                  </button>
-                </div>
+                </>
               )}
 
               {profileViewMode === "edit" && (
-                <div className={styles.panel}>
-                  <h2 className={styles.panelTitle}>
-                    <UserCircle size={22} weight="duotone" className={styles.iconBlue} />
+                <div className={styles.panel2026}>
+                  <h2 className={styles.panelTitle2026}>
+                    <UserCircle size={24} weight="duotone" className={styles.iconBlue} />
                     Edit Profil
                   </h2>
-                  <form className={styles.form} onSubmit={handleProfileSave}>
-                    <div className={styles.formGroup}>
-                      <label><User size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nama Lengkap</label>
-                      <input type="text" className={styles.input} value={profileForm.name}
+                  <form onSubmit={handleProfileSave}>
+                    <div className={styles.formGroup2026}>
+                      <label>Nama Lengkap</label>
+                      <input type="text" className={styles.input2026} value={profileForm.name}
                         onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                         placeholder="Nama pekerja" />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label><Phone size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nomor HP / WA</label>
-                      <input type="tel" className={styles.input} value={profileForm.phone}
+                    <div className={styles.formGroup2026}>
+                      <label>Nomor HP / WA</label>
+                      <input type="tel" className={styles.input2026} value={profileForm.phone}
                         onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                         placeholder="08123456789" />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label><Briefcase size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Jabatan</label>
-                      <input type="text" className={styles.input} value={profileForm.role}
+                    <div className={styles.formGroup2026}>
+                      <label>Jabatan</label>
+                      <input type="text" className={styles.input2026} value={profileForm.role}
                         onChange={(e) => setProfileForm({ ...profileForm, role: e.target.value })}
                         placeholder="Misal: Mandor, Tukang, Kenek" />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label><MapPin size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Alamat Domisili</label>
-                      <textarea className={styles.input} value={profileForm.address}
+                    <div className={styles.formGroup2026}>
+                      <label>Alamat Domisili</label>
+                      <textarea className={styles.input2026} value={profileForm.address}
                         onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
                         placeholder="Alamat lengkap (opsional)"
-                        style={{ minHeight: '80px', resize: 'vertical' }} />
+                        style={{ minHeight: '100px', resize: 'vertical' }} />
                     </div>
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                      <button type="button" className={styles.btnSecondary} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onClick={() => setProfileViewMode("info")}>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
+                      <button type="button" className={styles.btnSecondary2026} style={{ flex: 1 }} onClick={() => setProfileViewMode("info")}>
                         Batal
                       </button>
-                      <button type="submit" className={styles.btnPrimary} style={{ flex: 1 }} disabled={profileSubmitting}>
+                      <button type="submit" className={styles.btnPrimary2026} style={{ flex: 1 }} disabled={profileSubmitting}>
                         {profileSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />} Simpan
                       </button>
                     </div>
@@ -787,31 +806,31 @@ export default function WorkerDashboard() {
               )}
 
               {profileViewMode === "settings" && (
-                <div className={styles.panel}>
-                  <h2 className={styles.panelTitle}>
-                    <Gear size={22} weight="duotone" className={styles.iconBlue} />
-                    Setting Akun
+                <div className={styles.panel2026}>
+                  <h2 className={styles.panelTitle2026}>
+                    <Gear size={24} weight="duotone" className={styles.iconBlue} />
+                    Setting Keamanan
                   </h2>
-                  <form className={styles.form} onSubmit={handleSettingsSave}>
-                    <div className={styles.formGroup}>
+                  <form onSubmit={handleSettingsSave}>
+                    <div className={styles.formGroup2026}>
                       <label>Email Login</label>
-                      <input type="email" className={styles.input} value={settingsForm.email} onChange={e => setSettingsForm({...settingsForm, email: e.target.value})} required />
+                      <input type="email" className={styles.input2026} value={settingsForm.email} onChange={e => setSettingsForm({...settingsForm, email: e.target.value})} required />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label>Password Baru (kosongkan jika tidak diubah)</label>
-                      <input type="password" className={styles.input} value={settingsForm.password} onChange={e => setSettingsForm({...settingsForm, password: e.target.value})} placeholder="******" />
+                    <div className={styles.formGroup2026}>
+                      <label>Password Baru <span style={{ textTransform: 'none', fontWeight: 'normal', color: '#94a3b8' }}>(kosongkan jika tidak diubah)</span></label>
+                      <input type="password" className={styles.input2026} value={settingsForm.password} onChange={e => setSettingsForm({...settingsForm, password: e.target.value})} placeholder="******" />
                     </div>
                     {settingsForm.password && (
-                      <div className={styles.formGroup}>
+                      <div className={styles.formGroup2026}>
                         <label>Konfirmasi Password Baru</label>
-                        <input type="password" className={styles.input} value={settingsForm.passwordConfirm} onChange={e => setSettingsForm({...settingsForm, passwordConfirm: e.target.value})} placeholder="******" required />
+                        <input type="password" className={styles.input2026} value={settingsForm.passwordConfirm} onChange={e => setSettingsForm({...settingsForm, passwordConfirm: e.target.value})} placeholder="******" required />
                       </div>
                     )}
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                      <button type="button" className={styles.btnSecondary} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onClick={() => setProfileViewMode("info")}>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
+                      <button type="button" className={styles.btnSecondary2026} style={{ flex: 1 }} onClick={() => setProfileViewMode("info")}>
                         Batal
                       </button>
-                      <button type="submit" className={styles.btnPrimary} style={{ flex: 1 }} disabled={settingsSubmitting}>
+                      <button type="submit" className={styles.btnPrimary2026} style={{ flex: 1 }} disabled={settingsSubmitting}>
                         {settingsSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />} Simpan
                       </button>
                     </div>
