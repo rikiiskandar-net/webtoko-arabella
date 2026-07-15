@@ -629,7 +629,6 @@ select.input option {
 
 .navItemActive {
   color: #3b82f6;
-  transform: scale(0.95);
 }
 
 .navItemActive .navIcon {
@@ -645,7 +644,7 @@ select.input option {
 }
 
 .navItemActive .navIcon {
-  transform: scale(1.15);
+  transform: none;
 }
 
 /* Custom Modal */
