@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ClockCountdown, Wallet, CalendarDots, WarningCircle, ArrowClockwise,
-  FloppyDisk, SignOut, CheckCircle, ListDashes, Warning, CaretDown, CaretUp,
+  Timer, WarningCircle, FloppyDisk, SignOut, CheckCircle,
+  ListDashes, Warning, CaretDown, CaretUp,
   User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
-  BookOpenText, TrendingUp, UserCircle, NotePencil, MegaphoneSimple,
-  Spinner, CheckSquareOffset, Confetti, SealCheck
+  BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
+  CheckSquareOffset
 } from "@phosphor-icons/react";
 import styles from "./Dashboard.module.css";
 
@@ -436,7 +436,7 @@ export default function WorkerDashboard() {
                 </div>
                 <div className={styles.miniCard + ' ' + styles.miniCardOrange}>
                   <div className={styles.miniCardIcon}>
-                    <TrendingUp size={20} weight="duotone" />
+                    <TrendUp size={20} weight="duotone" />
                   </div>
                   <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
                     {formatRupiah(currentTotal).replace('Rp\u00a0', 'Rp')}
@@ -448,7 +448,7 @@ export default function WorkerDashboard() {
               {/* Form Kehadiran */}
               <div className={styles.panel}>
                 <h2 className={styles.panelTitle}>
-                  <ClockCountdown size={22} weight="duotone" className={styles.iconBlue} />
+                  <Timer size={22} weight="duotone" className={styles.iconBlue} />
                   Catat Kehadiran
                 </h2>
 
