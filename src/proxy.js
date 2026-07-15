@@ -14,18 +14,28 @@ async function verifyToken(token) {
   }
 }
 
-export default async function proxy(request) {
-  const { pathname } = request.nextUrl;
+export default async function proxy(req) {
+  const url = req.nextUrl;
+  const pathname = url.pathname;
+  
+  // 1. SUBDOMAIN ROUTING FOR ABSEN
+  const hostname = req.headers.get("host");
+  if (hostname && hostname.startsWith("absen.")) {
+    if (!pathname.startsWith("/absen") && !pathname.startsWith("/_next") && !pathname.startsWith("/api")) {
+      url.pathname = `/absen${pathname}`;
+      return NextResponse.rewrite(url);
+    }
+  }
 
-  // Protect /dashboard and /api/admin routes
+  // 2. ADMIN AUTHENTICATION GUARD
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/api/admin")) {
-    const token = request.cookies.get(COOKIE_NAME)?.value;
+    const token = req.cookies.get(COOKIE_NAME)?.value;
     
     if (!token) {
       if (pathname.startsWith("/api/admin")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
     const payload = await verifyToken(token);
@@ -34,7 +44,7 @@ export default async function proxy(request) {
       if (pathname.startsWith("/api/admin")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
     // Role checking for Superadmin routes
@@ -43,7 +53,7 @@ export default async function proxy(request) {
         if (pathname.startsWith("/api/admin")) {
           return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+        return NextResponse.redirect(new URL("/dashboard", req.url));
       }
     }
   }
@@ -53,7 +63,12 @@ export default async function proxy(request) {
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/api/admin/:path*"
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
