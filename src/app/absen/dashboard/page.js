@@ -220,6 +220,32 @@ export default function WorkerDashboard() {
     });
   };
 
+  const handleDeleteAttendance = (attendanceId) => {
+    setModalConfig({
+      isOpen: true,
+      type: "warning",
+      title: "Hapus Absen",
+      message: "Apakah Anda yakin ingin membatalkan (menghapus) absen ini?",
+      onConfirm: async () => {
+        setModalConfig({ ...modalConfig, isOpen: false });
+        try {
+          const res = await fetch(`/api/worker/attendance?id=${attendanceId}`, {
+            method: "DELETE"
+          });
+          if (res.ok) {
+            showToast("Absen berhasil dibatalkan", "success");
+            fetchData();
+          } else {
+            const errData = await res.json();
+            showToast(errData.error || "Gagal menghapus absen", "error");
+          }
+        } catch (err) {
+          showToast("Terjadi kesalahan jaringan", "error");
+        }
+      }
+    });
+  };
+
   const handleCloseBook = () => {
     setModalConfig({
       isOpen: true,
@@ -268,7 +294,7 @@ export default function WorkerDashboard() {
   };
 
   // Helper to render individual attendance card
-  const renderAttendanceCard = (att) => {
+  const renderAttendanceCard = (att, isActiveBook = false) => {
     const isExpanded = expandedCardId === att.id;
     return (
       <div className={`${styles.historyCardWrapper} ${isExpanded ? styles.historyCardWrapperActive : ''}`} key={att.id}>
@@ -281,6 +307,19 @@ export default function WorkerDashboard() {
           </div>
           <div className={styles.historyRight}>
             <span className={styles.historyPay}>{formatRupiah(att.totalPay)}</span>
+            {isActiveBook && (
+              <button 
+                className={styles.deleteBtn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteAttendance(att.id);
+                }}
+                title="Hapus Absen"
+                style={{ background: 'transparent', border: 'none', color: '#ef4444', padding: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
             {isExpanded ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
           </div>
         </div>
@@ -519,7 +558,7 @@ export default function WorkerDashboard() {
                       </div>
                     ) : (
                       <div className={styles.historyList}>
-                        {data?.activeAttendances?.map(renderAttendanceCard)}
+                        {data?.activeAttendances?.map(att => renderAttendanceCard(att, true))}
                       </div>
                     )}
                   </div>

@@ -121,6 +121,46 @@ export async function GET(req) {
     });
   } catch (error) {
     console.error("Error fetching worker attendance:", error);
-    return NextResponse.json({ error: "Failed to fetch attendance" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch data" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req) {
+  try {
+    const session = await getWorkerAuthSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { searchParams } = new URL(req.url);
+    const attendanceId = searchParams.get('id');
+
+    if (!attendanceId) {
+      return NextResponse.json({ error: "Missing attendance ID" }, { status: 400 });
+    }
+
+    const attendance = await prisma.workerAttendance.findUnique({
+      where: { id: attendanceId },
+      include: { payrollPeriod: true }
+    });
+
+    if (!attendance) {
+      return NextResponse.json({ error: "Attendance not found" }, { status: 404 });
+    }
+
+    if (attendance.workerId !== session.id) {
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
+    }
+
+    if (attendance.payrollPeriod.isClosed) {
+      return NextResponse.json({ error: "Cannot delete attendance from a closed book" }, { status: 400 });
+    }
+
+    await prisma.workerAttendance.delete({
+      where: { id: attendanceId }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting attendance:", error);
+    return NextResponse.json({ error: "Failed to delete attendance" }, { status: 500 });
   }
 }
