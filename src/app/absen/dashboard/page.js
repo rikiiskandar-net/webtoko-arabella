@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { 
   Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut, 
   CheckCircle2, Home, History, AlertTriangle, ChevronDown, ChevronUp, Droplet,
-  HardHat, User, Phone, MapPin, Briefcase
+  HardHat, User, Phone, MapPin, Briefcase, FileText
 } from "lucide-react";
 import styles from "./Dashboard.module.css";
 
@@ -20,7 +20,11 @@ export default function WorkerDashboard() {
   // UI State
   const [showSplash, setShowSplash] = useState(true);
   const [activeTab, setActiveTab] = useState("home"); // 'home', 'history', or 'profile'
+  const [historyTab, setHistoryTab] = useState("active"); // 'active' or 'archive'
+  
   const [expandedCardId, setExpandedCardId] = useState(null);
+  const [expandedArchiveId, setExpandedArchiveId] = useState(null);
+
   const [modalConfig, setModalConfig] = useState({ isOpen: false, title: "", message: "", type: "warning", onConfirm: null });
 
   // Form State (Absen)
@@ -192,7 +196,7 @@ export default function WorkerDashboard() {
       isOpen: true,
       type: "warning",
       title: "Tutup Buku",
-      message: "Tutup buku dan mulai perhitungan gaji baru? Perhitungan sebelumnya akan disimpan ke dalam riwayat.",
+      message: "Tutup buku dan mulai perhitungan gaji baru? Perhitungan sebelumnya akan disimpan ke dalam riwayat Arsip.",
       onConfirm: async () => {
         setModalConfig({ ...modalConfig, isOpen: false });
         try {
@@ -206,10 +210,11 @@ export default function WorkerDashboard() {
               isOpen: true,
               type: "success",
               title: "Berhasil",
-              message: "Buku gaji berhasil ditutup! Memulai perhitungan periode baru.",
+              message: "Buku gaji berhasil ditutup! Riwayat tagihan dapat dilihat di tab Arsip Gajian.",
               onConfirm: () => {
                 setModalConfig({ ...modalConfig, isOpen: false });
                 fetchData();
+                setHistoryTab("archive"); // Auto switch to archive tab to show the closed period
               }
             });
           } else {
@@ -228,6 +233,58 @@ export default function WorkerDashboard() {
     else setExpandedCardId(id);
   };
 
+  const toggleArchive = (id) => {
+    if (expandedArchiveId === id) setExpandedArchiveId(null);
+    else setExpandedArchiveId(id);
+  };
+
+  // Helper to render individual attendance card
+  const renderAttendanceCard = (att) => {
+    const isExpanded = expandedCardId === att.id;
+    return (
+      <div className={`${styles.historyCardWrapper} ${isExpanded ? styles.historyCardWrapperActive : ''}`} key={att.id}>
+        <div className={styles.historyCardHeader} onClick={() => toggleCard(att.id)}>
+          <div className={styles.historyLeft}>
+            <span className={styles.historyDate}>
+              {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </span>
+            <span className={styles.historyBadge}>{att.status}</span>
+          </div>
+          <div className={styles.historyRight}>
+            <span className={styles.historyPay}>{formatRupiah(att.totalPay)}</span>
+            {isExpanded ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
+          </div>
+        </div>
+        
+        {isExpanded && (
+          <div className={styles.expandedDetails}>
+            <div className={styles.detailRow}>
+              <span>Gaji Pokok</span>
+              <span>{formatRupiah(Math.round(att.totalPay - (att.extraPay || 0)))}</span>
+            </div>
+            {att.extraPay > 0 && (
+              <div className={styles.detailRow}>
+                <span>Lembur Ekstra</span>
+                <span>{formatRupiah(att.extraPay)}</span>
+              </div>
+            )}
+            {att.notes && (
+              <div className={styles.detailRow}>
+                <span>Catatan</span>
+                <span style={{textAlign: 'right'}}>{att.notes}</span>
+              </div>
+            )}
+            <div className={styles.detailTotal}>
+              <span>Total Hari Ini</span>
+              <span>{formatRupiah(att.totalPay)}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+
   if (loading || showSplash) {
     return (
       <div className={styles.splashScreen}>
@@ -242,7 +299,7 @@ export default function WorkerDashboard() {
     );
   }
 
-  const periodPay = data?.attendances?.reduce((sum, item) => sum + item.totalPay, 0) || 0;
+  const periodPay = data?.activeAttendances?.reduce((sum, item) => sum + item.totalPay, 0) || 0;
   const currentTotal = Math.round(Number(baseWage) * Number(multiplier)) + Number(extraPay);
 
   return (
@@ -396,68 +453,96 @@ export default function WorkerDashboard() {
 
         {/* TAB: HISTORY */}
         {activeTab === "history" && (
-          <>
-            <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
-              <button className={styles.btnCloseBook} onClick={handleCloseBook}>
-                Tutup Buku & Gajian Sekarang
+          <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
+            
+            {/* History Tab Switcher */}
+            <div className={styles.tabSwitcher}>
+              <button 
+                className={`${styles.tabSwitchBtn} ${historyTab === 'active' ? styles.tabSwitchBtnActive : ''}`}
+                onClick={() => setHistoryTab('active')}
+              >
+                Buku Aktif
+              </button>
+              <button 
+                className={`${styles.tabSwitchBtn} ${historyTab === 'archive' ? styles.tabSwitchBtnActive : ''}`}
+                onClick={() => setHistoryTab('archive')}
+              >
+                Arsip Gajian
               </button>
             </div>
 
-            <div className={styles.panel}>
-              <h3 className={styles.listTitle}>Riwayat (Periode Ini)</h3>
-              
-              {data?.attendances?.length === 0 ? (
-                <p className={styles.emptyText}>Belum ada riwayat absensi.</p>
-              ) : (
-                <div className={styles.historyList}>
-                  {data?.attendances?.map((att) => {
-                    const isExpanded = expandedCardId === att.id;
-                    return (
-                      <div className={`${styles.historyCardWrapper} ${isExpanded ? styles.historyCardWrapperActive : ''}`} key={att.id}>
-                        <div className={styles.historyCardHeader} onClick={() => toggleCard(att.id)}>
-                          <div className={styles.historyLeft}>
-                            <span className={styles.historyDate}>
-                              {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </span>
-                            <span className={styles.historyBadge}>{att.status}</span>
-                          </div>
-                          <div className={styles.historyRight}>
-                            <span className={styles.historyPay}>{formatRupiah(att.totalPay)}</span>
-                            {isExpanded ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
-                          </div>
-                        </div>
-                        
-                        {isExpanded && (
-                          <div className={styles.expandedDetails}>
-                            <div className={styles.detailRow}>
-                              <span>Gaji Pokok</span>
-                              <span>{formatRupiah(Math.round(att.totalPay - (att.extraPay || 0)))}</span>
-                            </div>
-                            {att.extraPay > 0 && (
-                              <div className={styles.detailRow}>
-                                <span>Lembur Ekstra</span>
-                                <span>{formatRupiah(att.extraPay)}</span>
-                              </div>
-                            )}
-                            {att.notes && (
-                              <div className={styles.detailRow}>
-                                <span>Catatan</span>
-                                <span style={{textAlign: 'right'}}>{att.notes}</span>
-                              </div>
-                            )}
-                            <div className={styles.detailTotal}>
-                              <span>Total Hari Ini</span>
-                              <span>{formatRupiah(att.totalPay)}</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+            {/* Content: Active Book */}
+            {historyTab === "active" && (
+              <>
+                <button className={styles.btnCloseBook} onClick={handleCloseBook} style={{marginBottom: '1rem'}}>
+                  Tutup Buku & Gajian Sekarang
+                </button>
+
+                <div className={styles.panel}>
+                  <h3 className={styles.listTitle}>Riwayat Berjalan</h3>
+                  
+                  {data?.activeAttendances?.length === 0 ? (
+                    <p className={styles.emptyText}>Belum ada absensi di buku ini.</p>
+                  ) : (
+                    <div className={styles.historyList}>
+                      {data?.activeAttendances?.map(renderAttendanceCard)}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </>
+              </>
+            )}
+
+            {/* Content: Archive Book */}
+            {historyTab === "archive" && (
+              <div className={styles.panel}>
+                <h3 className={styles.listTitle}>Riwayat Faktur Gaji</h3>
+                
+                {data?.closedPeriods?.length === 0 ? (
+                  <p className={styles.emptyText}>Belum ada riwayat gaji yang ditutup.</p>
+                ) : (
+                  <div>
+                    {data?.closedPeriods?.map((period) => {
+                      const isExpanded = expandedArchiveId === period.id;
+                      const startDateStr = new Date(period.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                      const endDateStr = period.endDate ? new Date(period.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) : 'Selesai';
+                      
+                      const periodTotal = period.attendances.reduce((sum, att) => sum + att.totalPay, 0);
+
+                      return (
+                        <div key={period.id} className={styles.archiveCard}>
+                          <div 
+                            className={`${styles.archiveHeader} ${isExpanded ? styles.archiveHeaderActive : ''}`}
+                            onClick={() => toggleArchive(period.id)}
+                          >
+                            <div className={styles.archiveTitle}>
+                              <FileText size={18} color="#64748b" />
+                              {startDateStr} - {endDateStr}
+                            </div>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+                              <span className={styles.archiveTotal}>{formatRupiah(periodTotal)}</span>
+                              {isExpanded ? <ChevronUp size={18} color="#94a3b8" /> : <ChevronDown size={18} color="#94a3b8" />}
+                            </div>
+                          </div>
+                          
+                          {isExpanded && (
+                            <div className={styles.archiveBody}>
+                              {period.attendances.length === 0 ? (
+                                <p className={styles.emptyText} style={{margin: 0}}>Tidak ada data absensi di periode ini.</p>
+                              ) : (
+                                <div className={styles.historyList}>
+                                  {period.attendances.map(renderAttendanceCard)}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         )}
 
         {/* TAB: PROFILE */}

@@ -71,10 +71,6 @@ export async function GET(req) {
     const session = await getWorkerAuthSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { searchParams } = new URL(req.url);
-    const month = parseInt(searchParams.get('month') || String(new Date().getMonth()));
-    const year = parseInt(searchParams.get('year') || String(new Date().getFullYear()));
-
     // Find active period for this worker
     let activePeriod = await prisma.workerPayrollPeriod.findFirst({
       where: { workerId: session.id, isClosed: false },
@@ -91,19 +87,24 @@ export async function GET(req) {
       });
     }
 
-    // Get attendance for the requested month/year
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0);
-
-    const attendances = await prisma.workerAttendance.findMany({
+    // Get active attendances
+    const activeAttendances = await prisma.workerAttendance.findMany({
       where: {
-        workerId: session.id,
-        date: {
-          gte: startDate,
-          lte: endDate,
-        }
+        payrollPeriodId: activePeriod.id,
+        workerId: session.id
       },
       orderBy: { date: 'asc' }
+    });
+
+    // Get closed periods and their attendances
+    const closedPeriods = await prisma.workerPayrollPeriod.findMany({
+      where: { workerId: session.id, isClosed: true },
+      orderBy: { endDate: 'desc' },
+      include: {
+        attendances: {
+          orderBy: { date: 'asc' }
+        }
+      }
     });
 
     const worker = await prisma.worker.findUnique({
@@ -113,7 +114,8 @@ export async function GET(req) {
 
     return NextResponse.json({
       activePeriod,
-      attendances,
+      activeAttendances,
+      closedPeriods,
       baseWage: worker?.baseWage || 0
     });
   } catch (error) {
