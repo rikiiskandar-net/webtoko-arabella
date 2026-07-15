@@ -711,6 +711,14 @@ export default function WorkerDashboard() {
                   </h2>
                   <div className={styles.profileInfoList}>
                     <div className={styles.profileInfoItem}>
+                      <span className={styles.profileInfoLabel}><User size={14} weight="bold" /> Nama Lengkap</span>
+                      <span className={styles.profileInfoValue}>{user?.name || '-'}</span>
+                    </div>
+                    <div className={styles.profileInfoItem}>
+                      <span className={styles.profileInfoLabel}><Briefcase size={14} weight="bold" /> Jabatan</span>
+                      <span className={styles.profileInfoValue}>{user?.role || '-'}</span>
+                    </div>
+                    <div className={styles.profileInfoItem}>
                       <span className={styles.profileInfoLabel}><Phone size={14} weight="bold" /> No. HP</span>
                       <span className={styles.profileInfoValue}>{user?.phone || '-'}</span>
                     </div>
