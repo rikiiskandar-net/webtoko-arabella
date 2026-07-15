@@ -355,13 +355,32 @@ export default function WorkerDashboard() {
 
   if (loading || showSplash) {
     return (
-      <div className={styles.splashScreen}>
-        <div className={styles.splashLogo}>
-          <HardHat size={48} color="#ffffff" strokeWidth={1.5} />
+      <div className={styles.skeletonWrapper}>
+        <div className={styles.skeletonTopBar}>
+          <div className={`${styles.skeleton} ${styles.skeletonAvatar}`}></div>
+          <div className={`${styles.skeleton} ${styles.skeletonIcon}`}></div>
         </div>
-        <h1 className={styles.splashTitle}>Dapur Arabella</h1>
-        <p className={styles.splashSubtitle}>Memuat data pekerja...</p>
-        <Loader2 className={styles.spinner} size={24} />
+        
+        <div className={`${styles.skeleton} ${styles.skeletonPremiumCard}`}></div>
+        
+        <div className={styles.panel} style={{boxShadow: 'none', border: '1px solid #e2e8f0'}}>
+          <div className={`${styles.skeleton} ${styles.skeletonTitle}`}></div>
+          
+          <div className={styles.skeletonFormGroup}>
+            <div className={`${styles.skeleton} ${styles.skeletonLabel}`}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonInputBox}`}></div>
+          </div>
+          <div className={styles.skeletonFormGroup}>
+            <div className={`${styles.skeleton} ${styles.skeletonLabel}`}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonInputBox}`}></div>
+          </div>
+          <div className={styles.skeletonFormGroup}>
+            <div className={`${styles.skeleton} ${styles.skeletonLabel}`}></div>
+            <div className={`${styles.skeleton} ${styles.skeletonInputBox}`}></div>
+          </div>
+          
+          <div className={`${styles.skeleton} ${styles.skeletonButton}`}></div>
+        </div>
       </div>
     );
   }

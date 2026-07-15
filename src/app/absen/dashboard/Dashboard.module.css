@@ -857,3 +857,83 @@ select.input option {
   padding-top: 0.5rem;
   border-top: 1px solid #e2e8f0;
 }
+
+/* Skeleton Loading Effect */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  background: #f1f5f9;
+  background-image: linear-gradient(90deg, #f1f5f9 0px, #e2e8f0 80px, #f1f5f9 160px);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+.skeletonWrapper {
+  padding: 5rem 1rem 7rem 1rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.skeletonTopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.skeletonAvatar {
+  width: 180px;
+  height: 30px;
+  border-radius: 8px;
+}
+
+.skeletonIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.skeletonPremiumCard {
+  width: 100%;
+  height: 180px;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+}
+
+.skeletonTitle {
+  width: 140px;
+  height: 24px;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.skeletonFormGroup {
+  margin-bottom: 1.5rem;
+}
+
+.skeletonLabel {
+  width: 100px;
+  height: 14px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonInputBox {
+  width: 100%;
+  height: 54px;
+  border-radius: 14px;
+}
+
+.skeletonButton {
+  width: 100%;
+  height: 56px;
+  border-radius: 14px;
+  margin-top: 1rem;
+}
