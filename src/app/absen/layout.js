@@ -1,8 +1,8 @@
 import "../globals.css";
 
 export const metadata = {
-  title: "Absensi Proyek",
-  description: "Portal Kehadiran Khusus Karyawan Proyek",
+  title: "ABSENKU — Dapur Arabella",
+  description: "Aplikasi absensi digital modern untuk pekerja Dapur Arabella",
 };
 
 export const viewport = {
@@ -10,7 +10,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#2563EB",
+  themeColor: "#6366F1",
 };
 
 export default function WorkerLayout({ children }) {
