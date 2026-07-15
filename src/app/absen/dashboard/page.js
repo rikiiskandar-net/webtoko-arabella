@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { 
   Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut, 
   CheckCircle2, Home, History, AlertTriangle, ChevronDown, ChevronUp, Droplet,
-  HardHat, User, Phone, MapPin, Briefcase, FileText
+  HardHat, User, Phone, MapPin, Briefcase, FileText, Frown, PackageOpen
 } from "lucide-react";
 import styles from "./Dashboard.module.css";
 
@@ -27,10 +27,18 @@ export default function WorkerDashboard() {
 
   const [modalConfig, setModalConfig] = useState({ isOpen: false, title: "", message: "", type: "warning", onConfirm: null });
 
+  // Toast State (UI/UX Polish)
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+
+  const showToast = (message, type = "success") => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => {
+      setToast({ visible: false, message: "", type: "success" });
+    }, 3000);
+  };
+
   // Form State (Absen)
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const getLocalToday = () => {
     const d = new Date();
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
@@ -120,8 +128,6 @@ export default function WorkerDashboard() {
   const handleCheckIn = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setError("");
-    setSuccess("");
 
     try {
       const res = await fetch("/api/worker/attendance", {
@@ -139,17 +145,16 @@ export default function WorkerDashboard() {
       });
 
       if (res.ok) {
-        setSuccess("Berhasil absen hari ini!");
+        showToast("Berhasil absen hari ini!", "success");
         setNotes("");
         setExtraPay(0);
         fetchData();
-        setTimeout(() => setSuccess(""), 3000);
       } else {
         const errData = await res.json();
-        setError(errData.error || "Gagal menyimpan absensi");
+        showToast(errData.error || "Gagal menyimpan absensi", "error");
       }
     } catch (err) {
-      setError("Terjadi kesalahan jaringan");
+      showToast("Terjadi kesalahan jaringan", "error");
     } finally {
       setSubmitting(false);
     }
@@ -158,8 +163,6 @@ export default function WorkerDashboard() {
   const handleProfileSave = async (e) => {
     e.preventDefault();
     setProfileSubmitting(true);
-    setError("");
-    setSuccess("");
 
     try {
       const res = await fetch("/api/worker/auth/profile", {
@@ -182,10 +185,10 @@ export default function WorkerDashboard() {
         });
       } else {
         const errData = await res.json();
-        setError(errData.error || "Gagal menyimpan profil");
+        showToast(errData.error || "Gagal menyimpan profil", "error");
       }
     } catch (err) {
-      setError("Terjadi kesalahan saat menyimpan");
+      showToast("Terjadi kesalahan saat menyimpan", "error");
     } finally {
       setProfileSubmitting(false);
     }
@@ -219,10 +222,10 @@ export default function WorkerDashboard() {
             });
           } else {
             const errData = await res.json();
-            alert(errData.error || "Gagal menutup buku");
+            showToast(errData.error || "Gagal menutup buku", "error");
           }
         } catch (err) {
-          alert("Terjadi kesalahan jaringan");
+          showToast("Terjadi kesalahan jaringan", "error");
         }
       }
     });
@@ -304,6 +307,17 @@ export default function WorkerDashboard() {
 
   return (
     <div className={styles.container}>
+
+      {/* Floating Toast UI */}
+      {toast.visible && (
+        <div className={styles.toastContainer}>
+          <div className={`${styles.toast} ${toast.type === 'error' ? styles.toastError : styles.toastSuccess}`}>
+            {toast.type === 'error' ? <AlertCircle size={20} /> : <CheckCircle2 size={20} />}
+            <span>{toast.message}</span>
+          </div>
+        </div>
+      )}
+
       {/* Custom Modal */}
       {modalConfig.isOpen && (
         <div className={styles.modalOverlay}>
@@ -344,23 +358,11 @@ export default function WorkerDashboard() {
         </div>
       </div>
 
-      {error && (
-        <div className={styles.errorBox}>
-          <AlertCircle size={20} /> {error}
-        </div>
-      )}
-
-      {success && (
-        <div className={styles.successBox}>
-          <CheckCircle2 size={20} /> {success}
-        </div>
-      )}
-
       <div className={styles.grid}>
         
         {/* TAB: HOME / FORM */}
         {activeTab === "home" && (
-          <>
+          <div className={styles.tabContentWrapper}>
             <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
               <div className={styles.statCardPremium}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -448,106 +450,118 @@ export default function WorkerDashboard() {
                 </button>
               </form>
             </div>
-          </>
+          </div>
         )}
 
         {/* TAB: HISTORY */}
         {activeTab === "history" && (
-          <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
-            
-            {/* History Tab Switcher */}
-            <div className={styles.tabSwitcher}>
-              <button 
-                className={`${styles.tabSwitchBtn} ${historyTab === 'active' ? styles.tabSwitchBtnActive : ''}`}
-                onClick={() => setHistoryTab('active')}
-              >
-                Buku Aktif
-              </button>
-              <button 
-                className={`${styles.tabSwitchBtn} ${historyTab === 'archive' ? styles.tabSwitchBtnActive : ''}`}
-                onClick={() => setHistoryTab('archive')}
-              >
-                Arsip Gajian
-              </button>
-            </div>
-
-            {/* Content: Active Book */}
-            {historyTab === "active" && (
-              <>
-                <button className={styles.btnCloseBook} onClick={handleCloseBook} style={{marginBottom: '1rem'}}>
-                  Tutup Buku & Gajian Sekarang
+          <div className={styles.tabContentWrapper}>
+            <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
+              
+              {/* History Tab Switcher */}
+              <div className={styles.tabSwitcher}>
+                <button 
+                  className={`${styles.tabSwitchBtn} ${historyTab === 'active' ? styles.tabSwitchBtnActive : ''}`}
+                  onClick={() => setHistoryTab('active')}
+                >
+                  Buku Aktif
                 </button>
+                <button 
+                  className={`${styles.tabSwitchBtn} ${historyTab === 'archive' ? styles.tabSwitchBtnActive : ''}`}
+                  onClick={() => setHistoryTab('archive')}
+                >
+                  Arsip Gajian
+                </button>
+              </div>
 
-                <div className={styles.panel}>
-                  <h3 className={styles.listTitle}>Riwayat Berjalan</h3>
+              {/* Content: Active Book */}
+              {historyTab === "active" && (
+                <div className={styles.tabContentWrapper}>
+                  <button className={styles.btnCloseBook} onClick={handleCloseBook} style={{marginBottom: '1rem'}}>
+                    Tutup Buku & Gajian Sekarang
+                  </button>
+
+                  <div className={styles.panel}>
+                    <h3 className={styles.listTitle}>Riwayat Berjalan</h3>
+                    
+                    {data?.activeAttendances?.length === 0 ? (
+                      <div className={styles.emptyStateContainer}>
+                        <div className={styles.emptyStateIcon}>
+                          <PackageOpen size={36} />
+                        </div>
+                        <span className={styles.emptyStateText}>Buku absen Anda masih kosong.</span>
+                      </div>
+                    ) : (
+                      <div className={styles.historyList}>
+                        {data?.activeAttendances?.map(renderAttendanceCard)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Content: Archive Book */}
+              {historyTab === "archive" && (
+                <div className={`${styles.panel} ${styles.tabContentWrapper}`}>
+                  <h3 className={styles.listTitle}>Riwayat Faktur Gaji</h3>
                   
-                  {data?.activeAttendances?.length === 0 ? (
-                    <p className={styles.emptyText}>Belum ada absensi di buku ini.</p>
+                  {data?.closedPeriods?.length === 0 ? (
+                    <div className={styles.emptyStateContainer}>
+                      <div className={styles.emptyStateIcon}>
+                        <FileText size={36} />
+                      </div>
+                      <span className={styles.emptyStateText}>Belum ada riwayat gaji yang ditutup.</span>
+                    </div>
                   ) : (
-                    <div className={styles.historyList}>
-                      {data?.activeAttendances?.map(renderAttendanceCard)}
+                    <div>
+                      {data?.closedPeriods?.map((period) => {
+                        const isExpanded = expandedArchiveId === period.id;
+                        const startDateStr = new Date(period.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                        const endDateStr = period.endDate ? new Date(period.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) : 'Selesai';
+                        
+                        const periodTotal = period.attendances.reduce((sum, att) => sum + att.totalPay, 0);
+
+                        return (
+                          <div key={period.id} className={styles.archiveCard}>
+                            <div 
+                              className={`${styles.archiveHeader} ${isExpanded ? styles.archiveHeaderActive : ''}`}
+                              onClick={() => toggleArchive(period.id)}
+                            >
+                              <div className={styles.archiveTitle}>
+                                <FileText size={18} color="#64748b" />
+                                {startDateStr} - {endDateStr}
+                              </div>
+                              <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+                                <span className={styles.archiveTotal}>{formatRupiah(periodTotal)}</span>
+                                {isExpanded ? <ChevronUp size={18} color="#94a3b8" /> : <ChevronDown size={18} color="#94a3b8" />}
+                              </div>
+                            </div>
+                            
+                            {isExpanded && (
+                              <div className={styles.archiveBody}>
+                                {period.attendances.length === 0 ? (
+                                  <p className={styles.emptyText} style={{margin: 0}}>Tidak ada data absensi di periode ini.</p>
+                                ) : (
+                                  <div className={styles.historyList}>
+                                    {period.attendances.map(renderAttendanceCard)}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
-              </>
-            )}
-
-            {/* Content: Archive Book */}
-            {historyTab === "archive" && (
-              <div className={styles.panel}>
-                <h3 className={styles.listTitle}>Riwayat Faktur Gaji</h3>
-                
-                {data?.closedPeriods?.length === 0 ? (
-                  <p className={styles.emptyText}>Belum ada riwayat gaji yang ditutup.</p>
-                ) : (
-                  <div>
-                    {data?.closedPeriods?.map((period) => {
-                      const isExpanded = expandedArchiveId === period.id;
-                      const startDateStr = new Date(period.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-                      const endDateStr = period.endDate ? new Date(period.endDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) : 'Selesai';
-                      
-                      const periodTotal = period.attendances.reduce((sum, att) => sum + att.totalPay, 0);
-
-                      return (
-                        <div key={period.id} className={styles.archiveCard}>
-                          <div 
-                            className={`${styles.archiveHeader} ${isExpanded ? styles.archiveHeaderActive : ''}`}
-                            onClick={() => toggleArchive(period.id)}
-                          >
-                            <div className={styles.archiveTitle}>
-                              <FileText size={18} color="#64748b" />
-                              {startDateStr} - {endDateStr}
-                            </div>
-                            <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
-                              <span className={styles.archiveTotal}>{formatRupiah(periodTotal)}</span>
-                              {isExpanded ? <ChevronUp size={18} color="#94a3b8" /> : <ChevronDown size={18} color="#94a3b8" />}
-                            </div>
-                          </div>
-                          
-                          {isExpanded && (
-                            <div className={styles.archiveBody}>
-                              {period.attendances.length === 0 ? (
-                                <p className={styles.emptyText} style={{margin: 0}}>Tidak ada data absensi di periode ini.</p>
-                              ) : (
-                                <div className={styles.historyList}>
-                                  {period.attendances.map(renderAttendanceCard)}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
 
         {/* TAB: PROFILE */}
         {activeTab === "profile" && (
-          <>
+          <div className={styles.tabContentWrapper}>
             <div className={styles.panel}>
               <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem'}}>
                 <div style={{
@@ -613,7 +627,7 @@ export default function WorkerDashboard() {
                 </button>
               </form>
             </div>
-          </>
+          </div>
         )}
 
       </div>
