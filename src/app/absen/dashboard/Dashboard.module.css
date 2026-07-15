@@ -124,7 +124,7 @@
 .grid {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 32px;
 }
 
 .panel {
