@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { 
   Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut, 
   CheckCircle2, Home, History, AlertTriangle, ChevronDown, ChevronUp, Droplet,
-  HardHat, User, Phone, MapPin, Briefcase, FileText, Frown, PackageOpen, Trash2
+  HardHat, User, Phone, MapPin, Briefcase, FileText, Frown, PackageOpen, Trash2, Bell
 } from "lucide-react";
 import styles from "./Dashboard.module.css";
 
@@ -325,27 +325,27 @@ export default function WorkerDashboard() {
         </div>
         
         {isExpanded && (
-          <div className={styles.expandedDetails}>
-            <div className={styles.detailRow}>
-              <span>Gaji Pokok</span>
-              <span>{formatRupiah(Math.round(att.totalPay - (att.extraPay || 0)))}</span>
+          <div className={styles.historyCardBody}>
+            <div className={styles.historyDetailRow}>
+              <span>Upah Dasar</span>
+              <span>{formatRupiah(att.baseWage)}</span>
+            </div>
+            <div className={styles.historyDetailRow}>
+              <span>Status</span>
+              <span>{att.status} (x{att.multiplier})</span>
             </div>
             {att.extraPay > 0 && (
-              <div className={styles.detailRow}>
-                <span>Lembur Ekstra</span>
+              <div className={styles.historyDetailRow}>
+                <span>Tambahan</span>
                 <span>{formatRupiah(att.extraPay)}</span>
               </div>
             )}
             {att.notes && (
-              <div className={styles.detailRow}>
-                <span>Catatan</span>
-                <span style={{textAlign: 'right'}}>{att.notes}</span>
+              <div className={styles.historyDetailNotes}>
+                <span className={styles.notesLabel}>Catatan:</span>
+                <span className={styles.notesText}>{att.notes}</span>
               </div>
             )}
-            <div className={styles.detailTotal}>
-              <span>Total Hari Ini</span>
-              <span>{formatRupiah(att.totalPay)}</span>
-            </div>
           </div>
         )}
       </div>
@@ -357,12 +357,11 @@ export default function WorkerDashboard() {
     return (
       <div className={styles.splashScreen}>
         <div className={styles.splashLogo}>
-          <Droplet size={64} color="#60a5fa" />
-          <div style={{textAlign: 'center'}}>
-            <div className={styles.splashTitle}>Arabella</div>
-            <div className={styles.splashSubtitle}>Worker App</div>
-          </div>
+          <HardHat size={48} color="#ffffff" strokeWidth={1.5} />
         </div>
+        <h1 className={styles.splashTitle}>Dapur Arabella</h1>
+        <p className={styles.splashSubtitle}>Memuat data pekerja...</p>
+        <Loader2 className={styles.spinner} size={24} />
       </div>
     );
   }
@@ -371,8 +370,7 @@ export default function WorkerDashboard() {
   const currentTotal = Math.round(Number(baseWage) * Number(multiplier)) + Number(extraPay);
 
   return (
-    <div className={styles.container}>
-
+    <>
       {/* Floating Toast UI */}
       {toast.visible && (
         <div className={styles.toastContainer}>
@@ -406,12 +404,21 @@ export default function WorkerDashboard() {
         </div>
       )}
 
-      {/* Header */}
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Halo, {user?.name}</h1>
-          <p className={styles.subtitle}>Catat kehadiran dan kelola gaji harian Anda.</p>
+      {/* Top Header Fixed */}
+      <header className={styles.topHeader}>
+        <div className={styles.headerLogo}>
+          <div style={{width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <HardHat size={18} />
+          </div>
+          <span>Hai, {user?.name?.split(' ')[0] || 'Pekerja'}!</span>
         </div>
+        <div className={styles.headerRight}>
+          <span style={{fontSize: '0.8rem', fontWeight: 600}}>{new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}</span>
+          <Bell size={20} />
+        </div>
+      </header>
+
+      <div className={styles.container}>
         <div className={styles.headerActions}>
           <div className={styles.wageBadge}>
             <Wallet size={18} />
@@ -421,7 +428,6 @@ export default function WorkerDashboard() {
             <LogOut size={20} />
           </button>
         </div>
-      </div>
 
       <div className={styles.grid}>
         
@@ -732,6 +738,6 @@ export default function WorkerDashboard() {
           <span>Profil</span>
         </button>
       </nav>
-    </div>
+    </>
   );
 }

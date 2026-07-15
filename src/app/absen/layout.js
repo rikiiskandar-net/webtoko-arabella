@@ -17,7 +17,7 @@ export default function WorkerLayout({ children }) {
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#f1f5f9', // A soft gray background for the overall page (visible on desktop)
+      backgroundColor: 'var(--background)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'flex-start',
@@ -27,8 +27,8 @@ export default function WorkerLayout({ children }) {
         width: '100%',
         maxWidth: '480px', // Mobile phone width max
         minHeight: '100vh',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 0 40px rgba(0,0,0,0.05)',
+        backgroundColor: 'var(--background)',
+        boxShadow: '0 0 40px rgba(0,0,0,0.03)',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
