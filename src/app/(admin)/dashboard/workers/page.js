@@ -14,11 +14,11 @@ export default function WorkersPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "", // PIN
     name: "",
     role: "Pekerja",
-    baseWage: 100000,
+    baseWage: 0,
     isActive: true
   });
   const [submitting, setSubmitting] = useState(false);
@@ -47,7 +47,7 @@ export default function WorkersPage() {
     if (worker) {
       setEditingId(worker.id);
       setFormData({
-        username: worker.username,
+        email: worker.email,
         password: "", // Leave blank so we don't overwrite if unchanged
         name: worker.name,
         role: worker.role,
@@ -57,11 +57,11 @@ export default function WorkersPage() {
     } else {
       setEditingId(null);
       setFormData({
-        username: "",
+        email: "",
         password: "",
         name: "",
         role: "Pekerja",
-        baseWage: 100000,
+        baseWage: 0,
         isActive: true
       });
     }
@@ -74,7 +74,7 @@ export default function WorkersPage() {
     setSubmitting(true);
 
     if (!editingId && !formData.password) {
-      setError("PIN Keamanan wajib diisi untuk pekerja baru");
+      setError("Password wajib diisi untuk pekerja baru");
       setSubmitting(false);
       return;
     }
@@ -132,7 +132,7 @@ export default function WorkersPage() {
             <thead>
               <tr>
                 <th>NAMA</th>
-                <th>USERNAME</th>
+                <th>EMAIL</th>
                 <th>PERAN</th>
                 <th>GAJI POKOK</th>
                 <th>STATUS</th>
@@ -148,7 +148,7 @@ export default function WorkersPage() {
                       <strong>{w.name}</strong>
                     </div>
                   </td>
-                  <td>{w.username}</td>
+                  <td>{w.email}</td>
                   <td>{w.role}</td>
                   <td>{formatRp(w.baseWage)}</td>
                   <td>
@@ -193,12 +193,12 @@ export default function WorkersPage() {
                 <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
               </div>
               <div className={styles.formGroup}>
-                <label>Username (Singkat)</label>
-                <input type="text" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} required placeholder="misal: budi" />
+                <label>Email</label>
+                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required placeholder="nama@email.com" />
               </div>
               <div className={styles.formGroup}>
-                <label>PIN Keamanan {editingId && <small>(Kosongkan jika tidak ingin ganti)</small>}</label>
-                <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} placeholder="••••" />
+                <label>Password {editingId && <small>(Kosongkan jika tidak ingin ganti)</small>}</label>
+                <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} placeholder="••••••••" />
               </div>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>

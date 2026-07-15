@@ -273,7 +273,7 @@ model Attendance {
 
 model Worker {
   id             String                @id @default(uuid())
-  username       String                @unique // Can be used for login (or PIN)
+  email          String                @unique
   password       String                // Can be a PIN hash
   name           String
   role           String                @default("Pekerja")

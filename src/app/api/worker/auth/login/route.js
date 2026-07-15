@@ -5,8 +5,8 @@ import rateLimit from "@/lib/rateLimit";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username wajib diisi"),
-  password: z.string().min(1, "PIN/Password wajib diisi")
+  email: z.string().email("Format email tidak valid").min(1, "Email wajib diisi"),
+  password: z.string().min(1, "Password wajib diisi")
 });
 
 export async function POST(request) {
@@ -18,17 +18,17 @@ export async function POST(request) {
       return NextResponse.json({ error: result.error.errors[0].message }, { status: 400 });
     }
 
-    const { username, password } = result.data;
+    const { email, password } = result.data;
 
     const rateLimitResult = rateLimit(request, { limit: 10, windowMs: 15 * 60 * 1000 });
     if (!rateLimitResult.success) {
       return NextResponse.json({ error: `Terlalu banyak percobaan. Coba lagi dalam ${rateLimitResult.retryAfter} detik.` }, { status: 429 });
     }
 
-    const worker = await prisma.worker.findUnique({ where: { username } });
+    const worker = await prisma.worker.findUnique({ where: { email } });
 
     if (!worker) {
-      return NextResponse.json({ error: "Nama atau PIN salah" }, { status: 401 });
+      return NextResponse.json({ error: "Email atau password salah" }, { status: 401 });
     }
 
     if (!worker.isActive) {

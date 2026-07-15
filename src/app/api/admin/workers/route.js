@@ -24,22 +24,22 @@ export async function POST(req) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const data = await req.json();
-    if (!data.username || !data.password || !data.name) {
+    if (!data.email || !data.password || !data.name) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const exists = await prisma.worker.findUnique({ where: { username: data.username } });
-    if (exists) return NextResponse.json({ error: "Username sudah digunakan" }, { status: 400 });
+    const exists = await prisma.worker.findUnique({ where: { email: data.email } });
+    if (exists) return NextResponse.json({ error: "Email sudah digunakan" }, { status: 400 });
 
     const hashedPassword = await hashWorkerPassword(data.password);
 
     const worker = await prisma.worker.create({
       data: {
-        username: data.username,
+        email: data.email,
         password: hashedPassword,
         name: data.name,
         role: data.role || "Pekerja",
-        baseWage: data.baseWage || 100000,
+        baseWage: data.baseWage || 0,
         isActive: data.isActive !== undefined ? data.isActive : true
       }
     });
@@ -59,7 +59,7 @@ export async function PUT(req) {
     if (!data.id) return NextResponse.json({ error: "ID missing" }, { status: 400 });
 
     const updateData = {
-      username: data.username,
+      email: data.email,
       name: data.name,
       role: data.role,
       baseWage: data.baseWage,
