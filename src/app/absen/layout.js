@@ -16,6 +16,7 @@ export const viewport = {
 export default function WorkerLayout({ children }) {
   return (
     <div style={{
+      width: '100%',
       minHeight: '100vh',
       backgroundColor: 'var(--background)',
       display: 'flex',
