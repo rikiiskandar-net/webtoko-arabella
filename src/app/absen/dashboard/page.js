@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { 
   Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut, 
-  CheckCircle2, Home, History, AlertTriangle, ChevronDown, ChevronUp, Droplet
+  CheckCircle2, Home, History, AlertTriangle, ChevronDown, ChevronUp, Droplet,
+  HardHat, User, Phone, MapPin, Briefcase
 } from "lucide-react";
 import styles from "./Dashboard.module.css";
 
@@ -18,11 +19,11 @@ export default function WorkerDashboard() {
   
   // UI State
   const [showSplash, setShowSplash] = useState(true);
-  const [activeTab, setActiveTab] = useState("home"); // 'home' or 'history'
+  const [activeTab, setActiveTab] = useState("home"); // 'home', 'history', or 'profile'
   const [expandedCardId, setExpandedCardId] = useState(null);
   const [modalConfig, setModalConfig] = useState({ isOpen: false, title: "", message: "", type: "warning", onConfirm: null });
 
-  // Form State
+  // Form State (Absen)
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -37,6 +38,15 @@ export default function WorkerDashboard() {
   const [multiplier, setMultiplier] = useState(1);
   const [extraPay, setExtraPay] = useState(0);
   const [notes, setNotes] = useState("");
+
+  // Form State (Profile)
+  const [profileForm, setProfileForm] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    role: ""
+  });
+  const [profileSubmitting, setProfileSubmitting] = useState(false);
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
@@ -60,6 +70,12 @@ export default function WorkerDashboard() {
       }
       const userData = await resUser.json();
       setUser(userData.user);
+      setProfileForm({
+        name: userData.user.name || "",
+        phone: userData.user.phone || "",
+        address: userData.user.address || "",
+        role: userData.user.role || ""
+      });
 
       const resAtt = await fetch("/api/worker/attendance");
       if (resAtt.ok) {
@@ -132,6 +148,42 @@ export default function WorkerDashboard() {
       setError("Terjadi kesalahan jaringan");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleProfileSave = async (e) => {
+    e.preventDefault();
+    setProfileSubmitting(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch("/api/worker/auth/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profileForm)
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setUser(result.user);
+        setModalConfig({
+          isOpen: true,
+          type: "success",
+          title: "Profil Diperbarui",
+          message: "Data profil Anda berhasil disimpan secara aman.",
+          onConfirm: () => {
+            setModalConfig({ ...modalConfig, isOpen: false });
+          }
+        });
+      } else {
+        const errData = await res.json();
+        setError(errData.error || "Gagal menyimpan profil");
+      }
+    } catch (err) {
+      setError("Terjadi kesalahan saat menyimpan");
+    } finally {
+      setProfileSubmitting(false);
     }
   };
 
@@ -408,6 +460,77 @@ export default function WorkerDashboard() {
           </>
         )}
 
+        {/* TAB: PROFILE */}
+        {activeTab === "profile" && (
+          <>
+            <div className={styles.panel}>
+              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem'}}>
+                <div style={{
+                  width: '80px', height: '80px', borderRadius: '50%', 
+                  background: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: '1rem', boxShadow: '0 4px 20px rgba(56, 189, 248, 0.3)'
+                }}>
+                  <HardHat size={40} color="#0284c7" />
+                </div>
+                <h2 className={styles.panelTitle} style={{margin: 0}}>Profil Pekerja</h2>
+                <p className={styles.subtitle} style={{textAlign: 'center', marginTop: '0.25rem'}}>Lengkapi identitas opsional Anda</p>
+              </div>
+              
+              <form className={styles.form} onSubmit={handleProfileSave}>
+                <div className={styles.formGroup}>
+                  <label><User size={14} style={{display:'inline', marginRight: '4px', verticalAlign: '-2px'}}/> Nama Lengkap</label>
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={profileForm.name}
+                    onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
+                    placeholder="Nama pekerja"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label><Phone size={14} style={{display:'inline', marginRight: '4px', verticalAlign: '-2px'}}/> Nomor HP / WA</label>
+                  <input 
+                    type="tel" 
+                    className={styles.input} 
+                    value={profileForm.phone}
+                    onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                    placeholder="08123456789 (Opsional)"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label><Briefcase size={14} style={{display:'inline', marginRight: '4px', verticalAlign: '-2px'}}/> Jabatan (Role)</label>
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={profileForm.role}
+                    onChange={(e) => setProfileForm({...profileForm, role: e.target.value})}
+                    placeholder="Misal: Mandor, Tukang, Kenek (Opsional)"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label><MapPin size={14} style={{display:'inline', marginRight: '4px', verticalAlign: '-2px'}}/> Alamat Domisili</label>
+                  <textarea 
+                    className={styles.input} 
+                    value={profileForm.address}
+                    onChange={(e) => setProfileForm({...profileForm, address: e.target.value})}
+                    placeholder="Alamat lengkap (Opsional)"
+                    style={{minHeight: '80px', resize: 'vertical'}}
+                  />
+                </div>
+
+                <button type="submit" className={styles.btnPrimary} style={{marginTop: '0.5rem'}} disabled={profileSubmitting}>
+                  {profileSubmitting ? <Loader2 size={20} className={styles.spinner} /> : <Save size={20} />}
+                  Simpan Profil
+                </button>
+              </form>
+            </div>
+          </>
+        )}
+
       </div>
 
       {/* Bottom Navigation */}
@@ -425,6 +548,13 @@ export default function WorkerDashboard() {
         >
           <History size={24} className={styles.navIcon} />
           <span>Riwayat</span>
+        </button>
+        <button 
+          className={`${styles.navItem} ${activeTab === 'profile' ? styles.navItemActive : ''}`}
+          onClick={() => setActiveTab('profile')}
+        >
+          <HardHat size={24} className={styles.navIcon} />
+          <span>Profil</span>
         </button>
       </nav>
     </div>
