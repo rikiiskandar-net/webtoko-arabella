@@ -24,6 +24,18 @@ export async function PUT(req) {
       where: { id: user.id },
       data: updateData
     });
+    
+    // Re-issue cookie so the session has the latest profile data
+    const { setWorkerAuthCookie } = await import("@/lib/workerAuth");
+    const newPayload = {
+      id: updatedWorker.id,
+      email: updatedWorker.email,
+      name: updatedWorker.name,
+      role: updatedWorker.role,
+      phone: updatedWorker.phone,
+      address: updatedWorker.address
+    };
+    await setWorkerAuthCookie(newPayload);
 
     return NextResponse.json({ 
       success: true, 
