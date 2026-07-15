@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// Force cache bust on Vercel Turbopack
 const nextConfig = {
   compress: true,
   env: {
