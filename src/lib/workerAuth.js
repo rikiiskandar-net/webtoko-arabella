@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 
 const COOKIE_NAME = "worker_auth_token";
 const TOKEN_TTL = "30d"; // 30 days for workers so they don't have to login often
@@ -26,7 +27,6 @@ export async function verifyWorkerToken(token) {
 }
 
 export async function setWorkerAuthCookie(payload) {
-  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const token = await signWorkerToken(payload);
   cookieStore.set(COOKIE_NAME, token, {
@@ -39,13 +39,11 @@ export async function setWorkerAuthCookie(payload) {
 }
 
 export async function clearWorkerAuthCookie() {
-  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
 
 export async function getWorkerAuthSession() {
-  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;

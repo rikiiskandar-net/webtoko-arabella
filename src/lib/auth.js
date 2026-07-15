@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
 
 const COOKIE_NAME = "auth_token";
 const TOKEN_TTL = "24h"; // 24 jam
@@ -27,7 +28,6 @@ export async function verifyToken(token) {
 }
 
 export async function setAuthCookie(payload) {
-  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const token = await signToken(payload);
   cookieStore.set(COOKIE_NAME, token, {
@@ -40,13 +40,11 @@ export async function setAuthCookie(payload) {
 }
 
 export async function clearAuthCookie() {
-  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
 
 export async function getAuthSession() {
-  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
