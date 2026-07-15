@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut,
-  CheckCircle2, History, AlertTriangle, ChevronDown, ChevronUp,
-  User, Phone, MapPin, Briefcase, FileText, PackageOpen, Trash2,
-  Home, BookOpen, TrendingUp, X
-} from "lucide-react";
+  ClockCountdown, Wallet, CalendarDots, WarningCircle, ArrowClockwise,
+  FloppyDisk, SignOut, CheckCircle, ListDashes, Warning, CaretDown, CaretUp,
+  User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
+  BookOpenText, TrendingUp, UserCircle, NotePencil, MegaphoneSimple,
+  Spinner, CheckSquareOffset, Confetti, SealCheck
+} from "@phosphor-icons/react";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
@@ -159,9 +160,9 @@ export default function WorkerDashboard() {
       onConfirm: async () => {
         setModalConfig(m => ({ ...m, isOpen: false }));
         try {
-          const res = await fetch(`/api/worker/attendance/${attId}`, { method: "DELETE" });
+          const res = await fetch(`/api/worker/attendance?id=${attId}`, { method: "DELETE" });
           if (res.ok) { showToast("Absensi dihapus."); await fetchData(); }
-          else showToast("Gagal menghapus absensi", "error");
+          else { const d = await res.json(); showToast(d.error || "Gagal menghapus absensi", "error"); }
         } catch { showToast("Terjadi kesalahan", "error"); }
       }
     });
@@ -175,9 +176,9 @@ export default function WorkerDashboard() {
       onConfirm: async () => {
         setModalConfig(m => ({ ...m, isOpen: false }));
         try {
-          const res = await fetch(`/api/worker/attendance/period/${periodId}`, { method: "DELETE" });
+          const res = await fetch(`/api/worker/attendance/period?id=${periodId}`, { method: "DELETE" });
           if (res.ok) { showToast("Arsip dihapus."); await fetchData(); }
-          else showToast("Gagal menghapus arsip", "error");
+          else { const d = await res.json(); showToast(d.error || "Gagal menghapus arsip", "error"); }
         } catch { showToast("Terjadi kesalahan", "error"); }
       }
     });
@@ -258,10 +259,10 @@ export default function WorkerDashboard() {
                   onClick={(e) => { e.stopPropagation(); handleDeleteAttendance(att.id); }}
                   title="Hapus Absen"
                 >
-                  <Trash2 size={15} />
+                  <Trash size={16} weight="duotone" />
                 </button>
               )}
-              {isExpanded ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
+              {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="bold" /> : <CaretDown size={16} color="#94a3b8" weight="bold" />}
             </div>
           </div>
         </div>
@@ -332,7 +333,7 @@ export default function WorkerDashboard() {
       {toast.visible && (
         <div className={styles.toastContainer}>
           <div className={`${styles.toast} ${toast.type === 'error' ? styles.toastError : styles.toastSuccess}`}>
-            {toast.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
+            {toast.type === 'error' ? <WarningCircle size={18} weight="fill" /> : <SealCheck size={18} weight="fill" />}
             <span>{toast.message}</span>
           </div>
         </div>
@@ -343,7 +344,7 @@ export default function WorkerDashboard() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={`${styles.modalIcon} ${modalConfig.type === 'success' ? styles.modalIconSuccess : styles.modalIconWarning}`}>
-              {modalConfig.type === 'success' ? <CheckCircle2 size={30} /> : <AlertTriangle size={30} />}
+              {modalConfig.type === 'success' ? <CheckCircle size={32} weight="duotone" /> : <Warning size={32} weight="duotone" />}
             </div>
             <h3 className={styles.modalTitle}>{modalConfig.title}</h3>
             <p className={styles.modalMessage}>{modalConfig.message}</p>
@@ -369,7 +370,7 @@ export default function WorkerDashboard() {
       <header className={styles.topHeader}>
         <div className={styles.headerLogo}>
           <div className={styles.headerLogoIcon}>
-            <BookOpen size={18} color="white" strokeWidth={2.5} />
+            <BookOpenText size={20} color="white" weight="fill" />
           </div>
           <div>
             <span className={styles.headerLogoText}>ABSENKU</span>
@@ -428,14 +429,14 @@ export default function WorkerDashboard() {
               <div className={styles.miniStatsGrid}>
                 <div className={styles.miniCard + ' ' + styles.miniCardGreen}>
                   <div className={styles.miniCardIcon}>
-                    <CheckCircle2 size={18} />
+                    <CheckSquareOffset size={20} weight="duotone" />
                   </div>
                   <div className={styles.miniCardValue}>{totalAbsen}</div>
                   <div className={styles.miniCardLabel}>Total Absen</div>
                 </div>
                 <div className={styles.miniCard + ' ' + styles.miniCardOrange}>
                   <div className={styles.miniCardIcon}>
-                    <TrendingUp size={18} />
+                    <TrendingUp size={20} weight="duotone" />
                   </div>
                   <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
                     {formatRupiah(currentTotal).replace('Rp\u00a0', 'Rp')}
@@ -447,7 +448,7 @@ export default function WorkerDashboard() {
               {/* Form Kehadiran */}
               <div className={styles.panel}>
                 <h2 className={styles.panelTitle}>
-                  <Clock size={20} className={styles.iconBlue} />
+                  <ClockCountdown size={22} weight="duotone" className={styles.iconBlue} />
                   Catat Kehadiran
                 </h2>
 
@@ -529,7 +530,7 @@ export default function WorkerDashboard() {
                   </div>
 
                   <button type="submit" className={styles.btnPrimary} disabled={submitting}>
-                    {submitting ? <Loader2 size={20} className={styles.spinner} /> : <Save size={20} />}
+                    {submitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />}
                     Simpan Absensi
                   </button>
                 </form>
@@ -572,7 +573,7 @@ export default function WorkerDashboard() {
                     <h3 className={styles.listTitle}>Riwayat Berjalan ({totalAbsen} data)</h3>
                     {data?.activeAttendances?.length === 0 ? (
                       <div className={styles.emptyStateContainer}>
-                        <div className={styles.emptyStateIcon}><PackageOpen size={32} /></div>
+                        <div className={styles.emptyStateIcon}><Package size={36} weight="duotone" /></div>
                         <span className={styles.emptyStateText}>Buku absen Anda masih kosong.</span>
                       </div>
                     ) : (
@@ -590,7 +591,7 @@ export default function WorkerDashboard() {
                   <h3 className={styles.listTitle}>Riwayat Faktur Gaji</h3>
                   {data?.closedPeriods?.length === 0 ? (
                     <div className={styles.emptyStateContainer}>
-                      <div className={styles.emptyStateIcon}><FileText size={32} /></div>
+                      <div className={styles.emptyStateIcon}><FileText size={36} weight="duotone" /></div>
                       <span className={styles.emptyStateText}>Belum ada riwayat gaji yang ditutup.</span>
                     </div>
                   ) : (
@@ -607,7 +608,7 @@ export default function WorkerDashboard() {
                               onClick={() => toggleArchive(period.id)}
                             >
                               <div className={styles.archiveTitle}>
-                                <FileText size={16} color="#6366F1" />
+                                <FileText size={18} weight="duotone" color="#6366F1" />
                                 {startDateStr} – {endDateStr}
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -617,9 +618,9 @@ export default function WorkerDashboard() {
                                   onClick={(e) => { e.stopPropagation(); handleDeleteArchive(period.id); }}
                                   title="Hapus Arsip"
                                 >
-                                  <Trash2 size={15} />
+                                  <Trash size={16} weight="duotone" />
                                 </button>
-                                {isExpanded ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
+                                {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="bold" /> : <CaretDown size={16} color="#94a3b8" weight="bold" />}
                               </div>
                             </div>
                             {isExpanded && (
@@ -659,43 +660,43 @@ export default function WorkerDashboard() {
               {/* Profile Form */}
               <div className={styles.panel}>
                 <h2 className={styles.panelTitle}>
-                  <User size={20} className={styles.iconBlue} />
+                  <UserCircle size={22} weight="duotone" className={styles.iconBlue} />
                   Edit Profil
                 </h2>
                 <form className={styles.form} onSubmit={handleProfileSave}>
                   <div className={styles.formGroup}>
-                    <label><User size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nama Lengkap</label>
+                    <label><User size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nama Lengkap</label>
                     <input type="text" className={styles.input} value={profileForm.name}
                       onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                       placeholder="Nama pekerja" />
                   </div>
                   <div className={styles.formGroup}>
-                    <label><Phone size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nomor HP / WA</label>
+                    <label><Phone size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Nomor HP / WA</label>
                     <input type="tel" className={styles.input} value={profileForm.phone}
                       onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                       placeholder="08123456789" />
                   </div>
                   <div className={styles.formGroup}>
-                    <label><Briefcase size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Jabatan</label>
+                    <label><Briefcase size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Jabatan</label>
                     <input type="text" className={styles.input} value={profileForm.role}
                       onChange={(e) => setProfileForm({ ...profileForm, role: e.target.value })}
                       placeholder="Misal: Mandor, Tukang, Kenek" />
                   </div>
                   <div className={styles.formGroup}>
-                    <label><MapPin size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Alamat Domisili</label>
+                    <label><MapPin size={12} weight="bold" style={{ display: 'inline', marginRight: '4px', verticalAlign: '-1px' }} /> Alamat Domisili</label>
                     <textarea className={styles.input} value={profileForm.address}
                       onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
                       placeholder="Alamat lengkap (opsional)"
                       style={{ minHeight: '80px', resize: 'vertical' }} />
                   </div>
                   <button type="submit" className={styles.btnPrimary} disabled={profileSubmitting}>
-                    {profileSubmitting ? <Loader2 size={20} className={styles.spinner} /> : <Save size={20} />}
+                    {profileSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />}
                     Simpan Profil
                   </button>
                 </form>
 
                 <button className={styles.btnDanger} onClick={handleLogout}>
-                  <LogOut size={18} />
+                  <SignOut size={18} weight="bold" />
                   Keluar dari Akun
                 </button>
               </div>
@@ -712,7 +713,7 @@ export default function WorkerDashboard() {
           onClick={() => setActiveTab('home')}
         >
           <div className={styles.navIconBg}>
-            <Home size={22} className={styles.navIcon} />
+            <House size={22} weight={activeTab === 'home' ? 'fill' : 'regular'} className={styles.navIcon} />
           </div>
           <span>Beranda</span>
         </button>
@@ -721,7 +722,7 @@ export default function WorkerDashboard() {
           onClick={() => setActiveTab('history')}
         >
           <div className={styles.navIconBg}>
-            <History size={22} className={styles.navIcon} />
+            <ListDashes size={22} weight={activeTab === 'history' ? 'fill' : 'regular'} className={styles.navIcon} />
           </div>
           <span>Riwayat</span>
         </button>
@@ -730,7 +731,7 @@ export default function WorkerDashboard() {
           onClick={() => setActiveTab('profile')}
         >
           <div className={styles.navIconBg}>
-            <User size={22} className={styles.navIcon} />
+            <UserCircle size={22} weight={activeTab === 'profile' ? 'fill' : 'regular'} className={styles.navIcon} />
           </div>
           <span>Profil</span>
         </button>
