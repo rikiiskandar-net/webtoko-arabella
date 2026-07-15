@@ -75,7 +75,7 @@ export default function WorkerDashboard() {
 
   const fetchData = async () => {
     try {
-      const resUser = await fetch("/api/worker/auth/me");
+      const resUser = await fetch("/api/worker/auth/me", { cache: "no-store" });
       if (!resUser.ok) {
         router.push("/absen");
         return;
@@ -89,7 +89,7 @@ export default function WorkerDashboard() {
         role: userData.user.role || ""
       });
 
-      const resAtt = await fetch("/api/worker/attendance");
+      const resAtt = await fetch("/api/worker/attendance", { cache: "no-store" });
       if (resAtt.ok) {
         const attData = await resAtt.json();
         setData(attData);

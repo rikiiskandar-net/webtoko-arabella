@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getWorkerAuthSession } from "@/lib/workerAuth";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req) {
   try {
     const session = await getWorkerAuthSession();

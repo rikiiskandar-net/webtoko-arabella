@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getWorkerAuthSession } from "@/lib/workerAuth";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const session = await getWorkerAuthSession();
   

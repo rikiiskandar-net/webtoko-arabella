@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyUserToken } from "@/lib/userAuth";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     const token = request.cookies.get("user_token")?.value;

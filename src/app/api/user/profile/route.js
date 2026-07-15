@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/userAuth";
 import { uploadProductImage } from "@/lib/storage";
 
+export const dynamic = 'force-dynamic';
+
 // GET - Ambil profil user
 export async function GET(request) {
   try {
