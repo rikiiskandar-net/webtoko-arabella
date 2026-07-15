@@ -2,24 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut, CheckCircle2 } from "lucide-react";
+import { 
+  Clock, Wallet, CalendarRange, AlertCircle, Loader2, Save, LogOut, 
+  CheckCircle2, Home, History, AlertTriangle, ChevronDown, ChevronUp, Droplet
+} from "lucide-react";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
   const router = useRouter();
+  
+  // Data State
   const [user, setUser] = useState(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // UI State
+  const [showSplash, setShowSplash] = useState(true);
+  const [activeTab, setActiveTab] = useState("home"); // 'home' or 'history'
+  const [expandedCardId, setExpandedCardId] = useState(null);
+  const [modalConfig, setModalConfig] = useState({ isOpen: false, title: "", message: "", type: "warning", onConfirm: null });
+
+  // Form State
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const getLocalToday = () => {
     const d = new Date();
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     return d.toISOString().split('T')[0];
   };
-
   const [selectedDate, setSelectedDate] = useState(getLocalToday());
   const [status, setStatus] = useState("Kerja Normal");
   const [baseWage, setBaseWage] = useState(100000);
@@ -33,6 +44,11 @@ export default function WorkerDashboard() {
 
   useEffect(() => {
     fetchData();
+    // Hide splash screen after 1.5 seconds
+    const splashTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 1500);
+    return () => clearTimeout(splashTimer);
   }, []);
 
   const fetchData = async () => {
@@ -58,9 +74,18 @@ export default function WorkerDashboard() {
     }
   };
 
-  const handleLogout = async () => {
-    await fetch("/api/worker/auth/logout", { method: "POST" });
-    router.push("/absen");
+  const handleLogout = () => {
+    setModalConfig({
+      isOpen: true,
+      type: "warning",
+      title: "Keluar Aplikasi",
+      message: "Anda yakin ingin keluar dari aplikasi absen?",
+      onConfirm: async () => {
+        setModalConfig({ ...modalConfig, isOpen: false });
+        await fetch("/api/worker/auth/logout", { method: "POST" });
+        router.push("/absen");
+      }
+    });
   };
 
   const handleStatusChange = (e) => {
@@ -110,31 +135,57 @@ export default function WorkerDashboard() {
     }
   };
 
-  const handleCloseBook = async () => {
-    if (!confirm("Tutup buku dan mulai perhitungan baru?")) return;
-    
-    try {
-      const res = await fetch("/api/worker/attendance/period/close", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ periodId: data?.activePeriod?.id })
-      });
-      if (res.ok) {
-        alert("Buku gaji berhasil ditutup!");
-        fetchData();
-      } else {
-        const errData = await res.json();
-        alert(errData.error || "Gagal menutup buku");
+  const handleCloseBook = () => {
+    setModalConfig({
+      isOpen: true,
+      type: "warning",
+      title: "Tutup Buku",
+      message: "Tutup buku dan mulai perhitungan gaji baru? Perhitungan sebelumnya akan disimpan ke dalam riwayat.",
+      onConfirm: async () => {
+        setModalConfig({ ...modalConfig, isOpen: false });
+        try {
+          const res = await fetch("/api/worker/attendance/period/close", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ periodId: data?.activePeriod?.id })
+          });
+          if (res.ok) {
+            setModalConfig({
+              isOpen: true,
+              type: "success",
+              title: "Berhasil",
+              message: "Buku gaji berhasil ditutup! Memulai perhitungan periode baru.",
+              onConfirm: () => {
+                setModalConfig({ ...modalConfig, isOpen: false });
+                fetchData();
+              }
+            });
+          } else {
+            const errData = await res.json();
+            alert(errData.error || "Gagal menutup buku");
+          }
+        } catch (err) {
+          alert("Terjadi kesalahan jaringan");
+        }
       }
-    } catch (err) {
-      alert("Terjadi kesalahan jaringan");
-    }
+    });
   };
 
-  if (loading) {
+  const toggleCard = (id) => {
+    if (expandedCardId === id) setExpandedCardId(null);
+    else setExpandedCardId(id);
+  };
+
+  if (loading || showSplash) {
     return (
-      <div style={{display:'flex', justifyContent:'center', alignItems:'center', minHeight:'100vh', background:'#f8fafc'}}>
-        <Loader2 className={styles.spinner} size={40} color="#3b82f6" />
+      <div className={styles.splashScreen}>
+        <div className={styles.splashLogo}>
+          <Droplet size={64} color="#60a5fa" />
+          <div style={{textAlign: 'center'}}>
+            <div className={styles.splashTitle}>Arabella</div>
+            <div className={styles.splashSubtitle}>Worker App</div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -144,16 +195,39 @@ export default function WorkerDashboard() {
 
   return (
     <div className={styles.container}>
-      {/* Header section */}
+      {/* Custom Modal */}
+      {modalConfig.isOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={`${styles.modalIcon} ${modalConfig.type === 'success' ? styles.modalIconSuccess : styles.modalIconWarning}`}>
+              {modalConfig.type === 'success' ? <CheckCircle2 size={32} /> : <AlertTriangle size={32} />}
+            </div>
+            <h3 className={styles.modalTitle}>{modalConfig.title}</h3>
+            <p className={styles.modalMessage}>{modalConfig.message}</p>
+            <div className={styles.modalActions}>
+              {modalConfig.type === 'warning' && (
+                <button className={`${styles.modalBtn} ${styles.modalBtnCancel}`} onClick={() => setModalConfig({...modalConfig, isOpen: false})}>
+                  Batal
+                </button>
+              )}
+              <button className={`${styles.modalBtn} ${styles.modalBtnConfirm}`} style={modalConfig.type === 'success' ? {background: '#10b981', flex: 1} : {}} onClick={modalConfig.onConfirm}>
+                {modalConfig.type === 'success' ? "Tutup" : "Ya, Lanjutkan"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Absensi & Gaji</h1>
-          <p className={styles.subtitle}>Catat kehadiran dan kelola pendapatan harian Anda.</p>
+          <h1 className={styles.title}>Halo, {user?.name}</h1>
+          <p className={styles.subtitle}>Catat kehadiran dan kelola gaji harian Anda.</p>
         </div>
         <div className={styles.headerActions}>
           <div className={styles.wageBadge}>
             <Wallet size={18} />
-            {formatRupiah(baseWage)} / hari
+            {formatRupiah(baseWage)}/hr
           </div>
           <button className={styles.logoutBtn} onClick={handleLogout} title="Keluar">
             <LogOut size={20} />
@@ -174,128 +248,185 @@ export default function WorkerDashboard() {
       )}
 
       <div className={styles.grid}>
-        {/* RIGHT PANEL: STATS & HISTORY (Moved to top on mobile for better UX) */}
-        <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
-          <div className={styles.statCardPremium}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-              <span className={styles.statLabel}>Buku Gaji Aktif</span>
-              <CalendarRange size={24} color="#34d399" />
-            </div>
-            <span className={styles.statValueHighlight}>{formatRupiah(periodPay)}</span>
-            <span className={styles.statSubtext}>
-              Mulai: {data?.activePeriod ? new Date(data.activePeriod.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
-            </span>
-          </div>
-          
-          <div style={{marginTop: '1rem'}}>
-             <button className={styles.btnCloseBook} onClick={handleCloseBook}>
-                Tutup Buku & Gajian
-             </button>
-          </div>
-        </div>
-
-        {/* LEFT PANEL: FORM */}
-        <div className={styles.panel}>
-          <h2 className={styles.panelTitle}>
-            <Clock size={20} className={styles.iconBlue} /> Form Kehadiran
-          </h2>
-          
-          <form className={styles.form} onSubmit={handleCheckIn}>
-            <div className={styles.formGroup}>
-              <label>Pilih Tanggal</label>
-              <input 
-                type="date" 
-                className={styles.input} 
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>Status Kehadiran</label>
-              <select className={styles.input} value={status} onChange={handleStatusChange}>
-                <option value="Kerja Normal">Kerja Normal (1x Gaji)</option>
-                <option value="Setengah Hari">Setengah Hari (0.5x Gaji)</option>
-                <option value="Lembur Penuh">Lembur Penuh (2x Gaji)</option>
-                <option value="Sakit">Sakit (0x Gaji)</option>
-                <option value="Izin">Izin (0x Gaji)</option>
-                <option value="Absen">Absen (0x Gaji)</option>
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>Gaji Pokok (Bisa Diedit)</label>
-              <input 
-                type="number" 
-                className={styles.input} 
-                value={baseWage}
-                onChange={(e) => setBaseWage(e.target.value)}
-                min="0"
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>Tambahan Lembur (Rp)</label>
-              <input 
-                type="number" 
-                className={styles.input} 
-                value={extraPay}
-                onChange={(e) => setExtraPay(e.target.value)}
-                min="0"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>Catatan (Opsional)</label>
-              <input 
-                type="text" 
-                className={styles.input} 
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Misal: Lembur bongkar muat..."
-              />
-            </div>
-
-            <div className={styles.summaryBox}>
-              Total Gaji Hari Ini
-              <strong>{formatRupiah(currentTotal)}</strong>
-            </div>
-
-            <button type="submit" className={styles.btnPrimary} disabled={submitting}>
-              {submitting ? <Loader2 size={20} className={styles.spinner} /> : <Save size={20} />}
-              Simpan Absensi
-            </button>
-          </form>
-        </div>
-
-        {/* BOTTOM PANEL: HISTORY LIST */}
-        <div className={styles.panel}>
-          <h3 className={styles.listTitle}>Riwayat (Periode Ini)</h3>
-          
-          {data?.attendances?.length === 0 ? (
-            <p className={styles.emptyText}>Belum ada riwayat absensi.</p>
-          ) : (
-            <div className={styles.historyList}>
-              {data?.attendances?.map((att) => (
-                <div className={styles.historyCard} key={att.id}>
-                  <div className={styles.historyLeft}>
-                    <span className={styles.historyDate}>
-                      {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </span>
-                    <span className={styles.historyBadge}>{att.status}</span>
-                  </div>
-                  <div className={styles.historyRight}>
-                    <span className={styles.historyPay}>{formatRupiah(att.totalPay)}</span>
-                    {att.notes && <span className={styles.historyNotes}>{att.notes}</span>}
-                  </div>
+        
+        {/* TAB: HOME / FORM */}
+        {activeTab === "home" && (
+          <>
+            <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
+              <div className={styles.statCardPremium}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <span className={styles.statLabel}>Buku Gaji Aktif</span>
+                  <CalendarRange size={24} color="#34d399" />
                 </div>
-              ))}
+                <span className={styles.statValueHighlight}>{formatRupiah(periodPay)}</span>
+                <span className={styles.statSubtext}>
+                  Mulai: {data?.activePeriod ? new Date(data.activePeriod.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
+
+            <div className={styles.panel}>
+              <h2 className={styles.panelTitle}>
+                <Clock size={20} className={styles.iconBlue} /> Form Kehadiran
+              </h2>
+              
+              <form className={styles.form} onSubmit={handleCheckIn}>
+                <div className={styles.formGroup}>
+                  <label>Pilih Tanggal</label>
+                  <input 
+                    type="date" 
+                    className={styles.input} 
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Status Kehadiran</label>
+                  <select className={styles.input} value={status} onChange={handleStatusChange}>
+                    <option value="Kerja Normal">Kerja Normal (1x Gaji)</option>
+                    <option value="Setengah Hari">Setengah Hari (0.5x Gaji)</option>
+                    <option value="Lembur Penuh">Lembur Penuh (2x Gaji)</option>
+                    <option value="Sakit">Sakit (0x Gaji)</option>
+                    <option value="Izin">Izin (0x Gaji)</option>
+                    <option value="Absen">Absen (0x Gaji)</option>
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Gaji Pokok (Bisa Diedit)</label>
+                  <input 
+                    type="number" 
+                    className={styles.input} 
+                    value={baseWage}
+                    onChange={(e) => setBaseWage(e.target.value)}
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Tambahan Lembur (Rp)</label>
+                  <input 
+                    type="number" 
+                    className={styles.input} 
+                    value={extraPay}
+                    onChange={(e) => setExtraPay(e.target.value)}
+                    min="0"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Catatan (Opsional)</label>
+                  <input 
+                    type="text" 
+                    className={styles.input} 
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Misal: Lembur bongkar muat..."
+                  />
+                </div>
+
+                <div className={styles.summaryBox}>
+                  Total Gaji Hari Ini
+                  <strong>{formatRupiah(currentTotal)}</strong>
+                </div>
+
+                <button type="submit" className={styles.btnPrimary} disabled={submitting}>
+                  {submitting ? <Loader2 size={20} className={styles.spinner} /> : <Save size={20} />}
+                  Simpan Absensi
+                </button>
+              </form>
+            </div>
+          </>
+        )}
+
+        {/* TAB: HISTORY */}
+        {activeTab === "history" && (
+          <>
+            <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
+              <button className={styles.btnCloseBook} onClick={handleCloseBook}>
+                Tutup Buku & Gajian Sekarang
+              </button>
+            </div>
+
+            <div className={styles.panel}>
+              <h3 className={styles.listTitle}>Riwayat (Periode Ini)</h3>
+              
+              {data?.attendances?.length === 0 ? (
+                <p className={styles.emptyText}>Belum ada riwayat absensi.</p>
+              ) : (
+                <div className={styles.historyList}>
+                  {data?.attendances?.map((att) => {
+                    const isExpanded = expandedCardId === att.id;
+                    return (
+                      <div className={`${styles.historyCardWrapper} ${isExpanded ? styles.historyCardWrapperActive : ''}`} key={att.id}>
+                        <div className={styles.historyCardHeader} onClick={() => toggleCard(att.id)}>
+                          <div className={styles.historyLeft}>
+                            <span className={styles.historyDate}>
+                              {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
+                            <span className={styles.historyBadge}>{att.status}</span>
+                          </div>
+                          <div className={styles.historyRight}>
+                            <span className={styles.historyPay}>{formatRupiah(att.totalPay)}</span>
+                            {isExpanded ? <ChevronUp size={16} color="#94a3b8" /> : <ChevronDown size={16} color="#94a3b8" />}
+                          </div>
+                        </div>
+                        
+                        {isExpanded && (
+                          <div className={styles.expandedDetails}>
+                            <div className={styles.detailRow}>
+                              <span>Gaji Pokok</span>
+                              <span>{formatRupiah(Math.round(att.totalPay - (att.extraPay || 0)))}</span>
+                            </div>
+                            {att.extraPay > 0 && (
+                              <div className={styles.detailRow}>
+                                <span>Lembur Ekstra</span>
+                                <span>{formatRupiah(att.extraPay)}</span>
+                              </div>
+                            )}
+                            {att.notes && (
+                              <div className={styles.detailRow}>
+                                <span>Catatan</span>
+                                <span style={{textAlign: 'right'}}>{att.notes}</span>
+                              </div>
+                            )}
+                            <div className={styles.detailTotal}>
+                              <span>Total Hari Ini</span>
+                              <span>{formatRupiah(att.totalPay)}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
       </div>
+
+      {/* Bottom Navigation */}
+      <nav className={styles.bottomNav}>
+        <button 
+          className={`${styles.navItem} ${activeTab === 'home' ? styles.navItemActive : ''}`}
+          onClick={() => setActiveTab('home')}
+        >
+          <Home size={24} className={styles.navIcon} />
+          <span>Beranda</span>
+        </button>
+        <button 
+          className={`${styles.navItem} ${activeTab === 'history' ? styles.navItemActive : ''}`}
+          onClick={() => setActiveTab('history')}
+        >
+          <History size={24} className={styles.navIcon} />
+          <span>Riwayat</span>
+        </button>
+      </nav>
     </div>
   );
 }
