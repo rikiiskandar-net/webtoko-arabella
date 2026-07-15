@@ -349,15 +349,55 @@ select.input option {
   font-size: 0.95rem;
 }
 
+/* Pill Badge Base */
 .historyBadge {
-  background: #dbeafe;
-  color: #1d4ed8;
-  padding: 0.2rem 0.6rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   width: fit-content;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Color per status */
+.badgeNormal {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.badgeLembur {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  color: #4c1d95;
+  border: 1px solid #c4b5fd;
+}
+
+.badgeSetengah {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #78350f;
+  border: 1px solid #fcd34d;
+}
+
+.badgeSakit {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1e3a8a;
+  border: 1px solid #93c5fd;
+}
+
+.badgeIzin {
+  background: linear-gradient(135deg, #ffedd5, #fed7aa);
+  color: #7c2d12;
+  border: 1px solid #fdba74;
+}
+
+.badgeAbsen {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #7f1d1d;
+  border: 1px solid #fca5a5;
 }
 
 .historyRight {

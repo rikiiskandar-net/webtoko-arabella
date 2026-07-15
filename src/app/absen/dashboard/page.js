@@ -293,9 +293,23 @@ export default function WorkerDashboard() {
     else setExpandedArchiveId(id);
   };
 
+  // Helper: get pill badge config by status
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'Kerja Normal':    return { cls: styles.badgeNormal,   emoji: '✅', label: 'Kerja Normal' };
+      case 'Lembur Penuh':   return { cls: styles.badgeLembur,   emoji: '⚡', label: 'Lembur Penuh' };
+      case 'Setengah Hari':  return { cls: styles.badgeSetengah, emoji: '🌤️', label: 'Setengah Hari' };
+      case 'Sakit':          return { cls: styles.badgeSakit,    emoji: '🩺', label: 'Sakit' };
+      case 'Izin':           return { cls: styles.badgeIzin,     emoji: '📋', label: 'Izin' };
+      case 'Absen':          return { cls: styles.badgeAbsen,    emoji: '❌', label: 'Absen' };
+      default:               return { cls: styles.badgeNormal,   emoji: '📌', label: status };
+    }
+  };
+
   // Helper to render individual attendance card
   const renderAttendanceCard = (att, isActiveBook = false) => {
     const isExpanded = expandedCardId === att.id;
+    const badge = getStatusBadge(att.status);
     return (
       <div className={`${styles.historyCardWrapper} ${isExpanded ? styles.historyCardWrapperActive : ''}`} key={att.id}>
         <div className={styles.historyCardHeader} onClick={() => toggleCard(att.id)}>
@@ -303,7 +317,9 @@ export default function WorkerDashboard() {
             <span className={styles.historyDate}>
               {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
             </span>
-            <span className={styles.historyBadge}>{att.status}</span>
+            <span className={`${styles.historyBadge} ${badge.cls}`}>
+              {badge.emoji} {badge.label}
+            </span>
           </div>
           <div className={styles.historyRight}>
             <span className={styles.historyPay}>{formatRupiah(att.totalPay)}</span>
