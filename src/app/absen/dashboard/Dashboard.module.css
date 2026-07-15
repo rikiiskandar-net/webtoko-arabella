@@ -99,7 +99,7 @@
   background: #ffffff;
   border-radius: 20px;
   padding: 1.5rem;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
 }
 
 .panelTitle {
@@ -129,20 +129,24 @@
 }
 
 .formGroup label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #334155;
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin-bottom: 0.5rem;
 }
 
 .input {
   width: 100%;
-  padding: 1rem;
-  border: 2px solid #e2e8f0;
+  padding: 0.85rem 1rem;
+  border: none;
+  background: #f1f5f9;
   border-radius: 14px;
   font-size: 1rem;
   color: #0f172a;
-  background: #f8fafc;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   font-family: inherit;
   appearance: none;
 }
@@ -195,7 +199,7 @@
 }
 
 .btnPrimary:active:not(:disabled) {
-  transform: translateY(2px);
+  transform: scale(0.98);
   box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
 }
 
@@ -594,7 +598,14 @@
 
 .navItemActive {
   color: #3b82f6;
-  transform: translateY(-2px);
+  transform: scale(0.95);
+}
+
+.navItemActive .navIcon {
+  background: #dbeafe;
+  padding: 6px;
+  border-radius: 12px;
+  margin-bottom: -4px;
 }
 
 .navIcon {

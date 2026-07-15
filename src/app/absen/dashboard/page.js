@@ -419,16 +419,6 @@ export default function WorkerDashboard() {
       </header>
 
       <div className={styles.container}>
-        <div className={styles.headerActions}>
-          <div className={styles.wageBadge}>
-            <Wallet size={18} />
-            {formatRupiah(baseWage)}/hr
-          </div>
-          <button className={styles.logoutBtn} onClick={handleLogout} title="Keluar">
-            <LogOut size={20} />
-          </button>
-        </div>
-
       <div className={styles.grid}>
         
         {/* TAB: HOME / FORM */}
@@ -436,8 +426,13 @@ export default function WorkerDashboard() {
           <div className={styles.tabContentWrapper}>
             <div className={styles.panel} style={{background: 'transparent', boxShadow: 'none', padding: '0'}}>
               <div className={styles.statCardPremium}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                  <span className={styles.statLabel}>Buku Gaji Aktif</span>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+                  <div>
+                    <span className={styles.statLabel}>Buku Gaji Aktif</span>
+                    <div style={{fontSize: '0.85rem', color: '#94a3b8', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px'}}>
+                      <Wallet size={14} /> Tarif: {formatRupiah(baseWage)}/hr
+                    </div>
+                  </div>
                   <CalendarRange size={24} color="#34d399" />
                 </div>
                 <span className={styles.statValueHighlight}>{formatRupiah(periodPay)}</span>
@@ -708,6 +703,17 @@ export default function WorkerDashboard() {
                   Simpan Profil
                 </button>
               </form>
+
+              <div style={{marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #e2e8f0'}}>
+                <button 
+                  className={styles.btnPrimary} 
+                  style={{background: '#fee2e2', color: '#ef4444', boxShadow: 'none'}} 
+                  onClick={handleLogout}
+                >
+                  <LogOut size={20} />
+                  Keluar dari Akun
+                </button>
+              </div>
             </div>
           </div>
         )}
