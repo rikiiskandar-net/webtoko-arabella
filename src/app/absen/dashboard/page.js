@@ -237,7 +237,11 @@ export default function WorkerDashboard() {
       onConfirm: async () => {
         setModalConfig(m => ({ ...m, isOpen: false }));
         try {
-          const res = await fetch("/api/worker/attendance/close", { method: "POST" });
+          const res = await fetch("/api/worker/attendance/period/close", { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ periodId: data?.activePeriod?.id })
+          });
           if (res.ok) { showToast("Buku ditutup! Selamat gajian 🎉"); await fetchData(); }
           else { const d = await res.json(); showToast(d.error || "Gagal menutup buku", "error"); }
         } catch { showToast("Terjadi kesalahan", "error"); }
