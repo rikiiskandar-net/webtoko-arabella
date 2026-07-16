@@ -8,7 +8,7 @@ import {
   User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
   BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
   CheckSquareOffset
-, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear } from "@phosphor-icons/react";
+, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, ArchiveBox, Coins } from "@phosphor-icons/react";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
@@ -267,13 +267,13 @@ export default function WorkerDashboard() {
 
   const getStatusBadge = (statusVal) => {
     switch (statusVal) {
-      case 'Kerja Normal':   return { cls: styles.badgeNormal,   emoji: '✅', label: 'Kerja Normal' };
-      case 'Lembur Penuh':   return { cls: styles.badgeLembur,   emoji: '⚡', label: 'Lembur Penuh' };
-      case 'Setengah Hari':  return { cls: styles.badgeSetengah, emoji: '🌤️', label: 'Setengah Hari' };
-      case 'Sakit':          return { cls: styles.badgeSakit,    emoji: '🩺', label: 'Sakit' };
-      case 'Izin':           return { cls: styles.badgeIzin,     emoji: '📋', label: 'Izin' };
-      case 'Absen':          return { cls: styles.badgeAbsen,    emoji: '❌', label: 'Absen' };
-      default:               return { cls: styles.badgeNormal,   emoji: '📌', label: statusVal };
+      case 'Kerja Normal':   return { cls: styles.badgeNormal,   emoji: <CheckCircle size={14} weight="fill" />, label: 'Kerja Normal' };
+      case 'Lembur Penuh':   return { cls: styles.badgeLembur,   emoji: <Lightning size={14} weight="fill" />, label: 'Lembur Penuh' };
+      case 'Setengah Hari':  return { cls: styles.badgeSetengah, emoji: <CloudSun size={14} weight="fill" />, label: 'Setengah Hari' };
+      case 'Sakit':          return { cls: styles.badgeSakit,    emoji: <Pill size={14} weight="fill" />, label: 'Sakit' };
+      case 'Izin':           return { cls: styles.badgeIzin,     emoji: <ListDashes size={14} weight="fill" />, label: 'Izin' };
+      case 'Absen':          return { cls: styles.badgeAbsen,    emoji: <XCircle size={14} weight="fill" />, label: 'Absen' };
+      default:               return { cls: styles.badgeNormal,   emoji: <CheckCircle size={14} weight="fill" />, label: statusVal };
     }
   };
 
@@ -444,7 +444,7 @@ export default function WorkerDashboard() {
               {/* Greeting */}
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6366F1', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                  👋 Selamat Datang
+                  <HandWaving size={16} weight="fill" style={{ marginRight: "4px", verticalAlign: "-2px" }} /> Selamat Datang
                 </div>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0F172A', margin: '4px 0 2px', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
                   Hai, {user?.name?.split(' ')[0] || 'Pekerja'}!
@@ -504,7 +504,7 @@ export default function WorkerDashboard() {
                 <form className={styles.form} onSubmit={handleCheckIn}>
                   {/* Tanggal */}
                   <div className={styles.formGroup}>
-                    <label>📅 Pilih Tanggal</label>
+                    <label><CalendarBlank size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Pilih Tanggal</label>
                     <input
                       type="date"
                       className={styles.input}
@@ -516,7 +516,7 @@ export default function WorkerDashboard() {
 
                   {/* Status Pill Selector */}
                   <div className={styles.formGroup}>
-                    <label>🏷️ Status Kehadiran</label>
+                    <label><Tag size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Status Kehadiran</label>
                     <div className={styles.statusSelectorGrid}>
                       {STATUS_OPTIONS.map((opt) => (
                         <button
@@ -537,7 +537,7 @@ export default function WorkerDashboard() {
 
                   {/* Gaji Pokok */}
                   <div className={styles.formGroup}>
-                    <label>💰 Gaji Pokok (Rp)</label>
+                    <label><Money size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Gaji Pokok (Rp)</label>
                     <input
                       type="number"
                       className={styles.input}
@@ -550,7 +550,7 @@ export default function WorkerDashboard() {
 
                   {/* Tambahan Lembur */}
                   <div className={styles.formGroup}>
-                    <label>⚡ Bonus/Tambahan (Rp)</label>
+                    <label><Lightning size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Bonus/Tambahan (Rp)</label>
                     <input
                       type="number"
                       className={styles.input}
@@ -562,7 +562,7 @@ export default function WorkerDashboard() {
 
                   {/* Catatan */}
                   <div className={styles.formGroup}>
-                    <label>📝 Catatan (Opsional)</label>
+                    <label><Notepad size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Catatan (Opsional)</label>
                     <input
                       type="text"
                       className={styles.input}
@@ -602,13 +602,13 @@ export default function WorkerDashboard() {
                   className={`${styles.tabSwitchBtn} ${historyTab === 'active' ? styles.tabSwitchBtnActive : ''}`}
                   onClick={() => setHistoryTab('active')}
                 >
-                  📖 Buku Aktif
+                  <BookBookmark size={18} weight="fill" style={{ marginRight: "6px", verticalAlign: "-4px" }} /> Buku Aktif
                 </button>
                 <button
                   className={`${styles.tabSwitchBtn} ${historyTab === 'archive' ? styles.tabSwitchBtnActive : ''}`}
                   onClick={() => setHistoryTab('archive')}
                 >
-                  🗃️ Arsip Gajian
+                  <ArchiveBox size={18} weight="fill" style={{ marginRight: "6px", verticalAlign: "-4px" }} /> Arsip Gajian
                 </button>
               </div>
 
@@ -616,7 +616,7 @@ export default function WorkerDashboard() {
               {historyTab === "active" && (
                 <div className={styles.tabContentWrapper}>
                   <button className={styles.btnCloseBook} onClick={handleCloseBook} style={{ marginBottom: '12px' }}>
-                    💰 Tutup Buku & Gajian Sekarang
+                    <Coins size={22} weight="fill" style={{ marginRight: "8px", verticalAlign: "-5px" }} /> Tutup Buku & Gajian Sekarang
                   </button>
                   <div className={styles.panel}>
                     <h3 className={styles.listTitle}>Riwayat Berjalan ({totalAbsen} data)</h3>
