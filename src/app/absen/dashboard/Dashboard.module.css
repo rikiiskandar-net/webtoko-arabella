@@ -916,6 +916,24 @@ select.input:focus {
   border: 1px solid #C4B5FD;
 }
 
+.badge15Hari {
+  background: linear-gradient(135deg, #DBEAFE, #93C5FD);
+  color: #1E40AF;
+  border: 1px solid #60A5FA;
+}
+
+.badgeLibur {
+  background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+  color: #374151;
+  border: 1px solid #9CA3AF;
+}
+
+.badgeCustom {
+  background: linear-gradient(135deg, #E2E8F0, #CBD5E1);
+  color: #334155;
+  border: 1px solid #94A3B8;
+}
+
 .badgeSetengah {
   background: linear-gradient(135deg, #FEF3C7, #FDE68A);
   color: #78350F;

@@ -268,8 +268,11 @@ export default function WorkerDashboard() {
   const getStatusBadge = (statusVal) => {
     switch (statusVal) {
       case 'Kerja Normal':   return { cls: styles.badgeNormal,   emoji: <CheckCircle size={14} weight="fill" />, label: 'Kerja Normal' };
-      case 'Lembur Penuh':   return { cls: styles.badgeLembur,   emoji: <Lightning size={14} weight="fill" />, label: 'Lembur Penuh' };
+      case 'Kerja 1.5 Hari': return { cls: styles.badge15Hari,   emoji: <Timer size={14} weight="fill" />, label: 'Kerja 1.5 Hari' };
+      case 'Kerja Lembur':   return { cls: styles.badgeLembur,   emoji: <Lightning size={14} weight="fill" />, label: 'Kerja Lembur' };
       case 'Setengah Hari':  return { cls: styles.badgeSetengah, emoji: <CloudSun size={14} weight="fill" />, label: 'Setengah Hari' };
+      case 'Libur':          return { cls: styles.badgeLibur,    emoji: <Coffee size={14} weight="fill" />, label: 'Libur' };
+      case 'Custom':         return { cls: styles.badgeCustom,   emoji: <Gear size={14} weight="fill" />, label: 'Custom' };
       case 'Sakit':          return { cls: styles.badgeSakit,    emoji: <Pill size={14} weight="fill" />, label: 'Sakit' };
       case 'Izin':           return { cls: styles.badgeIzin,     emoji: <ListDashes size={14} weight="fill" />, label: 'Izin' };
       case 'Absen':          return { cls: styles.badgeAbsen,    emoji: <XCircle size={14} weight="fill" />, label: 'Absen' };
