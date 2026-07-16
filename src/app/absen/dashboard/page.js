@@ -8,7 +8,7 @@ import {
   User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
   BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
   CheckSquareOffset
-, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, ArchiveBox, Coins } from "@phosphor-icons/react";
+, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, Archive, Coins } from "@phosphor-icons/react";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
@@ -608,7 +608,7 @@ export default function WorkerDashboard() {
                   className={`${styles.tabSwitchBtn} ${historyTab === 'archive' ? styles.tabSwitchBtnActive : ''}`}
                   onClick={() => setHistoryTab('archive')}
                 >
-                  <ArchiveBox size={18} weight="fill" style={{ marginRight: "6px", verticalAlign: "-4px" }} /> Arsip Gajian
+                  <Archive size={18} weight="fill" style={{ marginRight: "6px", verticalAlign: "-4px" }} /> Arsip Gajian
                 </button>
               </div>
 
