@@ -11,8 +11,8 @@
   --bg-card: #FFFFFF;
   --primary: #6366F1;
   --primary-dark: #4F46E5;
-  --text-dark: #0F172A;
-  --text-mid: #475569;
+  --text-dark: #334155;
+  --text-mid: #64748B;
   --text-light: #94A3B8;
   --radius-xl: 28px;
   --radius-lg: 20px;
@@ -623,7 +623,7 @@ select.input:focus {
 .panelTitle2026 {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-dark);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -654,7 +654,7 @@ select.input:focus {
   border-radius: 16px;
   font-size: 1rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-dark);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: var(--font-app);
 }
@@ -1562,7 +1562,7 @@ select.input:focus {
 .profileName2026 {
   font-size: 1.6rem;
   font-weight: 900;
-  color: #0f172a;
+  color: var(--text-dark);
   letter-spacing: -0.6px;
   margin-bottom: 6px;
 }
@@ -1629,7 +1629,7 @@ select.input:focus {
 .profileItemValue2026 {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-dark);
   letter-spacing: -0.2px;
 }
 
