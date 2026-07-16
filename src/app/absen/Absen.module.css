@@ -365,3 +365,201 @@
   color: #0f172a;
   text-align: right;
 }
+
+
+/* ==================================================
+   GOOGLE MATERIAL YOU (100% Google Sign-In)
+   ================================================== */
+
+.googlePage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f4f9; /* Google's light blue-gray background */
+  padding: 24px;
+  font-family: 'Roboto', 'Google Sans', sans-serif;
+}
+
+.googleCard {
+  background: #ffffff;
+  width: 100%;
+  max-width: 448px; /* Standard Google width */
+  border-radius: 28px;
+  padding: 36px 40px 48px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .googlePage {
+    background-color: #ffffff; /* Google mobile is full white */
+    padding: 0;
+    align-items: flex-start;
+  }
+  .googleCard {
+    border-radius: 0;
+    padding: 48px 24px;
+    max-width: 100%;
+    min-height: 100vh;
+  }
+}
+
+.googleLogoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* We style Absenku like Google */
+.googleLogoText {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  font-family: 'Product Sans', 'Google Sans', sans-serif;
+}
+.googleLogoG { color: #4285f4; }
+.googleLogoO1 { color: #ea4335; }
+.googleLogoO2 { color: #fbbc05; }
+.googleLogoG2 { color: #4285f4; }
+.googleLogoL { color: #34a853; }
+.googleLogoE { color: #ea4335; }
+
+.googleTitle {
+  font-size: 32px;
+  font-weight: 400;
+  color: #1f1f1f;
+  margin: 0 0 12px;
+  font-family: 'Google Sans', sans-serif;
+  letter-spacing: 0;
+}
+
+.googleSubtitle {
+  font-size: 16px;
+  color: #444746;
+  margin: 0 0 32px;
+  font-weight: 400;
+}
+
+.googleForm {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.googleInputGroup {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.googleInput {
+  width: 100%;
+  padding: 16px 16px;
+  font-size: 16px;
+  color: #1f1f1f;
+  background: transparent;
+  border: 1px solid #747775;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.googleInput:focus {
+  border-color: #0b57d0;
+  border-width: 2px;
+  padding: 15px 15px; /* Adjust padding to avoid jump */
+}
+
+.googleLabel {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  font-size: 16px;
+  color: #444746;
+  background: #ffffff;
+  padding: 0 4px;
+  transition: 0.2s ease all;
+  pointer-events: none;
+}
+
+.googleInput:focus ~ .googleLabel,
+.googleInput:not(:placeholder-shown) ~ .googleLabel {
+  top: -10px;
+  font-size: 12px;
+  color: #0b57d0;
+  font-weight: 500;
+}
+.googleInput:not(:focus):not(:placeholder-shown) ~ .googleLabel {
+  color: #444746;
+}
+
+.googleLink {
+  color: #0b57d0;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+.googleLink:hover {
+  text-decoration: none;
+}
+
+.googleActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.googleBtnSecondary {
+  background: transparent;
+  color: #0b57d0;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 20px; /* pill shape */
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+.googleBtnSecondary:hover {
+  background: #f4f8fe; /* light blue hover */
+}
+
+.googleBtnPrimary {
+  background: #0b57d0;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 20px; /* pill shape */
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.googleBtnPrimary:hover {
+  background: #0842a0;
+  box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+}
+.googleBtnPrimary:disabled {
+  background: #e3e3e3;
+  color: #9aa0a6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.googleError {
+  color: #b3261e;
+  font-size: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
