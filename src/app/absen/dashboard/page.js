@@ -95,12 +95,12 @@ export default function WorkerDashboard() {
 
   // Status config
   const STATUS_OPTIONS = [
-    { value: "Kerja Normal",   emoji: <CheckCircle weight="duotone" size={24} color="#059669" />, label: "Kerja Normal",  mult: "1x Gaji",   multiplierVal: 1,   activeClass: styles.statusPillNormalActive },
-    { value: "Kerja 1.5 Hari", emoji: <Timer weight="duotone" size={24} color="#2563EB" />,       label: "Kerja 1.5 Hari",mult: "1.5x",      multiplierVal: 1.5, activeClass: styles.statusPill15Active },
-    { value: "Kerja Lembur",   emoji: <Lightning weight="duotone" size={24} color="#7C3AED" />,   label: "Kerja Lembur",  mult: "2x Gaji",   multiplierVal: 2,   activeClass: styles.statusPillLemburActive },
-    { value: "Setengah Hari",  emoji: <CloudSun weight="duotone" size={24} color="#D97706" />,    label: "Setengah Hari", mult: "0.5x Gaji", multiplierVal: 0.5, activeClass: styles.statusPillSetengahActive },
-    { value: "Libur",          emoji: <Coffee weight="duotone" size={24} color="#6B7280" />,      label: "Libur",         mult: "0x Gaji",   multiplierVal: 0,   activeClass: styles.statusPillLiburActive },
-    { value: "Custom",         emoji: <Gear weight="duotone" size={24} color="#4B5563" />,        label: "Custom",        mult: "Atur Sendiri", multiplierVal: 1,   activeClass: styles.statusPillCustomActive },
+    { value: "Kerja Normal",   emoji: <CheckCircle weight="fill" size={24} color="#059669" />, label: "Kerja Normal",  mult: "1x Gaji",   multiplierVal: 1,   activeClass: styles.statusPillNormalActive },
+    { value: "Kerja 1.5 Hari", emoji: <Timer weight="fill" size={24} color="#2563EB" />,       label: "Kerja 1.5 Hari",mult: "1.5x",      multiplierVal: 1.5, activeClass: styles.statusPill15Active },
+    { value: "Kerja Lembur",   emoji: <Lightning weight="fill" size={24} color="#7C3AED" />,   label: "Kerja Lembur",  mult: "2x Gaji",   multiplierVal: 2,   activeClass: styles.statusPillLemburActive },
+    { value: "Setengah Hari",  emoji: <CloudSun weight="fill" size={24} color="#D97706" />,    label: "Setengah Hari", mult: "0.5x Gaji", multiplierVal: 0.5, activeClass: styles.statusPillSetengahActive },
+    { value: "Libur",          emoji: <Coffee weight="fill" size={24} color="#6B7280" />,      label: "Libur",         mult: "0x Gaji",   multiplierVal: 0,   activeClass: styles.statusPillLiburActive },
+    { value: "Custom",         emoji: <Gear weight="fill" size={24} color="#4B5563" />,        label: "Custom",        mult: "Atur Sendiri", multiplierVal: 1,   activeClass: styles.statusPillCustomActive },
   ];
 
   const handleStatusSelect = (opt) => {
@@ -308,10 +308,10 @@ export default function WorkerDashboard() {
                   onClick={(e) => { e.stopPropagation(); handleDeleteAttendance(att.id); }}
                   title="Hapus Absen"
                 >
-                  <Trash size={16} weight="duotone" />
+                  <Trash size={16} weight="fill" />
                 </button>
               )}
-              {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="bold" /> : <CaretDown size={16} color="#94a3b8" weight="bold" />}
+              {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="fill" /> : <CaretDown size={16} color="#94a3b8" weight="fill" />}
             </div>
           </div>
         </div>
@@ -393,7 +393,7 @@ export default function WorkerDashboard() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <div className={`${styles.modalIcon} ${modalConfig.type === 'success' ? styles.modalIconSuccess : styles.modalIconWarning}`}>
-              {modalConfig.type === 'success' ? <CheckCircle size={32} weight="duotone" /> : <Warning size={32} weight="duotone" />}
+              {modalConfig.type === 'success' ? <CheckCircle size={32} weight="fill" /> : <Warning size={32} weight="fill" />}
             </div>
             <h3 className={styles.modalTitle}>{modalConfig.title}</h3>
             <p className={styles.modalMessage}>{modalConfig.message}</p>
@@ -478,14 +478,14 @@ export default function WorkerDashboard() {
               <div className={styles.miniStatsGrid}>
                 <div className={styles.miniCard + ' ' + styles.miniCardGreen}>
                   <div className={styles.miniCardIcon}>
-                    <CheckSquareOffset size={20} weight="duotone" />
+                    <CheckSquareOffset size={20} weight="fill" />
                   </div>
                   <div className={styles.miniCardValue}>{totalAbsen}</div>
                   <div className={styles.miniCardLabel}>Total Absen</div>
                 </div>
                 <div className={styles.miniCard + ' ' + styles.miniCardOrange}>
                   <div className={styles.miniCardIcon}>
-                    <TrendUp size={20} weight="duotone" />
+                    <TrendUp size={20} weight="fill" />
                   </div>
                   <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
                     {formatRupiah(currentTotal).replace('Rp\u00a0', 'Rp')}
@@ -497,7 +497,7 @@ export default function WorkerDashboard() {
               {/* Form Kehadiran */}
               <div className={styles.panel}>
                 <h2 className={styles.panelTitle}>
-                  <Timer size={22} weight="duotone" className={styles.iconBlue} />
+                  <Timer size={22} weight="fill" className={styles.iconBlue} />
                   Catat Kehadiran
                 </h2>
 
@@ -579,7 +579,7 @@ export default function WorkerDashboard() {
                   </div>
 
                   <button type="submit" className={styles.btnPrimary} disabled={submitting}>
-                    {submitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />}
+                    {submitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />}
                     Simpan Absensi
                   </button>
                 </form>
@@ -622,7 +622,7 @@ export default function WorkerDashboard() {
                     <h3 className={styles.listTitle}>Riwayat Berjalan ({totalAbsen} data)</h3>
                     {data?.activeAttendances?.length === 0 ? (
                       <div className={styles.emptyStateContainer}>
-                        <div className={styles.emptyStateIcon}><Package size={36} weight="duotone" /></div>
+                        <div className={styles.emptyStateIcon}><Package size={36} weight="fill" /></div>
                         <span className={styles.emptyStateText}>Buku absen Anda masih kosong.</span>
                       </div>
                     ) : (
@@ -640,7 +640,7 @@ export default function WorkerDashboard() {
                   <h3 className={styles.listTitle}>Riwayat Faktur Gaji</h3>
                   {data?.closedPeriods?.length === 0 ? (
                     <div className={styles.emptyStateContainer}>
-                      <div className={styles.emptyStateIcon}><FileText size={36} weight="duotone" /></div>
+                      <div className={styles.emptyStateIcon}><FileText size={36} weight="fill" /></div>
                       <span className={styles.emptyStateText}>Belum ada riwayat gaji yang ditutup.</span>
                     </div>
                   ) : (
@@ -657,7 +657,7 @@ export default function WorkerDashboard() {
                               onClick={() => toggleArchive(period.id)}
                             >
                               <div className={styles.archiveTitle}>
-                                <FileText size={18} weight="duotone" color="#6366F1" />
+                                <FileText size={18} weight="fill" color="#6366F1" />
                                 {startDateStr} – {endDateStr}
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -667,9 +667,9 @@ export default function WorkerDashboard() {
                                   onClick={(e) => { e.stopPropagation(); handleDeleteArchive(period.id); }}
                                   title="Hapus Arsip"
                                 >
-                                  <Trash size={16} weight="duotone" />
+                                  <Trash size={16} weight="fill" />
                                 </button>
-                                {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="bold" /> : <CaretDown size={16} color="#94a3b8" weight="bold" />}
+                                {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="fill" /> : <CaretDown size={16} color="#94a3b8" weight="fill" />}
                               </div>
                             </div>
                             {isExpanded && (
@@ -712,7 +712,7 @@ export default function WorkerDashboard() {
                   <div className={styles.profileList2026}>
                     <div className={styles.profileItem2026}>
                       <div className={`${styles.profileItemIcon2026} ${styles.bgBlue}`}>
-                        <User size={20} weight="duotone" />
+                        <User size={20} weight="fill" />
                       </div>
                       <div className={styles.profileItemText2026}>
                         <div className={styles.profileItemLabel2026}>Nama Lengkap</div>
@@ -722,7 +722,7 @@ export default function WorkerDashboard() {
                     
                     <div className={styles.profileItem2026}>
                       <div className={`${styles.profileItemIcon2026} ${styles.bgPurple}`}>
-                        <Briefcase size={20} weight="duotone" />
+                        <Briefcase size={20} weight="fill" />
                       </div>
                       <div className={styles.profileItemText2026}>
                         <div className={styles.profileItemLabel2026}>Jabatan</div>
@@ -732,7 +732,7 @@ export default function WorkerDashboard() {
                     
                     <div className={styles.profileItem2026}>
                       <div className={`${styles.profileItemIcon2026} ${styles.bgOrange}`}>
-                        <Phone size={20} weight="duotone" />
+                        <Phone size={20} weight="fill" />
                       </div>
                       <div className={styles.profileItemText2026}>
                         <div className={styles.profileItemLabel2026}>No. HP</div>
@@ -742,7 +742,7 @@ export default function WorkerDashboard() {
                     
                     <div className={styles.profileItem2026}>
                       <div className={`${styles.profileItemIcon2026} ${styles.bgGreen}`}>
-                        <MapPin size={20} weight="duotone" />
+                        <MapPin size={20} weight="fill" />
                       </div>
                       <div className={styles.profileItemText2026}>
                         <div className={styles.profileItemLabel2026}>Alamat</div>
@@ -753,13 +753,13 @@ export default function WorkerDashboard() {
 
                   <div className={styles.actionRow2026}>
                     <button className={styles.btnPrimary2026} onClick={() => setProfileViewMode("edit")}>
-                      <User size={20} weight="bold" /> Edit Profil
+                      <User size={20} weight="fill" /> Edit Profil
                     </button>
                     <button className={styles.btnSecondary2026} onClick={() => setProfileViewMode("settings")}>
-                      <Gear size={20} weight="bold" /> Setting Keamanan
+                      <Gear size={20} weight="fill" /> Setting Keamanan
                     </button>
                     <button className={styles.btnDanger2026} onClick={handleLogout}>
-                      <SignOut size={20} weight="bold" /> Keluar dari Akun
+                      <SignOut size={20} weight="fill" /> Keluar dari Akun
                     </button>
                   </div>
                 </>
@@ -768,7 +768,7 @@ export default function WorkerDashboard() {
               {profileViewMode === "edit" && (
                 <div className={styles.panel2026}>
                   <h2 className={styles.panelTitle2026}>
-                    <UserCircle size={24} weight="duotone" className={styles.iconBlue} />
+                    <UserCircle size={24} weight="fill" className={styles.iconBlue} />
                     Edit Profil
                   </h2>
                   <form onSubmit={handleProfileSave}>
@@ -802,7 +802,7 @@ export default function WorkerDashboard() {
                         Batal
                       </button>
                       <button type="submit" className={styles.btnPrimary2026} style={{ flex: 1 }} disabled={profileSubmitting}>
-                        {profileSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />} Simpan
+                        {profileSubmitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />} Simpan
                       </button>
                     </div>
                   </form>
@@ -812,7 +812,7 @@ export default function WorkerDashboard() {
               {profileViewMode === "settings" && (
                 <div className={styles.panel2026}>
                   <h2 className={styles.panelTitle2026}>
-                    <Gear size={24} weight="duotone" className={styles.iconBlue} />
+                    <Gear size={24} weight="fill" className={styles.iconBlue} />
                     Setting Keamanan
                   </h2>
                   <form onSubmit={handleSettingsSave}>
@@ -835,7 +835,7 @@ export default function WorkerDashboard() {
                         Batal
                       </button>
                       <button type="submit" className={styles.btnPrimary2026} style={{ flex: 1 }} disabled={settingsSubmitting}>
-                        {settingsSubmitting ? <Spinner size={20} className={styles.spinner} weight="bold" /> : <FloppyDisk size={20} weight="fill" />} Simpan
+                        {settingsSubmitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />} Simpan
                       </button>
                     </div>
                   </form>
