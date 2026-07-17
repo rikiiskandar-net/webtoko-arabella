@@ -376,7 +376,7 @@ export default function WorkerDashboard() {
 
   const periodPay = data?.activeAttendances?.reduce((sum, item) => sum + item.totalPay, 0) || 0;
   const currentTotal = Math.round(Number(baseWage) * Number(multiplier)) + Number(extraPay);
-  const totalAbsen = data?.activeAttendances?.length || 0;
+  const totalHarian = data?.activeAttendances?.reduce((sum, item) => sum + (Number(item.multiplier) || 0), 0) || 0;
   const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
@@ -483,8 +483,8 @@ export default function WorkerDashboard() {
                   <div className={styles.miniCardIcon}>
                     <CheckSquareOffset size={20} weight="fill" />
                   </div>
-                  <div className={styles.miniCardValue}>{totalAbsen}</div>
-                  <div className={styles.miniCardLabel}>Total Absen</div>
+                  <div className={styles.miniCardValue}>{totalHarian}</div>
+                  <div className={styles.miniCardLabel}>Total Harian</div>
                 </div>
                 <div className={styles.miniCard + ' ' + styles.miniCardOrange}>
                   <div className={styles.miniCardIcon}>
