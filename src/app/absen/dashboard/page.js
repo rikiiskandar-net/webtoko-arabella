@@ -62,6 +62,8 @@ export default function WorkerDashboard() {
   const [profileViewMode, setProfileViewMode] = useState("info");
   const [settingsForm, setSettingsForm] = useState({ email: "", password: "", passwordConfirm: "" });
   const [settingsSubmitting, setSettingsSubmitting] = useState(false);
+  const [wageForm, setWageForm] = useState({ baseWage: 100000 });
+  const [wageSubmitting, setWageSubmitting] = useState(false);
 
   const formatRupiah = (number) =>
     new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
@@ -89,6 +91,7 @@ export default function WorkerDashboard() {
         role: meData.user.role || ""
       });
       setSettingsForm(prev => ({ ...prev, email: meData.user.email || "" }));
+      setWageForm({ baseWage: meData.user.baseWage || 100000 });
       if (attendRes.ok) {
         const attData = await attendRes.json();
         setData(attData);
@@ -208,6 +211,32 @@ export default function WorkerDashboard() {
       showToast("Terjadi kesalahan jaringan", "error");
     } finally {
       setSettingsSubmitting(false);
+    }
+  };
+
+  const handleWageSave = async (e) => {
+    e.preventDefault();
+    setWageSubmitting(true);
+    try {
+      const res = await fetch("/api/worker/auth/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ baseWage: wageForm.baseWage })
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setUser(result.user);
+        setBaseWage(result.user.baseWage || 100000); // Sync to attendance form
+        setProfileViewMode("info");
+        showToast("Gaji Harian berhasil diatur! 💰");
+      } else {
+        const errData = await res.json();
+        showToast(errData.error || "Gagal mengatur gaji", "error");
+      }
+    } catch {
+      showToast("Terjadi kesalahan jaringan", "error");
+    } finally {
+      setWageSubmitting(false);
     }
   };
 
@@ -729,6 +758,10 @@ export default function WorkerDashboard() {
                     </div>
                     <div className={styles.profileName2026}>{user?.name || 'Nama Pekerja'}</div>
                     <div className={styles.profileRole2026}>{user?.role || 'Pekerja'}</div>
+                    
+                    <button onClick={() => setProfileViewMode('wage')} className={styles.btnWagePill}>
+                      <Money size={16} weight="fill" /> Atur Gaji Harian
+                    </button>
                   </div>
 
                   <div className={styles.profileList2026}>
@@ -858,6 +891,30 @@ export default function WorkerDashboard() {
                       </button>
                       <button type="submit" className={styles.btnPrimary2026} style={{ flex: 1 }} disabled={settingsSubmitting}>
                         {settingsSubmitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />} Simpan
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {profileViewMode === "wage" && (
+                <div className={styles.panel2026}>
+                  <h2 className={styles.panelTitle2026}>
+                    <Money size={24} weight="fill" className={styles.iconBlue} />
+                    Atur Gaji Harian
+                  </h2>
+                  <form onSubmit={handleWageSave}>
+                    <div className={styles.formGroup2026}>
+                      <label>Standar Gaji Harian (Rp)</label>
+                      <input type="number" className={styles.input2026} value={wageForm.baseWage} onChange={e => setWageForm({...wageForm, baseWage: e.target.value})} required min="0" />
+                      <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '6px' }}>Nominal ini akan menjadi angka bawaan (default) saat Anda mengisi absen harian.</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
+                      <button type="button" className={styles.btnSecondary2026} style={{ flex: 1 }} onClick={() => setProfileViewMode("info")}>
+                        Batal
+                      </button>
+                      <button type="submit" className={styles.btnPrimary2026} style={{ flex: 1 }} disabled={wageSubmitting}>
+                        {wageSubmitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />} Simpan
                       </button>
                     </div>
                   </form>

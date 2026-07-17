@@ -10,24 +10,30 @@ export async function PUT(req) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { email, password } = body;
+    const { email, password, baseWage } = body;
 
-    if (!email) {
-      return NextResponse.json({ error: "Email wajib diisi" }, { status: 400 });
-    }
+    const updateData = {};
 
-    // Check if new email is already used by another worker
-    if (email !== session.email) {
-      const existing = await prisma.worker.findUnique({ where: { email } });
-      if (existing) {
-        return NextResponse.json({ error: "Email sudah digunakan pekerja lain" }, { status: 400 });
+    if (email) {
+      if (email !== session.email) {
+        const existing = await prisma.worker.findUnique({ where: { email } });
+        if (existing) {
+          return NextResponse.json({ error: "Email sudah digunakan pekerja lain" }, { status: 400 });
+        }
       }
+      updateData.email = email;
     }
-
-    const updateData = { email };
 
     if (password && password.trim() !== "") {
       updateData.password = await hashWorkerPassword(password);
+    }
+
+    if (baseWage !== undefined) {
+      updateData.baseWage = Number(baseWage);
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "Tidak ada data yang diubah" }, { status: 400 });
     }
 
     const updatedWorker = await prisma.worker.update({
