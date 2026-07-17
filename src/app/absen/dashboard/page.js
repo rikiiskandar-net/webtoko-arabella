@@ -8,7 +8,7 @@ import {
   User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
   BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
   CheckSquareOffset
-, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, Archive, Coins } from "@phosphor-icons/react";
+, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, Archive, Coins, Eye, EyeClosed } from "@phosphor-icons/react";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
@@ -27,6 +27,20 @@ export default function WorkerDashboard() {
   const [expandedArchiveId, setExpandedArchiveId] = useState(null);
   const [modalConfig, setModalConfig] = useState({ isOpen: false, title: "", message: "", type: "warning", onConfirm: null });
   const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+  const [showBalances, setShowBalances] = useState(false);
+
+  useEffect(() => {
+    const savedState = localStorage.getItem("absenku_show_balances");
+    if (savedState !== null) {
+      setShowBalances(savedState === "true");
+    }
+  }, []);
+
+  const toggleBalances = () => {
+    const newVal = !showBalances;
+    setShowBalances(newVal);
+    localStorage.setItem("absenku_show_balances", newVal.toString());
+  };
 
   // Form State (Absen)
   const [submitting, setSubmitting] = useState(false);
@@ -303,7 +317,7 @@ export default function WorkerDashboard() {
             </span>
           </div>
           <div className={styles.historyRight}>
-            <span className={styles.historyPay}>{formatRupiah(att.totalPay)}</span>
+            <span className={styles.historyPay}>{showBalances ? formatRupiah(att.totalPay) : 'Rp •••••'}</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {isActiveBook && (
                 <button
@@ -323,7 +337,7 @@ export default function WorkerDashboard() {
           <div className={styles.historyCardBody}>
             <div className={styles.historyDetailRow}>
               <span>Upah Dasar</span>
-              <span>{formatRupiah(att.baseWage)}</span>
+              <span>{showBalances ? formatRupiah(att.baseWage) : 'Rp •••••'}</span>
             </div>
             <div className={styles.historyDetailRow}>
               <span>Multiplier</span>
@@ -332,7 +346,7 @@ export default function WorkerDashboard() {
             {att.extraPay > 0 && (
               <div className={styles.historyDetailRow}>
                 <span>Tambahan</span>
-                <span>{formatRupiah(att.extraPay)}</span>
+                <span>{showBalances ? formatRupiah(att.extraPay) : 'Rp •••••'}</span>
               </div>
             )}
             {att.notes && (
@@ -459,16 +473,21 @@ export default function WorkerDashboard() {
               <div className={styles.heroCard}>
                 <div className={styles.heroTopRow}>
                   <div>
-                    <span className={styles.heroLabel}>Buku Gaji Aktif</span>
+                    <span className={styles.heroLabel} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      Buku Gaji Aktif
+                      <button onClick={toggleBalances} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', padding: 0, display: 'flex' }}>
+                        {showBalances ? <Eye size={16} /> : <EyeClosed size={16} />}
+                      </button>
+                    </span>
                     <div className={styles.heroName}>{user?.name || 'Pekerja'}</div>
                   </div>
                   <span className={styles.heroWageBadge}>
-                    {formatRupiah(baseWage)}/hari
+                    {showBalances ? formatRupiah(baseWage) : 'Rp •••••'}/hari
                   </span>
                 </div>
                 <div className={styles.heroAmount}>
                   <span className={styles.heroCurrency}>Rp</span>
-                  {periodPay.toLocaleString('id-ID')}
+                  {showBalances ? periodPay.toLocaleString('id-ID') : '••••••••'}
                 </div>
                 <span className={styles.heroSubtext}>
                   Mulai: {data?.activePeriod
@@ -491,7 +510,7 @@ export default function WorkerDashboard() {
                     <TrendUp size={20} weight="fill" />
                   </div>
                   <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
-                    {formatRupiah(currentTotal).replace('Rp\u00a0', 'Rp')}
+                    {showBalances ? formatRupiah(currentTotal).replace('Rp\u00a0', 'Rp') : 'Rp •••••'}
                   </div>
                   <div className={styles.miniCardLabel}>Estimasi Hari Ini</div>
                 </div>
@@ -578,7 +597,7 @@ export default function WorkerDashboard() {
                   {/* Summary */}
                   <div className={styles.summaryBox}>
                     Total Gaji Hari Ini
-                    <strong>{formatRupiah(currentTotal)}</strong>
+                    <strong>{showBalances ? formatRupiah(currentTotal) : 'Rp ••••••••'}</strong>
                   </div>
 
                   <button type="submit" className={styles.btnPrimary} disabled={submitting}>
@@ -664,7 +683,7 @@ export default function WorkerDashboard() {
                                 {startDateStr} – {endDateStr}
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span className={styles.archiveTotal}>{formatRupiah(periodTotal)}</span>
+                                <span className={styles.archiveTotal}>{showBalances ? formatRupiah(periodTotal) : 'Rp •••••'}</span>
                                 <button
                                   className={styles.deleteBtn}
                                   onClick={(e) => { e.stopPropagation(); handleDeleteArchive(period.id); }}
