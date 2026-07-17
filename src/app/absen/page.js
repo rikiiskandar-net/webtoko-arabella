@@ -2,113 +2,284 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { WarningCircle } from "@phosphor-icons/react";
-import styles from "./Absen.module.css";
+import styles from "./LiquidLogin.module.css";
+import { CheckCircle, Eye, EyeClosed, XCircle } from "@phosphor-icons/react";
 
 export default function WorkerLogin() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  
+  // State for tabs
+  const [activeTab, setActiveTab] = useState("login"); // 'login' or 'register'
+  
+  // States for forms
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [regForm, setRegForm] = useState({ name: "", email: "", password: "", passwordConfirm: "", terms: false });
+  
+  // UI states
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [showLoginPass, setShowLoginPass] = useState(false);
+  const [showRegPass, setShowRegPass] = useState(false);
+  const [showRegPass2, setShowRegPass2] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+
+  const showToast = (message, type = "success") => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast({ visible: false, message: "", type: "success" }), 3000);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
-    setSubmitting(true);
-
-    if (!email || !password) {
-      setError("Email dan password wajib diisi");
-      setSubmitting(false);
+    if (!loginForm.email || !loginForm.password) {
+      showToast("Email dan password wajib diisi", "error");
       return;
     }
-
+    
+    setSubmitting(true);
     try {
       const res = await fetch("/api/worker/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(loginForm),
       });
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Gagal masuk");
-      }
+      if (!res.ok) throw new Error(data.error || "Gagal masuk");
 
       router.push("/absen/dashboard");
       router.refresh();
     } catch (err) {
-      setError(err.message);
+      showToast(err.message, "error");
+      setSubmitting(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    
+    if (!regForm.name || !regForm.email || !regForm.password) {
+      showToast("Data pendaftaran tidak lengkap", "error");
+      return;
+    }
+    if (regForm.password !== regForm.passwordConfirm) {
+      showToast("Konfirmasi sandi tidak cocok", "error");
+      return;
+    }
+    if (!regForm.terms) {
+      showToast("Anda harus menyetujui syarat & ketentuan", "error");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/worker/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: regForm.name, email: regForm.email, password: regForm.password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Gagal mendaftar");
+
+      router.push("/absen/dashboard");
+      router.refresh();
+    } catch (err) {
+      showToast(err.message, "error");
       setSubmitting(false);
     }
   };
 
   return (
-    <div className={styles.googlePage}>
-      <div className={styles.googleCard}>
-        <div className={styles.googleLogoContainer}>
-          <svg viewBox="0 0 74 24" width="74" height="24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.4 18.6c-5.4 0-9.4-4.1-9.4-9.3s4-9.3 9.4-9.3c3 0 5.1 1.2 6.8 2.8l-1.9 1.9c-1.2-1.1-2.8-2-4.9-2-4.1 0-7.3 3.4-7.3 7.5s3.2 7.5 7.3 7.5c2.4 0 4.1-1 5-1.9 1.5-1.5 1.9-3.2 1.9-5.4H9.4v-2.8h9.8c.1.5.1 1.1.1 1.7 0 2.2-.6 4.7-2.1 6.5-1.5 1.8-3.5 2.8-5.8 2.8z" fill="#4285f4"></path>
-            <path d="M22 12.8c0 3.2-2.5 5.8-5.6 5.8s-5.6-2.6-5.6-5.8 2.5-5.8 5.6-5.8 5.6 2.6 5.6 5.8zm-2.8 0c0-2.1-1.4-3.5-2.8-3.5-1.4 0-2.8 1.4-2.8 3.5s1.4 3.5 2.8 3.5c1.4 0 2.8-1.4 2.8-3.5z" fill="#ea4335"></path>
-            <path d="M34.4 12.8c0 3.2-2.5 5.8-5.6 5.8s-5.6-2.6-5.6-5.8 2.5-5.8 5.6-5.8 5.6 2.6 5.6 5.8zm-2.8 0c0-2.1-1.4-3.5-2.8-3.5-1.4 0-2.8 1.4-2.8 3.5s1.4 3.5 2.8 3.5c1.4 0 2.8-1.4 2.8-3.5z" fill="#fbbc05"></path>
-            <path d="M45.5 7.3v10.8c0 4.4-2.7 6.2-5.4 6.2-2.7 0-4.3-1.8-4.9-3.3l2.4-1c.4 1 1.4 2 2.5 2 1.8 0 2.9-1.1 2.9-3.2v-1h-.1c-.6.7-1.7 1.3-3 1.3-2.9 0-5.5-2.5-5.5-5.8s2.6-5.8 5.5-5.8c1.3 0 2.4.6 3 1.3h.1v-1h2.7zm-2.5 5.5c0-2.1-1.4-3.5-2.8-3.5-1.5 0-2.8 1.5-2.8 3.5 0 2.1 1.3 3.5 2.8 3.5 1.4 0 2.8-1.4 2.8-3.5z" fill="#4285f4"></path>
-            <path d="M50.4 1.1v17.4h-2.8v-17.4h2.8z" fill="#34a853"></path>
-            <path d="M60.1 14.5l2.2 1.5c-.7 1-1.9 2.6-4.6 2.6-3 0-5.4-2.4-5.4-5.8 0-3.3 2.5-5.8 5.2-5.8 2.7 0 4.1 1.6 4.6 2.5l.3.7-6.2 2.6c.5.9 1.4 1.5 2.6 1.5 1.1 0 1.9-.6 2.4-1.3zm-3.8-3.8l3.4-1.4c-.2-.5-.8-.8-1.4-.8-1.1 0-2.5.8-3 2.2z" fill="#ea4335"></path>
-          </svg>
-        </div>
-        <h1 className={styles.googleTitle}>Masuk</h1>
-        <p className={styles.googleSubtitle}>Lanjutkan ke Dasbor Pekerja</p>
+    <div className={styles.pageWrapper}>
+      <div className={styles.scene}>
+        <div className={`${styles.orb} ${styles['orb-1']}`} aria-hidden="true"></div>
+        <div className={`${styles.orb} ${styles['orb-2']}`} aria-hidden="true"></div>
+        <div className={`${styles.orb} ${styles['orb-3']}`} aria-hidden="true"></div>
 
-        <form className={styles.googleForm} onSubmit={handleLogin}>
-          {error && (
-            <div className={styles.googleError}>
-              <WarningCircle size={16} weight="fill" />
-              <span>{error}</span>
-            </div>
+        <main className={styles.card}>
+          <div className={styles.logo}>
+            <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2 L14.5 9 L22 12 L14.5 15 L12 22 L9.5 15 L2 12 L9.5 9 Z"/>
+            </svg>
+          </div>
+
+          <div className={styles.heading}>
+            <h1>{activeTab === 'login' ? 'Selamat datang' : 'Buat akun baru'}</h1>
+            <p>{activeTab === 'login' ? 'Masuk untuk melanjutkan' : 'Isi data untuk mulai menggunakan'}</p>
+          </div>
+
+          <div className={styles.segmented} data-active={activeTab}>
+            <span className={styles['segmented-thumb']} aria-hidden="true"></span>
+            <button 
+              type="button"
+              className={styles['seg-btn']} 
+              onClick={() => setActiveTab('login')} 
+              aria-selected={activeTab === 'login'}
+            >Masuk</button>
+            <button 
+              type="button"
+              className={styles['seg-btn']} 
+              onClick={() => setActiveTab('register')} 
+              aria-selected={activeTab === 'register'}
+            >Daftar</button>
+          </div>
+
+          {activeTab === 'login' && (
+            <section className={styles.panel}>
+              <form onSubmit={handleLogin} noValidate>
+                <div className={styles.field}>
+                  <label className={styles['field-label']}>Email</label>
+                  <div className={styles['field-control']}>
+                    <svg className={styles['field-icon']} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+                      <path d="M3.5 6.5 12 13l8.5-6.5"/>
+                    </svg>
+                    <input 
+                      type="email" 
+                      placeholder="nama@email.com" 
+                      value={loginForm.email}
+                      onChange={e => setLoginForm({...loginForm, email: e.target.value})}
+                      required 
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.field}>
+                  <label className={styles['field-label']}>Kata sandi</label>
+                  <div className={styles['field-control']}>
+                    <svg className={styles['field-icon']} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="5" y="11" width="14" height="9" rx="2"/>
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+                    </svg>
+                    <input 
+                      type={showLoginPass ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      value={loginForm.password}
+                      onChange={e => setLoginForm({...loginForm, password: e.target.value})}
+                      required 
+                    />
+                    <button type="button" className={styles['field-toggle']} onClick={() => setShowLoginPass(!showLoginPass)}>
+                      {showLoginPass ? <Eye size={18} /> : <EyeClosed size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles['row-between']}>
+                  <label className={styles['checkbox-row']}>
+                    <input type="checkbox" />
+                    Ingat saya
+                  </label>
+                  <button type="button" className={styles['link-plain']} onClick={() => showToast('Fitur ini belum aktif, hubungi Admin')}>Lupa sandi?</button>
+                </div>
+
+                <button type="submit" className={styles['btn-cta']} disabled={submitting}>
+                  <span>{submitting ? "Memproses..." : "Masuk"}</span>
+                  {!submitting && <svg className={styles.icon} style={{width:'18px', height:'18px'}} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7"/></svg>}
+                </button>
+
+                <p className={styles['switch-line']}>Belum punya akun? <button type="button" className={styles['link-plain']} onClick={() => setActiveTab('register')}>Daftar</button></p>
+              </form>
+            </section>
           )}
 
-          <div className={styles.googleInputGroup}>
-            <input
-              type="email"
-              className={styles.googleInput}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder=" "
-              required
-            />
-            <label className={styles.googleLabel}>Email atau nomor ponsel</label>
-          </div>
+          {activeTab === 'register' && (
+            <section className={styles.panel}>
+              <form onSubmit={handleRegister} noValidate>
+                <div className={styles.field}>
+                  <label className={styles['field-label']}>Nama lengkap</label>
+                  <div className={styles['field-control']}>
+                    <svg className={styles['field-icon']} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="8" r="3.4"/>
+                      <path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>
+                    </svg>
+                    <input 
+                      type="text" 
+                      placeholder="Nama kamu" 
+                      value={regForm.name}
+                      onChange={e => setRegForm({...regForm, name: e.target.value})}
+                      required 
+                    />
+                  </div>
+                </div>
 
-          <div className={styles.googleInputGroup}>
-            <input
-              type="password"
-              className={styles.googleInput}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder=" "
-              required
-            />
-            <label className={styles.googleLabel}>Masukkan sandi Anda</label>
-          </div>
+                <div className={styles.field}>
+                  <label className={styles['field-label']}>Email</label>
+                  <div className={styles['field-control']}>
+                    <svg className={styles['field-icon']} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+                      <path d="M3.5 6.5 12 13l8.5-6.5"/>
+                    </svg>
+                    <input 
+                      type="email" 
+                      placeholder="nama@email.com" 
+                      value={regForm.email}
+                      onChange={e => setRegForm({...regForm, email: e.target.value})}
+                      required 
+                    />
+                  </div>
+                </div>
 
-          <Link href="/absen/register" className={styles.googleLink}>
-            Lupa email?
-          </Link>
+                <div className={styles.field}>
+                  <label className={styles['field-label']}>Kata sandi</label>
+                  <div className={styles['field-control']}>
+                    <svg className={styles['field-icon']} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="5" y="11" width="14" height="9" rx="2"/>
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+                    </svg>
+                    <input 
+                      type={showRegPass ? "text" : "password"} 
+                      placeholder="Minimal 6 karakter" 
+                      value={regForm.password}
+                      onChange={e => setRegForm({...regForm, password: e.target.value})}
+                      required 
+                    />
+                    <button type="button" className={styles['field-toggle']} onClick={() => setShowRegPass(!showRegPass)}>
+                      {showRegPass ? <Eye size={18} /> : <EyeClosed size={18} />}
+                    </button>
+                  </div>
+                </div>
 
-          <p style={{ fontSize: '14px', color: '#444746', lineHeight: '1.4', marginTop: '16px' }}>
-            Bukan perangkat Anda? Gunakan mode Tamu untuk login secara pribadi. <Link href="#" className={styles.googleLink} style={{ marginBottom: 0 }}>Pelajari lebih lanjut</Link>
-          </p>
+                <div className={styles.field}>
+                  <label className={styles['field-label']}>Konfirmasi kata sandi</label>
+                  <div className={styles['field-control']}>
+                    <svg className={styles['field-icon']} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="5" y="11" width="14" height="9" rx="2"/>
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+                    </svg>
+                    <input 
+                      type={showRegPass2 ? "text" : "password"} 
+                      placeholder="Ulangi kata sandi" 
+                      value={regForm.passwordConfirm}
+                      onChange={e => setRegForm({...regForm, passwordConfirm: e.target.value})}
+                      required 
+                    />
+                    <button type="button" className={styles['field-toggle']} onClick={() => setShowRegPass2(!showRegPass2)}>
+                      {showRegPass2 ? <Eye size={18} /> : <EyeClosed size={18} />}
+                    </button>
+                  </div>
+                </div>
 
-          <div className={styles.googleActions}>
-            <Link href="/absen/register" className={styles.googleBtnSecondary}>
-              Buat akun
-            </Link>
-            <button type="submit" className={styles.googleBtnPrimary} disabled={submitting}>
-              {submitting ? "Memuat..." : "Selanjutnya"}
-            </button>
-          </div>
-        </form>
+                <div className={styles['row-between']} style={{justifyContent: 'flex-start'}}>
+                  <label className={styles['checkbox-row']}>
+                    <input type="checkbox" checked={regForm.terms} onChange={e => setRegForm({...regForm, terms: e.target.checked})} />
+                    Saya setuju dengan Syarat & Ketentuan
+                  </label>
+                </div>
+
+                <button type="submit" className={styles['btn-cta']} disabled={submitting}>
+                  <span>{submitting ? "Memproses..." : "Buat akun"}</span>
+                  {!submitting && <svg className={styles.icon} style={{width:'18px', height:'18px'}} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5l7 7-7 7"/></svg>}
+                </button>
+
+                <p className={styles['switch-line']}>Sudah punya akun? <button type="button" className={styles['link-plain']} onClick={() => setActiveTab('login')}>Masuk</button></p>
+              </form>
+            </section>
+          )}
+        </main>
+      </div>
+
+      <div className={`${styles.toast} ${toast.visible ? styles.show : ''}`}>
+        {toast.type === "error" ? <XCircle size={20} weight="fill" color="#FB7185" /> : <CheckCircle size={20} weight="fill" color="#34D399" />}
+        <span>{toast.message}</span>
       </div>
     </div>
   );
