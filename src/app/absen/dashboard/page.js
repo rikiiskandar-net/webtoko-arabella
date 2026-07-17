@@ -622,7 +622,7 @@ export default function WorkerDashboard() {
                     <Coins size={22} weight="fill" style={{ marginRight: "8px", verticalAlign: "-5px" }} /> Tutup Buku & Gajian Sekarang
                   </button>
                   <div className={styles.panel}>
-                    <h3 className={styles.listTitle}>Riwayat Berjalan ({totalAbsen} data)</h3>
+                    <h3 className={styles.listTitle}>Riwayat Berjalan ({data?.activeAttendances?.length || 0} data)</h3>
                     {data?.activeAttendances?.length === 0 ? (
                       <div className={styles.emptyStateContainer}>
                         <div className={styles.emptyStateIcon}><Package size={36} weight="fill" /></div>
