@@ -1733,7 +1733,7 @@ select.input:focus {
   color: var(--text-dark);
 }
 .btnWagePill {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   background: linear-gradient(135deg, #10b981, #059669);
@@ -1745,7 +1745,7 @@ select.input:focus {
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  margin-top: 12px;
+  margin: 12px auto 0;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: var(--font-app);
 }
