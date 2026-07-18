@@ -323,3 +323,31 @@ model WorkerAttendance {
   @@index([payrollPeriodId])
   @@index([date])
 }
+
+// ==========================================
+// PENGELOLA AKUN (ACCOUNT MANAGER)
+// ==========================================
+
+model AccountCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  icon      String   @default("Folder")
+  accounts  AccountCredential[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AccountCredential {
+  id          String   @id @default(uuid())
+  categoryId  String
+  category    AccountCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  title       String
+  username    String
+  password    String   @db.Text
+  url         String?  @default("")
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categoryId])
+}

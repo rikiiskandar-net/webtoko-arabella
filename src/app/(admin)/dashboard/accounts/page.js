@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import styles from "./Accounts.module.css";
-import * as LucideIcons from "lucide-react";
-import { Plus, Search, Trash2, Edit2, Copy, CheckCircle, ExternalLink, Eye, EyeOff, X } from "lucide-react";
+import * as PhosphorIcons from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass as Search, Trash, PencilSimple as Edit2, Copy, CheckCircle, ArrowSquareOut as ExternalLink, Eye, EyeSlash as EyeOff, X } from "@phosphor-icons/react";
 import Toast from "@/components/Toast";
 
 // List of available icons for categories
-const availableIcons = ["Folder", "Facebook", "Instagram", "Twitter", "Youtube", "Mail", "Globe", "Cloud", "Database", "Server", "Github", "Figma", "Trello", "Slack"];
+const availableIcons = ["Folder", "FacebookLogo", "InstagramLogo", "TwitterLogo", "YoutubeLogo", "EnvelopeSimple", "Globe", "Cloud", "Database", "HardDrives", "GithubLogo", "FigmaLogo", "TrelloLogo", "SlackLogo"];
 
 export default function AccountsPage() {
   const [categories, setCategories] = useState([]);
@@ -69,8 +69,8 @@ export default function AccountsPage() {
   };
 
   const getLucideIcon = (iconName) => {
-    const IconComponent = LucideIcons[iconName] || LucideIcons.Folder;
-    return <IconComponent size={20} />;
+    const IconComponent = PhosphorIcons[iconName] || PhosphorIcons.Folder;
+    return <IconComponent size={20} weight="duotone" />;
   };
 
   // --- Category Handlers ---
@@ -199,7 +199,7 @@ export default function AccountsPage() {
               onClick={() => setActiveCategory("ALL")}
             >
               <div className={styles.categoryItemLeft}>
-                <span className={styles.categoryIcon}><LucideIcons.LayoutGrid size={18} /></span>
+                <span className={styles.categoryIcon}><PhosphorIcons.SquaresFour size={18} weight="duotone" /></span>
                 Semua Akun
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function AccountsPage() {
                     className={styles.catDeleteBtn} 
                     onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }}
                   >
-                    <Trash2 size={14} />
+                    <Trash size={14} weight="bold" />
                   </button>
                 </div>
               </div>
