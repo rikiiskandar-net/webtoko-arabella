@@ -25,7 +25,8 @@ export default async function proxy(req) {
       !pathname.startsWith("/absen") && 
       !pathname.startsWith("/_next") && 
       !pathname.startsWith("/api") &&
-      !pathname.startsWith("/portfolio")
+      !pathname.startsWith("/portfolio") &&
+      !pathname.startsWith("/images")
     ) {
       // If going to the root of the worker domain and already logged in, go straight to dashboard
       if (pathname === "/") {
