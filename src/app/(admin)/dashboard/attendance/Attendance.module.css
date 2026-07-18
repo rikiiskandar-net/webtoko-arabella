@@ -445,3 +445,179 @@
     min-width: 0;
   }
 }
+
+
+/* New Classes for Worker Attendance List */
+.btnOutlineDanger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid #FCA5A5;
+  border-radius: 8px;
+  color: #EF4444;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btnOutlineDanger:hover:not(:disabled) {
+  background: #FEF2F2;
+  border-color: #EF4444;
+}
+.btnOutlineDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--border-color);
+  color: var(--text-muted);
+}
+
+.panelHeaderFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.badgeBlue {
+  background: #EFF6FF;
+  color: #2563EB;
+  border: 1px solid #BFDBFE;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+.listItem:hover {
+  border-color: #3B82F6;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.listLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.listRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #F3F4F6;
+  border-radius: 8px;
+  min-width: 50px;
+  height: 50px;
+  border: 1px solid #E5E7EB;
+}
+.dateDay {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1;
+}
+.dateMonth {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.workerName {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.workerRole {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.statusBadge {
+  display: inline-block;
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.itemNotes {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.payAmount {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #047857;
+}
+
+.btnDelete {
+  background: transparent;
+  border: none;
+  color: #EF4444;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.btnDelete:hover {
+  background: #FEE2E2;
+}
+
+.emptyIcon {
+  color: #D1D5DB;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .listItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .listRight {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px dashed var(--border-color);
+    padding-top: 1rem;
+  }
+}
