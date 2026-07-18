@@ -1,0 +1,347 @@
+/* Premium Apple/Linear inspired CSS */
+.pageWrapper {
+  min-height: 100vh;
+  background-color: #ffffff;
+  color: #111827;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Soft Aurora Gradient */
+.aurora {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  opacity: 0.4;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 15% 50%, rgba(220, 230, 255, 0.4), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(255, 230, 240, 0.4), transparent 50%);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 8rem 1.5rem; /* bottom padding for dock */
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Glass Card */
+.glassCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 
+    0 10px 40px -10px rgba(0, 0, 0, 0.04),
+    0 1px 3px rgba(0,0,0,0.02);
+}
+
+/* Hero Section */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.statusBadge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #10B981;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  border: 2px solid white;
+}
+
+.name {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem 0;
+}
+
+.role {
+  font-size: 1.1rem;
+  color: #6B7280;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Quick Actions */
+.quickActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: white;
+  color: #374151;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  color: #111827;
+  border-color: #D1D5DB;
+}
+
+/* About Section */
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: #111827;
+}
+
+.aboutList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.aboutItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.aboutIcon {
+  color: #9CA3AF;
+}
+
+.aboutText {
+  font-size: 0.95rem;
+  color: #4B5563;
+}
+.aboutText strong {
+  color: #111827;
+  display: block;
+  font-size: 0.85rem;
+}
+
+/* Skills Bubble */
+.skillsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.skillBubble {
+  background: white;
+  border: 1px solid #E5E7EB;
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* Timeline */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-left: 2px solid #E5E7EB;
+  padding-left: 1.5rem;
+  margin-left: 0.5rem;
+}
+
+.timelineItem {
+  position: relative;
+}
+
+.timelineDot {
+  position: absolute;
+  left: -1.9rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3B82F6;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #E5E7EB;
+}
+
+.timelineTitle {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 0.25rem 0;
+}
+.timelineCompany {
+  font-size: 0.9rem;
+  color: #6B7280;
+  margin: 0 0 0.5rem 0;
+}
+.timelineDesc {
+  font-size: 0.9rem;
+  color: #4B5563;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Gallery Carousel */
+.embla {
+  overflow: hidden;
+  border-radius: 16px;
+  position: relative;
+}
+.emblaContainer {
+  display: flex;
+  touch-action: pan-y;
+  margin-left: -1rem;
+}
+.emblaSlide {
+  flex: 0 0 85%;
+  min-width: 0;
+  padding-left: 1rem;
+}
+.slideImg {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Quote */
+.quoteCard {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+.quoteIcon {
+  color: #D1D5DB;
+  margin: 0 auto 1rem auto;
+}
+.quoteText {
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: 500;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+}
+.quoteAuthor {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #9CA3AF;
+}
+
+/* Contact */
+.contactBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  background: #111827;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 1rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #E5E7EB;
+  color: #9CA3AF;
+  font-size: 0.85rem;
+}
+
+/* macOS Dock */
+.dock {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 99px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0,0,0,0.05);
+  z-index: 50;
+}
+
+.dockItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  color: #4B5563;
+  border: 1px solid #F3F4F6;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.dockItem:hover {
+  transform: translateY(-5px);
+  color: #111827;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+.dockItemActive {
+  background: #111827;
+  color: white;
+  border-color: #111827;
+}
+.dockItemActive:hover {
+  color: white;
+}

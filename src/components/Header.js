@@ -6,6 +6,7 @@ import { Menu, X, Search, Flame, Grid, Coffee, Info, MessageSquare, Phone, HelpC
 import styles from "./Header.module.css";
 import UserNav from "./UserNav";
 import { renderIcon } from "@/app/(admin)/dashboard/categories/iconOptions";
+import Link from "next/link";
 
 export default function Header({ searchQuery, onSearchChange, categories = [], onCategoryClick }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -252,6 +253,28 @@ export default function Header({ searchQuery, onSearchChange, categories = [], o
               />
             </div>
           </div>
+
+          <Link 
+            href="/portfolio"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              background: "#F3F4F6",
+              color: "#4B5563",
+              marginRight: "0.5rem",
+              textDecoration: "none",
+              transition: "all 0.2s"
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = "#E5E7EB"; e.currentTarget.style.color = "#111827"; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = "#F3F4F6"; e.currentTarget.style.color = "#4B5563"; }}
+            title="Portfolio Developer"
+          >
+            <Info size={20} />
+          </Link>
 
           <UserNav />
         </div>
