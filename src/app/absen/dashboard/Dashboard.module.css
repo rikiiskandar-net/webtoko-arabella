@@ -1586,15 +1586,24 @@ select.input:focus {
 }
 
 .profileRole2026 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #6366f1;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  background: #e0e7ff;
+  letter-spacing: 1.5px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
   display: inline-block;
-  padding: 4px 12px;
+  padding: 6px 16px;
   border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.roleAndWageWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
 }
 
 .profileList2026 {
@@ -1735,24 +1744,25 @@ select.input:focus {
 .btnWagePill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  border: none;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 9999px;
-  padding: 6px 16px;
-  font-size: 0.85rem;
+  padding: 8px 20px;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  margin: 12px auto 0;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
   font-family: var(--font-app);
 }
 
 .btnWagePill:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.4);
 }
 
 .btnWagePill:active {

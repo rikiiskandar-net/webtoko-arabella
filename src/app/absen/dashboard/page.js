@@ -772,11 +772,12 @@ export default function WorkerDashboard() {
                       </div>
                     </div>
                     <div className={styles.profileName2026}>{user?.name || 'Nama Pekerja'}</div>
-                    <div className={styles.profileRole2026}>{user?.role || 'Pekerja'}</div>
-                    
-                    <button onClick={() => setProfileViewMode('wage')} className={styles.btnWagePill}>
-                      <Money size={16} weight="fill" /> Atur Gaji Harian
-                    </button>
+                    <div className={styles.roleAndWageWrapper}>
+                      <div className={styles.profileRole2026}>{user?.role || 'Pekerja'}</div>
+                      <button onClick={() => setProfileViewMode('wage')} className={styles.btnWagePill}>
+                        <Money size={18} weight="duotone" /> Pengaturan Gaji
+                      </button>
+                    </div>
                   </div>
 
                   <div className={styles.profileList2026}>
