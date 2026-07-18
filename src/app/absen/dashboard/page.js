@@ -768,7 +768,7 @@ export default function WorkerDashboard() {
                   <div className={styles.profileHero2026}>
                     <div className={styles.profileAvatarContainer2026}>
                       <div className={styles.profileAvatarInner2026}>
-                        <img src="/images/logo.png" alt="Avatar Pekerja" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src="/images/iconproyek.png" alt="Avatar Pekerja" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
                     </div>
                     <div className={styles.profileName2026}>{user?.name || 'Nama Pekerja'}</div>
