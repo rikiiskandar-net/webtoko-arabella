@@ -270,7 +270,7 @@ export default function AccountsPage() {
                         <Edit2 size={16} />
                       </button>
                       <button className={`${styles.actionBtn} ${styles.delete}`} onClick={() => handleDeleteCredential(cred.id)}>
-                        <Trash2 size={16} />
+                        <Trash size={16} weight="bold" />
                       </button>
                     </div>
                   </div>
