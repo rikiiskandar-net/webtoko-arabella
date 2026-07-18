@@ -27,6 +27,14 @@ export default async function proxy(req) {
       !pathname.startsWith("/api") &&
       !pathname.startsWith("/portfolio")
     ) {
+      // If going to the root of the worker domain and already logged in, go straight to dashboard
+      if (pathname === "/") {
+        const workerToken = req.cookies.get("worker_auth_token")?.value;
+        if (workerToken) {
+          url.pathname = "/absen/dashboard";
+          return NextResponse.rewrite(url);
+        }
+      }
       url.pathname = `/absen${pathname}`;
       return NextResponse.rewrite(url);
     }
