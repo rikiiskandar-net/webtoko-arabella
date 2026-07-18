@@ -43,6 +43,7 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
       label: "MANAJEMEN SISTEM",
       items: [
         { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
+        { name: "Pengelola Akun", href: "/dashboard/accounts", icon: Shield },
         { name: "Data Admin", href: "/dashboard/admins", icon: Shield, superadminOnly: true },
       ]
     }
