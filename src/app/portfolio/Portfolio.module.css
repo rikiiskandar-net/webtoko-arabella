@@ -354,3 +354,12 @@
 /* Gallery Scroll */
 .galleryScroll { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-bottom: 1rem; margin: 0 -1rem; padding: 0 1rem; }
 .galleryItem { flex: 0 0 85%; scroll-snap-align: center; }
+
+/* New CTA & Contact Styles */
+.ctaGroup { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; }
+.btnPrimary { background: #111827; color: white; padding: 0.75rem 1.5rem; border-radius: 99px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s; }
+.btnPrimary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.btnOutline { background: white; color: #111827; padding: 0.75rem 1.5rem; border-radius: 99px; font-weight: 600; text-decoration: none; border: 1px solid #E5E7EB; display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s; }
+.btnOutline:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+.contactGroup { display: flex; flex-direction: column; gap: 1rem; }
+.contactGroup .contactBtn { margin-top: 0; }

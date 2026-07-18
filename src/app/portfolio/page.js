@@ -12,8 +12,10 @@ import {
   User,
   Image as ImageIcon,
   ChatCircleText,
-  GithubLogo,
-  LinkedinLogo
+  WhatsappLogo,
+  InstagramLogo,
+  FacebookLogo,
+  DownloadSimple
 } from "@phosphor-icons/react";
 import styles from "./Portfolio.module.css";
 import Link from "next/link";
@@ -30,7 +32,7 @@ export default function PortfolioPage() {
     <div className={styles.pageWrapper}>
       <div className={styles.aurora} />
       <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        Loading...
+        <div className={styles.loader}></div>
       </div>
     </div>
   );
@@ -44,21 +46,37 @@ export default function PortfolioPage() {
         {/* 1. Hero Section */}
         <section className={`${styles.hero} ${styles.animateFadeInUp}`}>
           <div className={styles.avatarWrapper}>
-            <img src="/images/avatar.jpg" alt="Developer Avatar" className={styles.avatar} onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=Developer&background=F3F4F6&color=111827&size=256"; }} />
+            <img src="/images/avatar.jpg" alt="Developer Avatar" className={styles.avatar} onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=Riki+Iskandar&background=F3F4F6&color=111827&size=256"; }} />
             <div className={styles.statusBadge}>Available</div>
           </div>
-          <h1 className={styles.name}>Developer Name</h1>
+          <h1 className={styles.name}>Riki Prawiro Joni Iskandar</h1>
           <p className={styles.role}>Senior Full-Stack Developer</p>
           
+          <div className={styles.ctaGroup}>
+            <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className={styles.btnPrimary}>
+              Contact Me
+            </a>
+            <a href="/cv.pdf" target="_blank" rel="noreferrer" className={styles.btnOutline}>
+              <DownloadSimple size={20} weight="bold" /> Download CV
+            </a>
+          </div>
+
           <div className={styles.quickActions}>
-            <a href="https://github.com" target="_blank" rel="noreferrer" className={styles.actionBtn}>
-              <GithubLogo size={20} weight="fill" />
+            <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className={styles.actionBtn}>
+              <WhatsappLogo size={20} weight="fill" color="#25D366" />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className={styles.actionBtn}>
-              <LinkedinLogo size={20} weight="fill" />
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.actionBtn}>
+              <InstagramLogo size={20} weight="fill" color="#E1306C" />
             </a>
-            <a href="mailto:hello@example.com" className={styles.actionBtn}><EnvelopeSimple size={20} weight="fill" /></a>
-            <a href="https://maps.google.com" target="_blank" rel="noreferrer" className={styles.actionBtn}><MapPin size={20} weight="fill" /></a>
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" className={styles.actionBtn}>
+              <FacebookLogo size={20} weight="fill" color="#1877F2" />
+            </a>
+            <a href="mailto:hi.rikiiskandar@gmail.com" className={styles.actionBtn}>
+              <EnvelopeSimple size={20} weight="fill" color="#EA4335" />
+            </a>
+            <a href="https://maps.google.com" target="_blank" rel="noreferrer" className={styles.actionBtn}>
+              <MapPin size={20} weight="fill" color="#4285F4" />
+            </a>
           </div>
         </section>
 
@@ -67,20 +85,24 @@ export default function PortfolioPage() {
           <h2 className={styles.sectionTitle}>About Me</h2>
           <div className={styles.aboutList}>
             <div className={styles.aboutItem}>
+              <User className={styles.aboutIcon} size={20} weight="fill" />
+              <div className={styles.aboutText}><strong>Nama</strong> Riki Prawiro Joni Iskandar</div>
+            </div>
+            <div className={styles.aboutItem}>
               <Briefcase className={styles.aboutIcon} size={20} weight="fill" />
               <div className={styles.aboutText}><strong>Pekerjaan</strong> Full-Stack Web Developer</div>
             </div>
             <div className={styles.aboutItem}>
               <MapPin className={styles.aboutIcon} size={20} weight="fill" />
-              <div className={styles.aboutText}><strong>Lokasi</strong> Jakarta, Indonesia</div>
+              <div className={styles.aboutText}><strong>Alamat</strong> Jakarta, Indonesia</div>
             </div>
             <div className={styles.aboutItem}>
               <EnvelopeSimple className={styles.aboutIcon} size={20} weight="fill" />
-              <div className={styles.aboutText}><strong>Email</strong> hi.developer@gmail.com</div>
+              <div className={styles.aboutText}><strong>Email</strong> hi.rikiiskandar@gmail.com</div>
             </div>
             <div className={styles.aboutItem}>
               <Phone className={styles.aboutIcon} size={20} weight="fill" />
-              <div className={styles.aboutText}><strong>WhatsApp</strong> +62 812-3456-7890</div>
+              <div className={styles.aboutText}><strong>Nomor HP</strong> +62 812-3456-7890</div>
             </div>
           </div>
           <p style={{ marginTop: "1.5rem", color: "#4B5563", fontSize: "0.95rem", lineHeight: 1.6 }}>
@@ -95,7 +117,7 @@ export default function PortfolioPage() {
             <Code size={20} weight="fill" /> Technical Skills
           </h2>
           <div className={styles.skillsWrap}>
-            {["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL", "Prisma", "Vercel", "AI Integration", "UI/UX Design", "Docker"].map((skill, idx) => (
+            {["HTML", "CSS", "Tailwind", "React", "Next.js", "TypeScript", "Node.js", "Supabase", "PostgreSQL", "Git", "Docker", "Linux", "UI/UX", "AI Integration", "Security"].map((skill, idx) => (
               <div key={idx} className={styles.skillBubble}>
                 {skill}
               </div>
@@ -130,7 +152,7 @@ export default function PortfolioPage() {
           </div>
         </section>
 
-        {/* 5. Gallery Carousel (Native CSS Scroll) */}
+        {/* 5. Gallery Carousel */}
         <section id="gallery" className={styles.animateFadeInUp} style={{ animationDelay: '0.4s' }}>
           <h2 className={styles.sectionTitle} style={{ marginLeft: "1rem" }}>My Workspace</h2>
           <div className={styles.galleryScroll}>
@@ -157,9 +179,17 @@ export default function PortfolioPage() {
           <p style={{ color: "#4B5563", fontSize: "0.95rem", marginBottom: "1.5rem" }}>
             Punya ide project luar biasa? Jangan ragu untuk menghubungi saya. Mari wujudkan ide Anda menjadi aplikasi modern berkualitas tinggi.
           </p>
-          <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className={styles.contactBtn}>
-            <ChatCircleText size={20} weight="fill" /> Chat via WhatsApp
-          </a>
+          <div className={styles.contactGroup}>
+            <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className={styles.contactBtn}>
+              <WhatsappLogo size={20} weight="fill" /> WhatsApp
+            </a>
+            <a href="mailto:hi.rikiiskandar@gmail.com" className={styles.contactBtn} style={{ background: '#EA4335', color: '#fff' }}>
+              <EnvelopeSimple size={20} weight="fill" /> Email
+            </a>
+            <a href="tel:+6281234567890" className={styles.contactBtn} style={{ background: '#4B5563', color: '#fff' }}>
+              <Phone size={20} weight="fill" /> Panggil
+            </a>
+          </div>
         </section>
 
         {/* Footer */}
