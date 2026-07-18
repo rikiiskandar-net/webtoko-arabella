@@ -14,18 +14,14 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
 
   const menuGroups = [
     {
-      label: "UTAMA",
+      label: "WEBTOKO (TOKO ONLINE)",
       items: [
-        { name: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
+        { name: "Dashboard Toko", href: "/dashboard", icon: LayoutDashboard },
         { name: "Pesanan", href: "/dashboard/orders", icon: ClipboardList },
-        { name: "Buku Kas", href: "/dashboard/cashbook", icon: BookOpen },
-      ]
-    },
-    {
-      label: "KATALOG",
-      items: [
-        { name: "Produk Menu", href: "/dashboard/products", icon: Package },
+        { name: "Katalog Produk", href: "/dashboard/products", icon: Package },
         { name: "Kategori", href: "/dashboard/categories", icon: Tags },
+        { name: "Pelanggan", href: "/dashboard/users", icon: Users },
+        { name: "Buku Kas", href: "/dashboard/cashbook", icon: BookOpen },
       ]
     },
     {
@@ -37,13 +33,17 @@ function AdminSidebar({ pathname, router, isSidebarCollapsed, onToggleCollapse }
       ]
     },
     {
-      label: "MANAJEMEN",
+      label: "ABSENKU (SISTEM PEKERJA)",
       items: [
         { name: "Pekerja Proyek", href: "/dashboard/workers", icon: HardHat },
-        { name: "Pengguna", href: "/dashboard/users", icon: Users },
-        { name: "Absensi & Gaji", href: "/dashboard/attendance", icon: BookOpen },
+        { name: "Data Absensi & Gaji", href: "/dashboard/attendance", icon: BookOpen },
+      ]
+    },
+    {
+      label: "MANAJEMEN SISTEM",
+      items: [
         { name: "Pengaturan", href: "/dashboard/settings", icon: Settings },
-        { name: "Admin", href: "/dashboard/admins", icon: Shield, superadminOnly: true },
+        { name: "Data Admin", href: "/dashboard/admins", icon: Shield, superadminOnly: true },
       ]
     }
   ];
