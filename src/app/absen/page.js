@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./LiquidLogin.module.css";
-import { CheckCircle, Eye, EyeClosed, XCircle } from "@phosphor-icons/react";
+import { CheckCircle, Eye, EyeClosed, XCircle, HardHat } from "@phosphor-icons/react";
 
 export default function WorkerLogin() {
   const router = useRouter();
@@ -97,9 +97,7 @@ export default function WorkerLogin() {
 
         <main className={styles.card}>
           <div className={styles.logo}>
-            <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2 L14.5 9 L22 12 L14.5 15 L12 22 L9.5 15 L2 12 L9.5 9 Z"/>
-            </svg>
+            <HardHat weight="fill" className={styles.icon} />
           </div>
 
           <div className={styles.heading}>
