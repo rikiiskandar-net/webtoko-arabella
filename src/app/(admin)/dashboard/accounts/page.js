@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import styles from "./Accounts.module.css";
 import * as PhosphorIcons from "@phosphor-icons/react";
-import { Plus, MagnifyingGlass as Search, Trash, PencilSimple as Edit2, Copy, CheckCircle, ArrowSquareOut as ExternalLink, Eye, EyeSlash as EyeOff, X } from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass as Search, Trash, PencilSimple as Edit2, Copy, CheckCircle, ArrowSquareOut as ExternalLink, Eye, EyeSlash as EyeOff, X, UploadSimple } from "@phosphor-icons/react";
 import Toast from "@/components/Toast";
 
 // List of available icons for categories
@@ -20,10 +20,12 @@ export default function AccountsPage() {
   // Modal States
   const [catModalOpen, setCatModalOpen] = useState(false);
   const [credModalOpen, setCredModalOpen] = useState(false);
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
   
   // Form States
   const [catForm, setCatForm] = useState({ id: null, name: "", icon: "Folder" });
   const [credForm, setCredForm] = useState({ id: null, categoryId: "", title: "", username: "", password: "", url: "", description: "" });
+  const [bulkData, setBulkData] = useState("");
   
   // UI States
   const [submitting, setSubmitting] = useState(false);
@@ -154,6 +156,48 @@ export default function AccountsPage() {
     }
   };
 
+  const handleBulkImport = async (e) => {
+    e.preventDefault();
+    if (!bulkData.trim()) return showToast("Data tidak boleh kosong", "error");
+    
+    setSubmitting(true);
+    try {
+      // Parse bulkData text: email|password|category|notes
+      const lines = bulkData.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+      const accounts = lines.map(line => {
+        const parts = line.split("|");
+        return {
+          email: parts[0]?.trim() || "",
+          password: parts[1]?.trim() || "",
+          categoryName: parts[2]?.trim() || "",
+          notes: parts.slice(3).join("|").trim() || ""
+        };
+      }).filter(acc => acc.email && acc.password && acc.categoryName);
+      
+      if (accounts.length === 0) {
+        throw new Error("Format data tidak valid. Pastikan formatnya: email|password|kategori");
+      }
+
+      const res = await fetch("/api/admin/accounts/credentials/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accounts })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal mengimpor data");
+      
+      showToast(`Berhasil mengimpor ${data.count} akun`);
+      setBulkModalOpen(false);
+      setBulkData("");
+      fetchData();
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Filtered credentials based on search
   const filteredCredentials = credentials.filter(c => 
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -169,15 +213,24 @@ export default function AccountsPage() {
           <h1>Pengelola Akun & Sandi</h1>
           <p>Kelola semua aset digital dan kredensial bisnis Anda secara terenkripsi.</p>
         </div>
-        <button 
-          className={styles.addBtn}
-          onClick={() => {
-            setCredForm({ id: null, categoryId: activeCategory !== "ALL" ? activeCategory : (categories[0]?.id || ""), title: "", username: "", password: "", url: "", description: "" });
-            setCredModalOpen(true);
-          }}
-        >
-          <Plus size={18} /> Tambah Akun
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button 
+            className={styles.addBtn}
+            onClick={() => setBulkModalOpen(true)}
+            style={{ backgroundColor: '#10B981', boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.2)' }}
+          >
+            <UploadSimple size={18} /> Bulk Import
+          </button>
+          <button 
+            className={styles.addBtn}
+            onClick={() => {
+              setCredForm({ id: null, categoryId: activeCategory !== "ALL" ? activeCategory : (categories[0]?.id || ""), title: "", username: "", password: "", url: "", description: "" });
+              setCredModalOpen(true);
+            }}
+          >
+            <Plus size={18} /> Tambah Akun
+          </button>
+        </div>
       </div>
 
       <div className={styles.layout}>
@@ -410,6 +463,44 @@ export default function AccountsPage() {
                 <button type="button" className={styles.cancelBtn} onClick={() => setCredModalOpen(false)}>Batal</button>
                 <button type="submit" className={styles.saveBtn} disabled={submitting}>
                   {submitting ? "Menyimpan..." : "Simpan"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Import Modal */}
+      {bulkModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal} style={{ maxWidth: '600px' }}>
+            <div className={styles.modalHeader}>
+              <h2>Bulk Import Akun</h2>
+              <button className={styles.closeBtn} onClick={() => setBulkModalOpen(false)}><X size={20} /></button>
+            </div>
+            <form onSubmit={handleBulkImport}>
+              <div className={styles.modalBody}>
+                <div className={styles.formGroup}>
+                  <label>Masukkan Data Akun (Tiap baris 1 akun)</label>
+                  <p style={{ fontSize: '0.75rem', color: '#6B7280', margin: '0 0 0.5rem 0' }}>
+                    <strong>Format:</strong> <code>email|password|kategori|catatan opsional</code><br/>
+                    Contoh: <code>admin@gmail.com|rahasia123|Sosial Media|Dibuat tahun 2023</code><br/>
+                    Kategori yang belum ada otomatis akan dibuatkan.
+                  </p>
+                  <textarea 
+                    rows={8} 
+                    value={bulkData} 
+                    onChange={(e) => setBulkData(e.target.value)} 
+                    required 
+                    placeholder="email|password|kategori|catatan opsional" 
+                    style={{ fontFamily: 'monospace' }}
+                  />
+                </div>
+              </div>
+              <div className={styles.modalFooter}>
+                <button type="button" className={styles.cancelBtn} onClick={() => setBulkModalOpen(false)}>Batal</button>
+                <button type="submit" className={styles.saveBtn} style={{ backgroundColor: '#10B981' }} disabled={submitting}>
+                  {submitting ? "Memproses..." : "Import Akun"}
                 </button>
               </div>
             </form>

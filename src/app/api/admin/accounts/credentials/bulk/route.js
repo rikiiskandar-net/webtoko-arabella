@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { getAuthSession } from "@/lib/auth";
+import { encrypt } from "@/lib/encryption";
+
+export const dynamic = 'force-dynamic';
+
+export async function POST(req) {
+  try {
+    const session = await getAuthSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { accounts } = await req.json();
+    if (!accounts || !Array.isArray(accounts)) {
+      return NextResponse.json({ error: "Invalid payload format" }, { status: 400 });
+    }
+
+    // accounts format: [{ email, password, categoryName, notes }]
+    let successCount = 0;
+    
+    // We process sequentially to ensure categories are handled correctly without race conditions
+    for (const acc of accounts) {
+      if (!acc.email || !acc.password || !acc.categoryName) continue;
+      
+      // Find or create category
+      let category = await prisma.accountCategory.findUnique({
+        where: { name: acc.categoryName }
+      });
+      
+      if (!category) {
+        category = await prisma.accountCategory.create({
+          data: { name: acc.categoryName, icon: "Folder" }
+        });
+      }
+      
+      const encryptedPassword = encrypt(acc.password);
+      
+      await prisma.accountCredential.create({
+        data: {
+          categoryId: category.id,
+          title: acc.email, // Using email as title by default for bulk
+          username: acc.email,
+          password: encryptedPassword,
+          description: acc.notes || "",
+          url: ""
+        }
+      });
+      
+      successCount++;
+    }
+
+    return NextResponse.json({ success: true, count: successCount });
+  } catch (error) {
+    console.error("Error in bulk import credentials:", error);
+    return NextResponse.json({ error: "Failed to process bulk import" }, { status: 500 });
+  }
+}
