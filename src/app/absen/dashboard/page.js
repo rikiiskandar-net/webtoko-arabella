@@ -8,7 +8,8 @@ import {
   User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
   BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
   CheckSquareOffset
-, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, Archive, Coins, Eye, EyeClosed } from "@phosphor-icons/react";
+, Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, Archive, Coins, Eye, EyeClosed, Info } from "@phosphor-icons/react";
+import Link from "next/link";
 import styles from "./Dashboard.module.css";
 
 export default function WorkerDashboard() {
@@ -473,6 +474,20 @@ export default function WorkerDashboard() {
           </div>
         </div>
         <div className={styles.headerRight}>
+          <Link href="/portfolio" title="Developer Portfolio" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            backgroundColor: '#F3F4F6',
+            color: '#4B5563',
+            marginRight: '8px',
+            textDecoration: 'none'
+          }}>
+            <Info size={20} weight="bold" />
+          </Link>
           <span className={styles.headerDateBadge}>
             {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
           </span>
