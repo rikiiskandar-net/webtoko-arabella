@@ -200,14 +200,14 @@ export default function PortfolioPage() {
         <motion.section className={styles.quoteCard} variants={itemVariants}>
           <Quote size={120} strokeWidth={1} className={styles.quoteIcon} />
           <p className={styles.quoteText}>
-            "Design is not just what it looks like and feels like. Design is how it works."
+            &quot;Design is not just what it looks like and feels like. Design is how it works.&quot;
           </p>
           <div className={styles.quoteAuthor}>— Steve Jobs</div>
         </motion.section>
 
         {/* 7. Contact */}
         <motion.section id="contact" className={styles.glassCard} variants={itemVariants}>
-          <h2 className={styles.sectionTitle}>Let's Work Together</h2>
+          <h2 className={styles.sectionTitle}>Let&apos;s Work Together</h2>
           <p style={{ color: "#52525B", fontSize: "1rem", marginBottom: "2rem" }}>
             Punya ide project luar biasa? Jangan ragu untuk menghubungi saya. Mari wujudkan ide Anda menjadi aplikasi modern berkualitas tinggi.
           </p>
