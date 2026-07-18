@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./LiquidLogin.module.css";
 import { CheckCircle, Eye, EyeClosed, XCircle, HardHat } from "@phosphor-icons/react";
@@ -10,6 +10,21 @@ export default function WorkerLogin() {
   
   // State for tabs
   const [activeTab, setActiveTab] = useState("login"); // 'login' or 'register'
+  
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch(`/api/worker/auth/me?t=${Date.now()}`);
+        if (res.ok) {
+          router.replace("/absen/dashboard");
+        }
+      } catch (e) {
+        // Not logged in
+      }
+    };
+    checkSession();
+  }, [router]);
   
   // States for forms
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });

@@ -21,7 +21,12 @@ export default async function proxy(req) {
   // 1. SUBDOMAIN ROUTING FOR ABSEN
   const hostname = req.headers.get("host");
   if (hostname && hostname.startsWith("absen.")) {
-    if (!pathname.startsWith("/absen") && !pathname.startsWith("/_next") && !pathname.startsWith("/api")) {
+    if (
+      !pathname.startsWith("/absen") && 
+      !pathname.startsWith("/_next") && 
+      !pathname.startsWith("/api") &&
+      !pathname.startsWith("/portfolio")
+    ) {
       url.pathname = `/absen${pathname}`;
       return NextResponse.rewrite(url);
     }
