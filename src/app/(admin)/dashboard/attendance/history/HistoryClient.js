@@ -95,10 +95,10 @@ export default function HistoryClient() {
                   </div>
                   <div>
                     <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.1rem", color: "#111827" }}>
-                      {formatDate(period.startDate)} - {formatDate(period.endDate)}
+                      {period.worker?.name} <span style={{ color: "#6B7280", fontSize: "0.9rem", fontWeight: "normal" }}>({period.worker?.role})</span>
                     </h3>
                     <p style={{ margin: 0, color: "#6B7280", fontSize: "0.9rem" }}>
-                      {period.attendances.length} Hari Kerja
+                      {formatDate(period.startDate)} - {formatDate(period.endDate)} &bull; {period.attendances.length} Hari Kerja
                     </p>
                   </div>
                 </div>

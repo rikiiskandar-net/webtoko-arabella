@@ -9,7 +9,7 @@ export async function DELETE(req, { params }) {
 
     const { id: attendanceId } = await params;
 
-    const attendance = await prisma.attendance.findUnique({
+    const attendance = await prisma.workerAttendance.findUnique({
       where: { id: attendanceId },
       include: { payrollPeriod: true }
     });
@@ -18,21 +18,17 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Data absen tidak ditemukan" }, { status: 404 });
     }
 
-    if (attendance.adminId !== session.id) {
-      return NextResponse.json({ error: "Bukan milik Anda" }, { status: 403 });
-    }
-
     if (attendance.payrollPeriod.isClosed) {
       return NextResponse.json({ error: "Buku gaji sudah ditutup, absen tidak bisa dihapus." }, { status: 400 });
     }
 
-    await prisma.attendance.delete({
+    await prisma.workerAttendance.delete({
       where: { id: attendanceId }
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting attendance:", error);
+    console.error("Error deleting worker attendance:", error);
     return NextResponse.json({ error: "Gagal menghapus absen" }, { status: 500 });
   }
 }

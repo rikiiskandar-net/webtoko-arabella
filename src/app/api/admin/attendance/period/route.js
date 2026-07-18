@@ -2,46 +2,53 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthSession as getAdminSession } from "@/lib/auth";
 
-// GET active period for the admin
+// GET active periods for all workers and the worker list
 export async function GET(req) {
   try {
     const session = await getAdminSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    let activePeriod = await prisma.payrollPeriod.findFirst({
-      where: { adminId: session.id, isClosed: false },
+    // Fetch all active workers
+    const workers = await prisma.worker.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true, baseWage: true, role: true }
+    });
+
+    // Fetch all active worker payroll periods with their attendances
+    const activePeriods = await prisma.workerPayrollPeriod.findMany({
+      where: { isClosed: false },
       include: {
+        worker: {
+          select: { name: true, role: true }
+        },
         attendances: {
           orderBy: { date: 'desc' }
         }
       }
     });
 
-    if (!activePeriod) {
-      // Auto create a new one
-      activePeriod = await prisma.payrollPeriod.create({
-        data: {
-          adminId: session.id,
-          startDate: new Date(),
-        },
-        include: {
-          attendances: true
-        }
+    // We can flat-map attendances for easy display
+    let allAttendances = [];
+    activePeriods.forEach(period => {
+      period.attendances.forEach(att => {
+        allAttendances.push({
+          ...att,
+          workerName: period.worker.name,
+          workerRole: period.worker.role
+        });
       });
-    }
-
-    // Also get the admin's base wage
-    const admin = await prisma.admin.findUnique({
-      where: { id: session.id },
-      select: { baseWage: true }
     });
+
+    // Sort all attendances by date descending
+    allAttendances.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     return NextResponse.json({
-      period: activePeriod,
-      baseWage: admin?.baseWage || 120000
+      workers,
+      activePeriods,
+      attendances: allAttendances
     });
   } catch (error) {
-    console.error("Error fetching payroll period:", error);
-    return NextResponse.json({ error: "Failed to fetch period" }, { status: 500 });
+    console.error("Error fetching worker payroll periods:", error);
+    return NextResponse.json({ error: "Failed to fetch periods" }, { status: 500 });
   }
 }

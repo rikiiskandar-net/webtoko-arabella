@@ -8,9 +8,9 @@ export async function POST(req) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { periodId, date, status, baseWage, multiplier, extraPay, notes } = body;
+    const { workerId, date, status, baseWage, multiplier, extraPay, notes } = body;
 
-    if (!periodId || !date || !status) {
+    if (!workerId || !date || !status) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -24,11 +24,28 @@ export async function POST(req) {
 
     const totalPay = Math.round((Number(baseWage) * Number(multiplier)) + Number(extraPay));
 
-    const attendance = await prisma.attendance.upsert({
+    // Get or create active payroll period for this worker
+    let activePeriod = await prisma.workerPayrollPeriod.findFirst({
+      where: { workerId: workerId, isClosed: false }
+    });
+
+    if (!activePeriod) {
+      activePeriod = await prisma.workerPayrollPeriod.create({
+        data: {
+          workerId: workerId,
+          startDate: new Date()
+        }
+      });
+    }
+
+    const periodId = activePeriod.id;
+
+    const attendance = await prisma.workerAttendance.upsert({
       where: {
-        adminId_date: {
-          adminId: session.id,
-          date: recordDate
+        workerId_date_payrollPeriodId: {
+          workerId: workerId,
+          date: recordDate,
+          payrollPeriodId: periodId
         }
       },
       update: {
@@ -41,7 +58,7 @@ export async function POST(req) {
       },
       create: {
         payrollPeriodId: periodId,
-        adminId: session.id,
+        workerId: workerId,
         date: recordDate,
         status: status,
         baseWage: Number(baseWage),
@@ -54,7 +71,7 @@ export async function POST(req) {
 
     return NextResponse.json(attendance);
   } catch (error) {
-    console.error("Error saving attendance:", error);
+    console.error("Error saving worker attendance:", error);
     return NextResponse.json({ error: "Failed to save attendance" }, { status: 500 });
   }
 }

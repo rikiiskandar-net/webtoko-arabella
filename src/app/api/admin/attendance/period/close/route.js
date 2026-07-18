@@ -2,38 +2,44 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthSession as getAdminSession } from "@/lib/auth";
 
-// POST close the active period
 export async function POST(req) {
   try {
     const session = await getAdminSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const activePeriod = await prisma.payrollPeriod.findFirst({
-      where: { adminId: session.id, isClosed: false },
+    const activePeriods = await prisma.workerPayrollPeriod.findMany({
+      where: { isClosed: false },
       include: {
         attendances: true
       }
     });
 
-    if (!activePeriod) {
-      return NextResponse.json({ error: "No active period found" }, { status: 404 });
+    if (activePeriods.length === 0) {
+      return NextResponse.json({ error: "No active periods found" }, { status: 404 });
     }
 
-    // Calculate total amount
-    const totalAmount = activePeriod.attendances.reduce((sum, att) => sum + att.totalPay, 0);
+    const closedPeriods = [];
 
-    const updatedPeriod = await prisma.payrollPeriod.update({
-      where: { id: activePeriod.id },
-      data: {
-        isClosed: true,
-        endDate: new Date(),
-        totalAmount: totalAmount
+    // Transaction to safely close all periods
+    await prisma.$transaction(async (tx) => {
+      for (const period of activePeriods) {
+        const totalAmount = period.attendances.reduce((sum, att) => sum + att.totalPay, 0);
+
+        const updated = await tx.workerPayrollPeriod.update({
+          where: { id: period.id },
+          data: {
+            isClosed: true,
+            endDate: new Date(),
+            totalAmount: totalAmount
+          }
+        });
+        closedPeriods.push(updated);
       }
     });
 
-    return NextResponse.json(updatedPeriod);
+    return NextResponse.json({ message: "Periods closed successfully", closedPeriods });
   } catch (error) {
-    console.error("Error closing payroll period:", error);
-    return NextResponse.json({ error: "Failed to close period" }, { status: 500 });
+    console.error("Error closing worker payroll periods:", error);
+    return NextResponse.json({ error: "Failed to close periods" }, { status: 500 });
   }
 }

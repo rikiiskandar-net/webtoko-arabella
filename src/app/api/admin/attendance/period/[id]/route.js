@@ -9,7 +9,7 @@ export async function DELETE(req, { params }) {
 
     const { id: periodId } = await params;
 
-    const period = await prisma.payrollPeriod.findUnique({
+    const period = await prisma.workerPayrollPeriod.findUnique({
       where: { id: periodId }
     });
 
@@ -17,22 +17,18 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Buku gaji tidak ditemukan" }, { status: 404 });
     }
 
-    if (period.adminId !== session.id) {
-      return NextResponse.json({ error: "Bukan milik Anda" }, { status: 403 });
-    }
-
     // Delete attendances first to avoid foreign key constraint errors
-    await prisma.attendance.deleteMany({
+    await prisma.workerAttendance.deleteMany({
       where: { payrollPeriodId: periodId }
     });
 
-    await prisma.payrollPeriod.delete({
+    await prisma.workerPayrollPeriod.delete({
       where: { id: periodId }
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting history period:", error);
+    console.error("Error deleting worker history period:", error);
     return NextResponse.json({ error: "Gagal menghapus riwayat gaji" }, { status: 500 });
   }
 }

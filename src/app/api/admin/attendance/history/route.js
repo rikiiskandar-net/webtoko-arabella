@@ -7,12 +7,14 @@ export async function GET(req) {
     const session = await getAdminSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const closedPeriods = await prisma.payrollPeriod.findMany({
+    const closedPeriods = await prisma.workerPayrollPeriod.findMany({
       where: {
-        adminId: session.id,
         isClosed: true
       },
       include: {
+        worker: {
+          select: { name: true, role: true }
+        },
         attendances: {
           orderBy: { date: 'asc' }
         }
@@ -22,7 +24,7 @@ export async function GET(req) {
 
     return NextResponse.json({ periods: closedPeriods });
   } catch (error) {
-    console.error("Error fetching history:", error);
+    console.error("Error fetching worker attendance history:", error);
     return NextResponse.json({ error: "Failed to fetch history" }, { status: 500 });
   }
 }

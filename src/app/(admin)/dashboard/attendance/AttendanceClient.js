@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, CheckCircle2, Wallet, CalendarRange, AlertCircle, Loader2, Save, Trash2, History } from "lucide-react";
+import { Clock, CheckCircle2, Wallet, CalendarRange, AlertCircle, Loader2, Save, Trash2, History, Users } from "lucide-react";
 import Link from "next/link";
 import styles from "./Attendance.module.css";
 
 export default function AttendanceClient({ adminId, adminName }) {
-  const [period, setPeriod] = useState(null);
-  const [baseWage, setBaseWage] = useState(120000);
+  const [workers, setWorkers] = useState([]);
+  const [activePeriods, setActivePeriods] = useState([]);
+  const [attendances, setAttendances] = useState([]);
+  
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -20,23 +22,33 @@ export default function AttendanceClient({ adminId, adminName }) {
     return d.toISOString().split('T')[0];
   };
 
+  const [selectedWorkerId, setSelectedWorkerId] = useState("");
   const [selectedDate, setSelectedDate] = useState(getLocalToday());
   const [status, setStatus] = useState("Kerja Normal");
+  const [baseWage, setBaseWage] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [extraPay, setExtraPay] = useState(0);
   const [notes, setNotes] = useState("");
 
   const formatRupiah = (number) => {
-    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(number);
+    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
   };
 
-  const fetchPeriod = async () => {
+  const fetchPeriods = async () => {
     try {
       const res = await fetch("/api/admin/attendance/period");
       const data = await res.json();
       if (res.ok) {
-        setPeriod(data.period);
-        setBaseWage(data.baseWage);
+        setWorkers(data.workers || []);
+        setActivePeriods(data.activePeriods || []);
+        setAttendances(data.attendances || []);
+        
+        // Auto select first worker if not selected
+        if (!selectedWorkerId && data.workers && data.workers.length > 0) {
+          const fw = data.workers[0];
+          setSelectedWorkerId(fw.id);
+          setBaseWage(fw.baseWage);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -46,8 +58,17 @@ export default function AttendanceClient({ adminId, adminName }) {
   };
 
   useEffect(() => {
-    fetchPeriod();
+    fetchPeriods();
   }, []);
+
+  const handleWorkerChange = (e) => {
+    const wid = e.target.value;
+    setSelectedWorkerId(wid);
+    const worker = workers.find(w => w.id === wid);
+    if (worker) {
+      setBaseWage(worker.baseWage);
+    }
+  };
 
   const handleStatusChange = (e) => {
     const val = e.target.value;
@@ -58,27 +79,13 @@ export default function AttendanceClient({ adminId, adminName }) {
     else setMultiplier(1); // Custom or others
   };
 
-  const handleUpdateBaseWage = async () => {
-    const newWage = prompt("Masukkan Standar Gaji Harian Baru (contoh: 150000):", baseWage);
-    if (newWage && !isNaN(newWage)) {
-      try {
-        const res = await fetch("/api/admin/settings/wage", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ baseWage: Number(newWage) })
-        });
-        if (res.ok) {
-          setBaseWage(Number(newWage));
-          alert("Gaji standar berhasil diperbarui!");
-        }
-      } catch (e) {
-        alert("Gagal update gaji");
-      }
-    }
-  };
-
   const handleCheckIn = async (e) => {
     e.preventDefault();
+    if (!selectedWorkerId) {
+      setError("Pilih pekerja terlebih dahulu");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
     setSuccess("");
@@ -88,7 +95,7 @@ export default function AttendanceClient({ adminId, adminName }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          periodId: period.id,
+          workerId: selectedWorkerId,
           date: selectedDate,
           status,
           baseWage,
@@ -102,8 +109,8 @@ export default function AttendanceClient({ adminId, adminName }) {
       if (!res.ok) {
         setError(data.error || "Gagal menyimpan absen");
       } else {
-        setSuccess("Absen hari ini berhasil dicatat!");
-        fetchPeriod(); // Refresh data
+        setSuccess("Absen berhasil dicatat!");
+        fetchPeriods(); // Refresh data
         // Reset form slightly
         setExtraPay(0);
         setNotes("");
@@ -112,18 +119,19 @@ export default function AttendanceClient({ adminId, adminName }) {
       setError("Terjadi kesalahan jaringan");
     } finally {
       setSubmitting(false);
+      setTimeout(() => setSuccess(""), 3000);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Hapus catatan absen ini? Anda bisa mengisinya ulang nanti.")) return;
+    if (!confirm("Hapus catatan absen ini?")) return;
 
     try {
       const res = await fetch(`/api/admin/attendance/${id}`, {
         method: "DELETE"
       });
       if (res.ok) {
-        fetchPeriod();
+        fetchPeriods();
         setSuccess("Data absen berhasil dihapus.");
         setTimeout(() => setSuccess(""), 3000);
       } else {
@@ -136,7 +144,7 @@ export default function AttendanceClient({ adminId, adminName }) {
   };
 
   const handleClosePeriod = async () => {
-    if (!confirm("Tutup Buku sekarang? Sesi ini akan ditutup dan Anda bisa mulai periode baru esok hari.")) return;
+    if (!confirm("Tutup Buku sekarang? Sesi gaji semua pekerja akan ditutup dan Anda bisa mulai periode baru esok hari.")) return;
     
     setSubmitting(true);
     try {
@@ -145,9 +153,9 @@ export default function AttendanceClient({ adminId, adminName }) {
       });
       if (res.ok) {
         alert("Buku berhasil ditutup! Total gaji periode ini telah diakumulasi.");
-        fetchPeriod();
+        fetchPeriods();
       } else {
-        alert("Gagal menutup buku.");
+        alert("Gagal menutup buku atau tidak ada absensi aktif.");
       }
     } catch (e) {
       alert("Error.");
@@ -160,27 +168,22 @@ export default function AttendanceClient({ adminId, adminName }) {
     return <div className={styles.loadingState}><Loader2 className={styles.spinner} /> Memuat data...</div>;
   }
 
-  // Cek apakah hari ini sudah absen
-  const alreadyCheckedIn = period?.attendances?.some(att => {
-    // att.date comes as 'YYYY-MM-DDT00:00:00.000Z', so the first 10 chars are perfectly 'YYYY-MM-DD'
-    return att.date.substring(0, 10) === selectedDate;
-  });
-
-  const totalPeriodPay = period?.attendances?.reduce((sum, att) => sum + att.totalPay, 0) || 0;
+  // Calculate overall unpaid wages (sum of totalAmount for active periods is 0 because they are not closed yet. Oh wait, activePeriods attendances are accumulated)
+  const totalUnpaidWages = attendances.reduce((sum, att) => sum + att.totalPay, 0);
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Absensi & Gaji</h1>
-          <p className={styles.subtitle}>Catat kehadiran dan kelola gaji harian Anda dengan fleksibel.</p>
+          <h1 className={styles.title}>Absensi & Gaji Pekerja</h1>
+          <p className={styles.subtitle}>Pantau kehadiran, tambah absen manual, dan tutup buku gaji pekerja.</p>
         </div>
         <div className={styles.headerActions}>
           <Link href="/dashboard/attendance/history" className={styles.btnOutlineSecondary}>
-            <History size={16} /> Riwayat Gaji
+            <History size={16} /> Riwayat Tutup Buku
           </Link>
-          <button onClick={handleUpdateBaseWage} className={styles.btnOutline}>
-            <Wallet size={16} /> Standar Gaji: {formatRupiah(baseWage)}/hari
+          <button onClick={handleClosePeriod} className={styles.btnOutlineDanger} disabled={attendances.length === 0}>
+            <Wallet size={16} /> Tutup Buku Gaji
           </button>
         </div>
       </div>
@@ -189,13 +192,22 @@ export default function AttendanceClient({ adminId, adminName }) {
         {/* Panel Kiri: Form Absen */}
         <div className={styles.panel}>
           <h2 className={styles.panelTitle}>
-            <Clock size={20} className={styles.iconBlue} /> Catat Kehadiran
+            <Clock size={20} className={styles.iconBlue} /> Input Absen Manual
           </h2>
           
           <form onSubmit={handleCheckIn} className={styles.form}>
             {error && <div className={styles.errorBox}><AlertCircle size={16}/> {error}</div>}
             {success && <div className={styles.successBox}><CheckCircle2 size={16}/> {success}</div>}
             
+            <div className={styles.formGroup}>
+              <label>Pilih Pekerja</label>
+              <select value={selectedWorkerId} onChange={handleWorkerChange} className={styles.input} required>
+                {workers.map(w => (
+                  <option key={w.id} value={w.id}>{w.name} ({w.role}) - {formatRupiah(w.baseWage)}</option>
+                ))}
+              </select>
+            </div>
+
             <div className={styles.formGroup}>
               <label>Pilih Tanggal</label>
               <input 
@@ -225,7 +237,7 @@ export default function AttendanceClient({ adminId, adminName }) {
             )}
 
             <div className={styles.formGroup}>
-              <label>Nominal Gaji Pokok (Bisa Diedit)</label>
+              <label>Gaji Pokok Pekerja</label>
               <input type="number" min="0" value={baseWage} onChange={e => setBaseWage(Number(e.target.value))} className={styles.input} />
             </div>
 
@@ -240,79 +252,57 @@ export default function AttendanceClient({ adminId, adminName }) {
             </div>
 
             <div className={styles.summaryBox}>
-                <span>Total Gaji Hari Ini:</span>
+                <span>Total Gaji Dihitung:</span>
                 <strong>{formatRupiah((baseWage * multiplier) + extraPay)}</strong>
               </div>
 
             <button type="submit" disabled={submitting} className={styles.btnPrimary}>
-              {submitting ? <><Loader2 size={16} className={styles.spinner} /> Menyimpan...</> : (alreadyCheckedIn ? <><CheckCircle2 size={16} /> Update Absensi</> : <><Save size={16} /> Simpan Absensi</>)}
+              {submitting ? <><Loader2 size={16} className={styles.spinner} /> Menyimpan...</> : <><Save size={16} /> Simpan Absensi</>}
             </button>
           </form>
         </div>
 
-        {/* Panel Kanan: Ringkasan Periode */}
+        {/* Panel Kanan: Daftar Absen Aktif */}
         <div className={styles.panel}>
-          <div className={styles.panelHeaderRow}>
-            <h2 className={styles.panelTitle}>
-              <CalendarRange size={20} className={styles.iconOrange} /> Buku Gaji Aktif
+          <div className={styles.panelHeaderFlex}>
+            <h2 className={styles.panelTitle} style={{ marginBottom: 0 }}>
+              <Users size={20} className={styles.iconGreen} /> Riwayat Absen (Periode Berjalan)
             </h2>
-            <button onClick={handleClosePeriod} disabled={submitting} className={styles.btnCloseBook}>
-              Tutup Buku & Gajian
-            </button>
+            <div className={styles.badgeBlue}>
+              Tagihan: {formatRupiah(totalUnpaidWages)}
+            </div>
           </div>
           
-          <div className={styles.periodStats}>
-            <div className={styles.statBox}>
-              <span className={styles.statLabel}>Mulai Periode</span>
-              <span className={styles.statValue}>
-                {period?.startDate ? new Date(period.startDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
-              </span>
+          {attendances.length === 0 ? (
+            <div className={styles.emptyState}>
+              <CalendarRange size={40} className={styles.emptyIcon} />
+              <p>Belum ada absensi di periode berjalan ini.</p>
             </div>
-            <div className={styles.statBox}>
-              <span className={styles.statLabel}>Total Terkumpul</span>
-              <span className={styles.statValueHighlight}>{formatRupiah(totalPeriodPay)}</span>
-            </div>
-          </div>
-
-          <h3 className={styles.listTitle}>Riwayat Kehadiran (Periode Ini)</h3>
-          {period?.attendances?.length === 0 ? (
-            <p className={styles.emptyText}>Belum ada data absen di periode ini.</p>
           ) : (
-            <div className={styles.tableWrapper}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Tanggal</th>
-                    <th>Status</th>
-                    <th>Gaji Pokok</th>
-                    <th>Tambahan</th>
-                    <th>Total</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {period?.attendances?.map(att => (
-                    <tr key={att.id}>
-                      <td>{new Date(att.date).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit' })}</td>
-                      <td>
-                        <span className={styles.badge}>{att.status}</span>
-                      </td>
-                      <td>{formatRupiah(att.baseWage * att.multiplier)}</td>
-                      <td>{att.extraPay > 0 ? formatRupiah(att.extraPay) : '-'}</td>
-                      <td className={styles.bold}>{formatRupiah(att.totalPay)}</td>
-                      <td>
-                        <button 
-                          onClick={() => handleDelete(att.id)}
-                          className={styles.btnDeleteSm}
-                          title="Hapus"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className={styles.listContainer}>
+              {attendances.map(att => (
+                <div key={att.id} className={styles.listItem}>
+                  <div className={styles.listLeft}>
+                    <div className={styles.dateBox}>
+                      <span className={styles.dateDay}>{new Date(att.date).getDate()}</span>
+                      <span className={styles.dateMonth}>
+                        {new Date(att.date).toLocaleString('id-ID', { month: 'short' })}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className={styles.workerName}>{att.workerName} <span className={styles.workerRole}>({att.workerRole})</span></h4>
+                      <div className={styles.statusBadge}>{att.status}</div>
+                      {att.notes && <p className={styles.itemNotes}>{att.notes}</p>}
+                    </div>
+                  </div>
+                  <div className={styles.listRight}>
+                    <span className={styles.payAmount}>+{formatRupiah(att.totalPay)}</span>
+                    <button onClick={() => handleDelete(att.id)} className={styles.btnDelete} title="Hapus Absen">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
