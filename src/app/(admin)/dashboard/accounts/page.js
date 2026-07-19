@@ -30,6 +30,8 @@ export default function AccountsPage() {
   // UI States
   const [submitting, setSubmitting] = useState(false);
   const [showPasswords, setShowPasswords] = useState({});
+  const [decryptedPasswords, setDecryptedPasswords] = useState({});
+  const [fetchingPassword, setFetchingPassword] = useState({});
 
   const showToast = (message, type = "success") => {
     setToast({ visible: true, message, type });
@@ -66,8 +68,39 @@ export default function AccountsPage() {
     showToast("Disalin ke clipboard!");
   };
 
-  const togglePasswordVisibility = (id) => {
+  const fetchPassword = async (id) => {
+    if (decryptedPasswords[id]) return decryptedPasswords[id];
+    
+    setFetchingPassword(prev => ({ ...prev, [id]: true }));
+    try {
+      const res = await fetch(`/api/admin/accounts/credentials/${id}/reveal`);
+      if (!res.ok) throw new Error("Gagal mengambil sandi");
+      const data = await res.json();
+      setDecryptedPasswords(prev => ({ ...prev, [id]: data.password }));
+      return data.password;
+    } catch (err) {
+      showToast(err.message, "error");
+      return null;
+    } finally {
+      setFetchingPassword(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
+  const togglePasswordVisibility = async (id) => {
+    if (!showPasswords[id] && !decryptedPasswords[id]) {
+      await fetchPassword(id);
+    }
     setShowPasswords(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleCopyPassword = async (id) => {
+    let pwd = decryptedPasswords[id];
+    if (!pwd) {
+      pwd = await fetchPassword(id);
+    }
+    if (pwd) {
+      copyToClipboard(pwd);
+    }
   };
 
   const getLucideIcon = (iconName) => {
@@ -345,13 +378,13 @@ export default function AccountsPage() {
                         <input 
                           type={showPasswords[cred.id] ? "text" : "password"} 
                           readOnly 
-                          value={cred.password || "********"} 
+                          value={decryptedPasswords[cred.id] || "********"} 
                         />
                         <div style={{ display: 'flex', gap: '0.25rem' }}>
-                          <button className={styles.copyBtn} onClick={() => togglePasswordVisibility(cred.id)} title="Lihat">
-                            {showPasswords[cred.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                          <button className={styles.copyBtn} onClick={() => togglePasswordVisibility(cred.id)} title="Lihat" disabled={fetchingPassword[cred.id]}>
+                            {fetchingPassword[cred.id] ? <PhosphorIcons.Spinner size={16} className={styles.spin} /> : (showPasswords[cred.id] ? <EyeOff size={16} /> : <Eye size={16} />)}
                           </button>
-                          <button className={styles.copyBtn} onClick={() => copyToClipboard(cred.password)} title="Salin">
+                          <button className={styles.copyBtn} onClick={() => handleCopyPassword(cred.id)} title="Salin" disabled={fetchingPassword[cred.id]}>
                             <Copy size={16} />
                           </button>
                         </div>

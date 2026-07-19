@@ -26,13 +26,14 @@ export async function GET(req) {
       }
     });
 
-    // Decrypt passwords before sending to the client (admin only)
-    const decryptedCredentials = credentials.map(cred => ({
-      ...cred,
-      password: decrypt(cred.password)
-    }));
+    // DO NOT decrypt passwords here for Zero-Trust architecture.
+    // The password field is removed entirely from the list.
+    const safeCredentials = credentials.map(cred => {
+      const { password, ...rest } = cred;
+      return rest;
+    });
     
-    return NextResponse.json(decryptedCredentials);
+    return NextResponse.json(safeCredentials);
   } catch (error) {
     console.error("Error fetching account credentials:", error);
     return NextResponse.json({ error: "Failed to fetch credentials" }, { status: 500 });
@@ -47,6 +48,10 @@ export async function POST(req) {
     const { categoryId, title, username, password, url, description } = await req.json();
     if (!categoryId || !title || !username || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    if (title.length > 255 || username.length > 255 || (url && url.length > 1000) || (description && description.length > 2000)) {
+      return NextResponse.json({ error: "Input melebihi batas maksimal karakter." }, { status: 400 });
     }
 
     // Encrypt password before saving
@@ -80,6 +85,10 @@ export async function PUT(req) {
     const { id, categoryId, title, username, password, url, description } = await req.json();
     if (!id || !categoryId || !title || !username) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    if (title.length > 255 || username.length > 255 || (url && url.length > 1000) || (description && description.length > 2000)) {
+      return NextResponse.json({ error: "Input melebihi batas maksimal karakter." }, { status: 400 });
     }
 
     let updateData = {

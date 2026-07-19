@@ -15,6 +15,10 @@ export async function POST(req) {
       return NextResponse.json({ error: "Invalid payload format" }, { status: 400 });
     }
 
+    if (accounts.length > 100) {
+      return NextResponse.json({ error: "Maksimal 100 akun dalam satu kali import untuk mencegah beban server (DoS)." }, { status: 413 });
+    }
+
     // accounts format: [{ email, password, categoryName, notes }]
     let successCount = 0;
     
