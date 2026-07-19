@@ -26,14 +26,18 @@ export async function POST(req) {
     for (const acc of accounts) {
       if (!acc.email || !acc.password || !acc.categoryName) continue;
       
-      // Find or create category
-      let category = await prisma.accountCategory.findUnique({
-        where: { name: acc.categoryName }
+      const catName = acc.categoryName.trim();
+      
+      // Find or create category (case-insensitive & trim spaces)
+      let category = await prisma.accountCategory.findFirst({
+        where: { 
+          name: { equals: catName, mode: 'insensitive' } 
+        }
       });
       
       if (!category) {
         category = await prisma.accountCategory.create({
-          data: { name: acc.categoryName, icon: "Folder" }
+          data: { name: catName, icon: "Folder" }
         });
       }
       
