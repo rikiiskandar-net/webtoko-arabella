@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId");
@@ -42,7 +42,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { categoryId, title, username, password, url, description } = await req.json();
     if (!categoryId || !title || !username || !password) {
@@ -75,7 +75,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id, categoryId, title, username, password, url, description } = await req.json();
     if (!id || !categoryId || !title || !username) {
@@ -111,7 +111,7 @@ export async function PUT(req) {
 export async function DELETE(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

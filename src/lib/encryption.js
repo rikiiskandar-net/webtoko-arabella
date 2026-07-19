@@ -2,14 +2,21 @@ import crypto from "crypto";
 
 // Kunci harus tepat 32 karakter (256 bit). 
 // Di produksi, pastikan ENCRYPTION_KEY di-set di file .env
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "arabella_dapur_secret_key_123456"; // 32 chars
 const ALGORITHM = "aes-256-gcm";
+
+function getEncryptionKey() {
+  const key = process.env.ENCRYPTION_KEY;
+  if (!key || key.length !== 32) {
+    throw new Error("FATAL: ENCRYPTION_KEY must be exactly 32 characters in .env");
+  }
+  return key;
+}
 
 export function encrypt(text) {
   if (!text) return "";
   
   const iv = crypto.randomBytes(12); // IV untuk GCM direkomendasikan 12 bytes
-  const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+  const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(getEncryptionKey()), iv);
   
   let encrypted = cipher.update(text, "utf8", "hex");
   encrypted += cipher.final("hex");
@@ -25,13 +32,16 @@ export function decrypt(encryptedData) {
   
   try {
     const parts = encryptedData.split(":");
-    if (parts.length !== 3) return encryptedData; // Berarti tidak dienkripsi atau format salah (fallback)
+    if (parts.length !== 3) {
+      console.warn("Peringatan: Format dekripsi tidak sesuai. Mencegah kebocoran data.");
+      return "[Format Data Tidak Valid]"; 
+    }
     
     const iv = Buffer.from(parts[0], "hex");
     const authTag = Buffer.from(parts[1], "hex");
     const encryptedText = parts[2];
     
-    const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+    const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(getEncryptionKey()), iv);
     decipher.setAuthTag(authTag);
     
     let decrypted = decipher.update(encryptedText, "hex", "utf8");
@@ -40,6 +50,6 @@ export function decrypt(encryptedData) {
     return decrypted;
   } catch (err) {
     console.error("Dekripsi gagal:", err);
-    return "Error: Cannot decrypt";
+    return "[Gagal Mendekripsi Data]";
   }
 }

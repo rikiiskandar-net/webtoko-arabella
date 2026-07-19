@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { accounts } = await req.json();
     if (!accounts || !Array.isArray(accounts)) {

@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const categories = await prisma.accountCategory.findMany({
       orderBy: { createdAt: 'desc' },
@@ -26,7 +26,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { name, icon } = await req.json();
     if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -48,7 +48,7 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id, name, icon } = await req.json();
     if (!id || !name) return NextResponse.json({ error: "ID and Name are required" }, { status: 400 });
@@ -68,7 +68,7 @@ export async function PUT(req) {
 export async function DELETE(req) {
   try {
     const session = await getAuthSession();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session || session.role !== "superadmin") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
