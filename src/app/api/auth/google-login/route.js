@@ -38,10 +38,23 @@ export async function POST(request) {
     // Pastikan akun superadmin pertama sudah ada
     await seedFirstAdmin();
 
-    // Dapatkan data admin utama untuk session kita (ambil admin pertama)
-    const admin = await prisma.admin.findFirst({
-      where: { isActive: true }
+    // Dapatkan data admin utama (prioritaskan superadmin)
+    let admin = await prisma.admin.findFirst({
+      where: { isActive: true, role: "superadmin" }
     });
+
+    if (!admin) {
+      admin = await prisma.admin.findFirst({
+        where: { isActive: true }
+      });
+      if (admin) {
+        // Otomatis promosikan admin ini menjadi superadmin karena pemilik Google Email yang login
+        admin = await prisma.admin.update({
+          where: { id: admin.id },
+          data: { role: "superadmin" }
+        });
+      }
+    }
 
     if (!admin) {
       return NextResponse.json({ error: "Data admin tidak ditemukan di database" }, { status: 500 });
