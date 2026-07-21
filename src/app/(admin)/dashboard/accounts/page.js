@@ -346,10 +346,19 @@ export default function AccountsPage() {
               {filteredCredentials.map(cred => {
                 const brand = getBrandConfig(cred.category?.name);
                 return (
-                  <div key={cred.id} className={styles.credCard} style={{ borderTop: `4px solid ${brand.primary}` }}>
+                  <div 
+                    key={cred.id} 
+                    className={styles.credCard} 
+                    style={{ 
+                      '--brand-primary': brand.primary, 
+                      '--brand-bg': brand.bgLight, 
+                      '--brand-primary-dark': brand.primaryDark, 
+                      '--brand-bg-dark': brand.bgDark 
+                    }}
+                  >
                     <div className={styles.credHeader}>
                       <div className={styles.credTitleGroup}>
-                        <div className={styles.credIconWrapper} style={{ backgroundColor: brand.bgLight, color: brand.primary }}>
+                        <div className={styles.credIconWrapper}>
                           {getLucideIcon(brand.icon)}
                         </div>
                         <div>

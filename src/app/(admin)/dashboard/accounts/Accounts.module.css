@@ -226,7 +226,7 @@
   transition: all 0.2s ease-in-out;
   position: relative;
   overflow: hidden;
-  border-top: 4px solid #3B82F6; /* Default border top, can be overridden inline */
+  border-top: 4px solid var(--brand-primary, #3B82F6);
 }
 
 .credCard:hover {
@@ -257,6 +257,8 @@
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.2s;
+  background-color: var(--brand-bg, #EFF6FF);
+  color: var(--brand-primary, #3B82F6);
 }
 
 .credTitle {
@@ -554,3 +556,163 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+/* ==========================================
+   DARK MODE OVERRIDES ([data-theme="dark"])
+   ========================================== */
+:global([data-theme="dark"]) .header h1 {
+  color: #F3F4F6;
+}
+
+:global([data-theme="dark"]) .header p {
+  color: #9CA3AF;
+}
+
+:global([data-theme="dark"]) .categoriesCard,
+:global([data-theme="dark"]) .credentialsHeader {
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(12px);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .credCard {
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid var(--brand-primary-dark, var(--brand-primary, #60A5FA));
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .credIconWrapper {
+  background-color: var(--brand-bg-dark, rgba(59, 130, 246, 0.2));
+  color: var(--brand-primary-dark, #60A5FA);
+}
+
+:global([data-theme="dark"]) .credCard:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+:global([data-theme="dark"]) .categoryHeader {
+  border-bottom-color: #334155;
+}
+
+:global([data-theme="dark"]) .categoryHeader h3 {
+  color: #E2E8F0;
+}
+
+:global([data-theme="dark"]) .categoryItem {
+  color: #94A3B8;
+}
+
+:global([data-theme="dark"]) .categoryItem:hover {
+  background-color: #334155;
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .categoryItem.active {
+  background-color: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60A5FA;
+}
+
+:global([data-theme="dark"]) .categoryCount {
+  background-color: #334155;
+  color: #94A3B8;
+}
+
+:global([data-theme="dark"]) .categoryItem.active .categoryCount {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #93C5FD;
+}
+
+:global([data-theme="dark"]) .searchBox {
+  background-color: #1E293B;
+  border-color: #334155;
+}
+
+:global([data-theme="dark"]) .searchBox input {
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .credTitle {
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .credCategoryBadge {
+  background-color: #334155;
+  color: #94A3B8;
+}
+
+:global([data-theme="dark"]) .actionBtn:hover {
+  background-color: #334155;
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .credFieldLabel {
+  color: #94A3B8;
+}
+
+:global([data-theme="dark"]) .credFieldValue {
+  background-color: #0F172A;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .credFieldValue input {
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .credFooter {
+  border-top-color: #334155;
+}
+
+:global([data-theme="dark"]) .modal {
+  background-color: #1E293B;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .modalHeader {
+  border-bottom-color: #334155;
+}
+
+:global([data-theme="dark"]) .modalHeader h2 {
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .closeBtn {
+  color: #94A3B8;
+}
+
+:global([data-theme="dark"]) .closeBtn:hover {
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .modalBody label {
+  color: #CBD5E1;
+}
+
+:global([data-theme="dark"]) .modalBody input,
+:global([data-theme="dark"]) .modalBody select,
+:global([data-theme="dark"]) .modalBody textarea {
+  background-color: #0F172A;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+:global([data-theme="dark"]) .modalFooter {
+  background-color: #0F172A;
+}
+
+:global([data-theme="dark"]) .cancelBtn {
+  background-color: #1E293B;
+  border-color: #334155;
+  color: #E2E8F0;
+}
+
+:global([data-theme="dark"]) .cancelBtn:hover {
+  background-color: #334155;
+}
+
