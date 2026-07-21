@@ -223,15 +223,16 @@
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-in-out;
   position: relative;
   overflow: hidden;
+  border-top: 4px solid #3B82F6; /* Default border top, can be overridden inline */
 }
 
 .credCard:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border-color: #BFDBFE;
+  border-color: rgba(229, 231, 235, 0.8);
 }
 
 .credHeader {
@@ -248,15 +249,14 @@
 }
 
 .credIconWrapper {
-  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
-  color: #2563EB;
-  width: 40px;
-  height: 40px;
-  border-radius: 0.75rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all 0.2s;
 }
 
 .credTitle {
@@ -266,10 +266,15 @@
   margin: 0;
 }
 
-.credCategoryName {
-  font-size: 0.75rem;
-  color: #6B7280;
-  margin: 0;
+.credCategoryBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  margin-top: 0.25rem;
+  display: inline-block;
+  background-color: #F3F4F6;
+  color: #4B5563;
 }
 
 .credActions {

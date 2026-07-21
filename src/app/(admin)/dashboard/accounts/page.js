@@ -5,6 +5,7 @@ import styles from "./Accounts.module.css";
 import * as PhosphorIcons from "@phosphor-icons/react";
 import { Plus, MagnifyingGlass as Search, Trash, PencilSimple as Edit2, Copy, CheckCircle, ArrowSquareOut as ExternalLink, Eye, EyeSlash as EyeOff, X, UploadSimple } from "@phosphor-icons/react";
 import Toast from "@/components/Toast";
+import { getBrandConfig } from "@/utils/brandColors";
 
 // List of available icons for categories
 const availableIcons = ["Folder", "FacebookLogo", "InstagramLogo", "TwitterLogo", "YoutubeLogo", "EnvelopeSimple", "Globe", "Cloud", "Database", "HardDrives", "GithubLogo", "FigmaLogo", "TrelloLogo", "SlackLogo"];
@@ -342,18 +343,20 @@ export default function AccountsPage() {
             </div>
           ) : (
             <div className={styles.cardsGrid}>
-              {filteredCredentials.map(cred => (
-                <div key={cred.id} className={styles.credCard}>
-                  <div className={styles.credHeader}>
-                    <div className={styles.credTitleGroup}>
-                      <div className={styles.credIconWrapper}>
-                        {getLucideIcon(cred.category?.icon || "Folder")}
+              {filteredCredentials.map(cred => {
+                const brand = getBrandConfig(cred.category?.name);
+                return (
+                  <div key={cred.id} className={styles.credCard} style={{ borderTop: `4px solid ${brand.primary}` }}>
+                    <div className={styles.credHeader}>
+                      <div className={styles.credTitleGroup}>
+                        <div className={styles.credIconWrapper} style={{ backgroundColor: brand.bgLight, color: brand.primary }}>
+                          {getLucideIcon(brand.icon)}
+                        </div>
+                        <div>
+                          <h3 className={styles.credTitle}>{cred.title}</h3>
+                          <span className={styles.credCategoryBadge}>{cred.category?.name}</span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className={styles.credTitle}>{cred.title}</h3>
-                        <p className={styles.credCategoryName}>{cred.category?.name}</p>
-                      </div>
-                    </div>
                     <div className={styles.credActions}>
                       <button className={styles.actionBtn} onClick={() => {
                         setCredForm({ ...cred });
@@ -413,11 +416,12 @@ export default function AccountsPage() {
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
+    </div>
 
       {/* Category Modal */}
       {catModalOpen && (
