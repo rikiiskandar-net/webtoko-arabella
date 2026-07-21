@@ -162,8 +162,14 @@ export default function AccountsPage() {
         body: JSON.stringify(credForm)
       });
       
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal menyimpan akun");
+      let errorMsg = "Gagal menyimpan akun";
+      try {
+        const data = await res.json();
+        if (!res.ok) errorMsg = data.error || errorMsg;
+      } catch (parseErr) {
+        errorMsg = `Server Error (${res.status})`;
+      }
+      if (!res.ok) throw new Error(errorMsg);
       
       showToast("Akun berhasil disimpan");
       setCredModalOpen(false);

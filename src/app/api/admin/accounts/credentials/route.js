@@ -73,6 +73,9 @@ export async function POST(req) {
     return NextResponse.json(safeCredential);
   } catch (error) {
     console.error("Error creating account credential:", error);
+    if (error.message && error.message.includes("ENCRYPTION_KEY")) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     return NextResponse.json({ error: "Failed to create credential" }, { status: 500 });
   }
 }
@@ -113,6 +116,9 @@ export async function PUT(req) {
     return NextResponse.json(safeCredential);
   } catch (error) {
     console.error("Error updating account credential:", error);
+    if (error.message && error.message.includes("ENCRYPTION_KEY")) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     return NextResponse.json({ error: "Failed to update credential" }, { status: 500 });
   }
 }

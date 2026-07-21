@@ -60,6 +60,9 @@ export async function POST(req) {
     return NextResponse.json({ success: true, count: successCount });
   } catch (error) {
     console.error("Error in bulk import credentials:", error);
+    if (error.message && error.message.includes("ENCRYPTION_KEY")) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     return NextResponse.json({ error: "Failed to process bulk import" }, { status: 500 });
   }
 }
