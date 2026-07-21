@@ -245,7 +245,7 @@ export default function AccountsPage() {
 
   return (
     <div className={styles.container}>
-      {toast.visible && <Toast message={toast.message} type={toast.type} onClose={() => setToast({ ...toast, visible: false })} />}
+      <Toast isVisible={toast.visible} message={toast.message} type={toast.type} onClose={() => setToast({ ...toast, visible: false })} />
       
       <div className={styles.header}>
         <div>
