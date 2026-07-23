@@ -1957,3 +1957,40 @@ select.input:focus {
   color: #F87171 !important;
 }
 
+/* =============================================
+   MOBILE RESPONSIVENESS (< 380px SCREENS)
+   ============================================= */
+@media (max-width: 380px) {
+  .historyCardHeader {
+    padding: 12px 10px;
+    gap: 6px;
+  }
+  .historyDate {
+    font-size: 0.8rem;
+  }
+  .historyBadge {
+    padding: 4px 8px;
+    font-size: 0.65rem;
+  }
+  .historyRightGroup {
+    gap: 6px;
+  }
+  .historyPay {
+    font-size: 0.85rem;
+  }
+  .cashbonCardHeader {
+    gap: 6px;
+  }
+  .cashbonPay {
+    font-size: 0.85rem;
+  }
+  .homeSegBtn {
+    font-size: 0.78rem;
+    padding: 8px 10px;
+  }
+  .historySubBtn {
+    font-size: 0.72rem;
+    padding: 8px 6px;
+  }
+}
+
