@@ -6,7 +6,7 @@ import {
   Timer, WarningCircle, FloppyDisk, SignOut, CheckCircle,
   ListDashes, Warning, CaretDown, CaretUp,
   User, Phone, MapPin, Briefcase, FileText, Package, Trash, House,
-  BookOpenText, TrendUp, UserCircle, Spinner, SealCheck,
+  BookOpenText, IdentificationCard, TrendUp, UserCircle, Spinner, SealCheck,
   CheckSquareOffset
 , Lightning, CloudSun, Pill, Receipt, XCircle, Coffee, Gear , HandWaving, CalendarBlank, Tag, Money, Notepad, BookBookmark, Archive, Coins, Eye, EyeClosed, Info } from "@phosphor-icons/react";
 import Link from "next/link";
@@ -466,11 +466,11 @@ export default function WorkerDashboard() {
       <header className={styles.topHeader}>
         <div className={styles.headerLogo}>
           <div className={styles.headerLogoIcon}>
-            <BookOpenText size={20} color="white" weight="fill" />
+            <IdentificationCard size={22} color="white" weight="fill" />
           </div>
           <div>
             <span className={styles.headerLogoText}>ABSENKU</span>
-            <span className={styles.headerLogoSub}>by Dapur Arabella</span>
+            <span className={styles.headerLogoSub}>Absen Online By Riki Iskandar</span>
           </div>
         </div>
         <div className={styles.headerRight}>

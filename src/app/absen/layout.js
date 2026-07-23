@@ -4,8 +4,15 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata = {
-  title: "ABSENKU — Dapur Arabella",
-  description: "Aplikasi absensi digital modern untuk pekerja Dapur Arabella",
+  title: "ABSENKU - Absen Online By Riki Iskandar",
+  description: "ABSENKU - Aplikasi Absen Online Modern & Presensi Digital oleh Riki Iskandar",
+  icons: {
+    icon: [
+      { url: "/absen-icon.svg", type: "image/svg+xml" }
+    ],
+    shortcut: "/absen-icon.svg",
+    apple: "/absen-icon.svg",
+  },
 };
 
 export const viewport = {
