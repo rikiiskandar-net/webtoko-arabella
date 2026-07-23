@@ -1777,3 +1777,183 @@ select.input:focus {
 .btnWagePill:active {
   transform: scale(0.95);
 }
+
+/* =============================================
+   CASHBON (KASBON PEKERJA) STYLES
+   ============================================= */
+.homeSegmented {
+  display: flex;
+  background: #E2E8F0;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.homeSegBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: #64748B;
+  font-family: var(--font-app);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.homeSegBtnActive {
+  background: #FFFFFF;
+  color: #4F46E5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.homeSegBtnActiveCashbon {
+  background: #FFFFFF;
+  color: #DC2626;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.12);
+}
+
+.summaryBoxCashbon {
+  background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+  border: 2px dashed #FCA5A5;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #991B1B;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.summaryBoxCashbon strong {
+  color: #DC2626;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.btnDanger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-family: var(--font-app);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+}
+
+.btnDanger:active {
+  transform: scale(0.98);
+}
+
+.historySubNav {
+  display: flex;
+  background: #F1F5F9;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.historySubBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: #64748B;
+  font-family: var(--font-app);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.historySubBtnActive {
+  background: #FFFFFF;
+  color: #4F46E5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.historySubBtnActiveCashbon {
+  background: #FFFFFF;
+  color: #DC2626;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.12);
+}
+
+.cashbonCardWrapper {
+  border-radius: 16px;
+  background: #FFF5F5;
+  border: 1.5px solid #FEE2E2;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.cashbonCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cashbonBadge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #FEE2E2, #FECACA);
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+}
+
+.cashbonPay {
+  font-weight: 800;
+  color: #DC2626;
+  font-size: 0.95rem;
+  letter-spacing: -0.3px;
+}
+
+.cashbonReasonText {
+  font-size: 0.78rem;
+  color: #7F1D1D;
+  font-style: italic;
+  padding-top: 4px;
+  border-top: 1px dashed #FCA5A5;
+}
+
+.heroAmountMinus {
+  color: #F87171 !important;
+}
+

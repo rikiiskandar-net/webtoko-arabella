@@ -283,6 +283,7 @@ model Worker {
   baseWage       Int                   @default(100000)
   payrollPeriods WorkerPayrollPeriod[]
   attendances    WorkerAttendance[]
+  cashbons       WorkerCashbon[]
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
 }
@@ -296,6 +297,7 @@ model WorkerPayrollPeriod {
   isClosed    Boolean            @default(false)
   totalAmount Int                @default(0)
   attendances WorkerAttendance[]
+  cashbons    WorkerCashbon[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
@@ -321,6 +323,23 @@ model WorkerAttendance {
 
   @@unique([workerId, date, payrollPeriodId])
   @@index([payrollPeriodId])
+  @@index([date])
+}
+
+model WorkerCashbon {
+  id              String              @id @default(uuid())
+  payrollPeriodId String
+  payrollPeriod   WorkerPayrollPeriod @relation(fields: [payrollPeriodId], references: [id], onDelete: Cascade)
+  workerId        String
+  worker          Worker              @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  date            DateTime            @db.Date
+  amount          Int
+  reason          String              @default("")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([payrollPeriodId])
+  @@index([workerId])
   @@index([date])
 }
 

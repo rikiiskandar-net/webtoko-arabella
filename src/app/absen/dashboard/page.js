@@ -66,6 +66,14 @@ export default function WorkerDashboard() {
   const [wageForm, setWageForm] = useState({ baseWage: 100000 });
   const [wageSubmitting, setWageSubmitting] = useState(false);
 
+  // Form State (Kasbon)
+  const [homeFormType, setHomeFormType] = useState("attendance"); // 'attendance' or 'cashbon'
+  const [cashbonDate, setCashbonDate] = useState(getLocalToday());
+  const [cashbonAmount, setCashbonAmount] = useState("");
+  const [cashbonReason, setCashbonReason] = useState("");
+  const [cashbonSubmitting, setCashbonSubmitting] = useState(false);
+  const [historySubTab, setHistorySubTab] = useState("attendance"); // 'attendance', 'cashbon', or 'archive'
+
   const formatRupiah = (number) =>
     new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
 
@@ -300,6 +308,100 @@ export default function WorkerDashboard() {
     });
   };
 
+  const handleCreateCashbon = async (e) => {
+    e.preventDefault();
+    if (!cashbonAmount || Number(cashbonAmount) <= 0) {
+      showToast("Nominal kasbon harus lebih dari 0", "error");
+      return;
+    }
+
+    setCashbonSubmitting(true);
+    try {
+      const res = await fetch("/api/worker/cashbon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          periodId: data?.activePeriod?.id,
+          date: cashbonDate,
+          amount: Number(cashbonAmount),
+          reason: cashbonReason
+        })
+      });
+      const result = await res.json();
+      if (res.ok) {
+        showToast("Kasbon berhasil dicatat! 💸");
+        setCashbonAmount("");
+        setCashbonReason("");
+        setCashbonDate(getLocalToday());
+        await fetchData();
+      } else {
+        showToast(result.error || "Gagal mencatat kasbon", "error");
+      }
+    } catch {
+      showToast("Terjadi kesalahan jaringan", "error");
+    } finally {
+      setCashbonSubmitting(false);
+    }
+  };
+
+  const handleDeleteCashbon = (cashbonId) => {
+    setModalConfig({
+      isOpen: true, type: "warning",
+      title: "Hapus Catatan Kasbon?",
+      message: "Catatan kasbon ini akan dihapus dari buku berjalan.",
+      onConfirm: async () => {
+        setModalConfig(m => ({ ...m, isOpen: false }));
+        try {
+          const res = await fetch(`/api/worker/cashbon?id=${cashbonId}`, { method: "DELETE" });
+          if (res.ok) {
+            showToast("Kasbon berhasil dihapus 🗑️");
+            await fetchData();
+          } else {
+            const d = await res.json();
+            showToast(d.error || "Gagal menghapus kasbon", "error");
+          }
+        } catch {
+          showToast("Terjadi kesalahan jaringan", "error");
+        }
+      }
+    });
+  };
+
+  const renderCashbonCard = (cashbon, isActiveBook = false) => {
+    return (
+      <div className={styles.cashbonCardWrapper} key={cashbon.id}>
+        <div className={styles.cashbonCardHeader}>
+          <span className={styles.historyDate}>
+            {new Date(cashbon.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </span>
+
+          <span className={styles.cashbonBadge}>
+            <Coins size={14} weight="fill" /> Kasbon
+          </span>
+
+          <div className={styles.historyRightGroup}>
+            <span className={styles.cashbonPay}>-{showBalances ? formatRupiah(cashbon.amount) : 'Rp •••••'}</span>
+            {isActiveBook && (
+              <button
+                type="button"
+                className={styles.deleteBtn}
+                onClick={() => handleDeleteCashbon(cashbon.id)}
+                title="Hapus Kasbon"
+              >
+                <Trash size={16} weight="fill" />
+              </button>
+            )}
+          </div>
+        </div>
+        {cashbon.reason && (
+          <div className={styles.cashbonReasonText}>
+            Keterangan: {cashbon.reason}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const handleDeleteArchive = (periodId) => {
     setModalConfig({
       isOpen: true, type: "warning",
@@ -462,7 +564,9 @@ export default function WorkerDashboard() {
     );
   }
 
-  const periodPay = data?.activeAttendances?.reduce((sum, item) => sum + item.totalPay, 0) || 0;
+  const periodGrossPay = data?.activeAttendances?.reduce((sum, item) => sum + item.totalPay, 0) || 0;
+  const periodCashbon = data?.activeCashbons?.reduce((sum, item) => sum + item.amount, 0) || 0;
+  const periodNetPay = periodGrossPay - periodCashbon;
   const currentTotal = Math.round(Number(baseWage) * Number(multiplier)) + Number(extraPay);
   const totalHarian = data?.activeAttendances?.reduce((sum, item) => sum + (Number(item.multiplier) || 0), 0) || 0;
   const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -571,7 +675,7 @@ export default function WorkerDashboard() {
                 <div className={styles.heroTopRow}>
                   <div>
                     <span className={styles.heroLabel} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      Buku Gaji Aktif
+                      Buku Gaji Aktif (Bersih)
                       <button onClick={toggleBalances} style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', padding: 0, display: 'flex' }}>
                         {showBalances ? <Eye size={16} /> : <EyeClosed size={16} />}
                       </button>
@@ -582,9 +686,9 @@ export default function WorkerDashboard() {
                     {showBalances ? formatRupiah(baseWage) : 'Rp •••••'}/hari
                   </span>
                 </div>
-                <div className={styles.heroAmount}>
-                  <span className={styles.heroCurrency}>Rp</span>
-                  {showBalances ? periodPay.toLocaleString('id-ID') : '••••••••'}
+                <div className={`${styles.heroAmount} ${periodNetPay < 0 ? styles.heroAmountMinus : ''}`}>
+                  <span className={styles.heroCurrency}>{periodNetPay < 0 ? '-Rp' : 'Rp'}</span>
+                  {showBalances ? Math.abs(periodNetPay).toLocaleString('id-ID') : '••••••••'}
                 </div>
                 <span className={styles.heroSubtext}>
                   Mulai: {data?.activePeriod
@@ -599,180 +703,289 @@ export default function WorkerDashboard() {
                   <div className={styles.miniCardIcon}>
                     <CheckSquareOffset size={20} weight="fill" />
                   </div>
-                  <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
-                    {data?.activeAttendances?.length || 0} Hari <span style={{ fontSize: '0.8rem', opacity: 0.85 }}>({totalHarian} HK)</span>
+                  <div className={styles.miniCardValue} style={{ fontSize: '0.95rem' }}>
+                    {data?.activeAttendances?.length || 0} Hari <span style={{ fontSize: '0.78rem', opacity: 0.85 }}>({totalHarian} HK)</span>
                   </div>
                   <div className={styles.miniCardLabel}>Total Kehadiran</div>
                 </div>
                 <div className={styles.miniCard + ' ' + styles.miniCardOrange}>
                   <div className={styles.miniCardIcon}>
-                    <TrendUp size={20} weight="fill" />
+                    <Coins size={20} weight="fill" style={{ color: periodCashbon > 0 ? '#DC2626' : 'inherit' }} />
                   </div>
-                  <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
-                    {showBalances ? formatRupiah(periodPay).replace('Rp\u00a0', 'Rp') : 'Rp •••••'}
+                  <div className={styles.miniCardValue} style={{ fontSize: '0.95rem', color: periodCashbon > 0 ? '#DC2626' : 'inherit' }}>
+                    {showBalances ? (periodCashbon > 0 ? `-${formatRupiah(periodCashbon)}` : 'Rp 0') : 'Rp •••••'}
                   </div>
-                  <div className={styles.miniCardLabel}>Total Gaji Periode Ini</div>
+                  <div className={styles.miniCardLabel}>Total Kasbon</div>
                 </div>
               </div>
 
-              {/* Form Kehadiran */}
-              <div className={styles.panel}>
-                <h2 className={styles.panelTitle}>
-                  <Timer size={22} weight="fill" className={styles.iconBlue} />
-                  {existingRecordForSelectedDate ? "Edit Absensi Kehadiran" : "Catat Kehadiran"}
-                </h2>
+              {/* Home Form Switcher Segmented Control */}
+              <div className={styles.homeSegmented}>
+                <button
+                  type="button"
+                  className={`${styles.homeSegBtn} ${homeFormType === 'attendance' ? styles.homeSegBtnActive : ''}`}
+                  onClick={() => setHomeFormType('attendance')}
+                >
+                  <Timer size={18} weight="fill" />
+                  <span>Catat Kehadiran</span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.homeSegBtn} ${homeFormType === 'cashbon' ? styles.homeSegBtnActiveCashbon : ''}`}
+                  onClick={() => setHomeFormType('cashbon')}
+                >
+                  <Coins size={18} weight="fill" />
+                  <span>Input Kasbon</span>
+                </button>
+              </div>
 
-                <form className={styles.form} onSubmit={handleCheckIn}>
-                  {/* Tanggal */}
-                  <div className={styles.formGroup}>
-                    <label><CalendarBlank size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Pilih Tanggal</label>
-                    <input
-                      type="date"
-                      className={styles.input}
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      required
-                    />
-                  </div>
+              {homeFormType === 'attendance' ? (
+                /* Form Kehadiran */
+                <div className={styles.panel}>
+                  <h2 className={styles.panelTitle}>
+                    <Timer size={22} weight="fill" className={styles.iconBlue} />
+                    {existingRecordForSelectedDate ? "Edit Absensi Kehadiran" : "Catat Kehadiran"}
+                  </h2>
 
-                  {/* Status Pill Selector */}
-                  <div className={styles.formGroup}>
-                    <label><Tag size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Status Kehadiran</label>
-                    <div className={styles.statusSelectorGrid}>
-                      {STATUS_OPTIONS.map((opt) => (
-                        <button
-                          key={opt.value}
-                          type="button"
-                          className={`${styles.statusPill} ${status === opt.value ? opt.activeClass : ''}`}
-                          onClick={() => handleStatusSelect(opt)}
-                        >
-                          <span className={styles.statusPillEmoji}>{opt.emoji}</span>
-                          <span className={styles.statusPillText}>
-                            <span className={styles.statusPillName}>{opt.label}</span>
-                            <span className={styles.statusPillMult}>{opt.mult}</span>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Custom Multiplier (Only shown when Custom is selected) */}
-                  {status === "Custom" && (
+                  <form className={styles.form} onSubmit={handleCheckIn}>
+                    {/* Tanggal */}
                     <div className={styles.formGroup}>
-                      <label><Gear size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Multiplier Pengali Gaji (x Gaji)</label>
+                      <label><CalendarBlank size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Pilih Tanggal</label>
                       <input
-                        type="number"
-                        step="0.1"
-                        min="0"
+                        type="date"
                         className={styles.input}
-                        value={multiplier}
-                        onChange={(e) => setMultiplier(Number(e.target.value))}
-                        placeholder="Misal: 1.25 atau 2.5"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
                         required
                       />
                     </div>
-                  )}
 
-                  {/* Gaji Pokok */}
-                  <div className={styles.formGroup}>
-                    <label><Money size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Gaji Pokok (Rp)</label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={baseWage}
-                      onChange={(e) => setBaseWage(e.target.value)}
-                      min="0"
-                      required
-                    />
-                  </div>
+                    {/* Status Pill Selector */}
+                    <div className={styles.formGroup}>
+                      <label><Tag size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Status Kehadiran</label>
+                      <div className={styles.statusSelectorGrid}>
+                        {STATUS_OPTIONS.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            className={`${styles.statusPill} ${status === opt.value ? opt.activeClass : ''}`}
+                            onClick={() => handleStatusSelect(opt)}
+                          >
+                            <span className={styles.statusPillEmoji}>{opt.emoji}</span>
+                            <span className={styles.statusPillText}>
+                              <span className={styles.statusPillName}>{opt.label}</span>
+                              <span className={styles.statusPillMult}>{opt.mult}</span>
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-                  {/* Tambahan Lembur */}
-                  <div className={styles.formGroup}>
-                    <label><Lightning size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Bonus/Tambahan (Rp)</label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={extraPay}
-                      onChange={(e) => setExtraPay(e.target.value)}
-                      min="0"
-                    />
-                  </div>
+                    {/* Custom Multiplier (Only shown when Custom is selected) */}
+                    {status === "Custom" && (
+                      <div className={styles.formGroup}>
+                        <label><Gear size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Multiplier Pengali Gaji (x Gaji)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          className={styles.input}
+                          value={multiplier}
+                          onChange={(e) => setMultiplier(Number(e.target.value))}
+                          placeholder="Misal: 1.25 atau 2.5"
+                          required
+                        />
+                      </div>
+                    )}
 
-                  {/* Catatan */}
-                  <div className={styles.formGroup}>
-                    <label><Notepad size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Catatan (Opsional)</label>
-                    <input
-                      type="text"
-                      className={styles.input}
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Misal: Lembur bongkar muat..."
-                    />
-                  </div>
+                    {/* Gaji Pokok */}
+                    <div className={styles.formGroup}>
+                      <label><Money size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Gaji Pokok (Rp)</label>
+                      <input
+                        type="number"
+                        className={styles.input}
+                        value={baseWage}
+                        onChange={(e) => setBaseWage(e.target.value)}
+                        min="0"
+                        required
+                      />
+                    </div>
 
-                  {/* Summary */}
-                  <div className={styles.summaryBox}>
-                    Total Gaji Hari Ini
-                    <strong>{showBalances ? formatRupiah(currentTotal) : 'Rp ••••••••'}</strong>
-                  </div>
+                    {/* Tambahan Lembur */}
+                    <div className={styles.formGroup}>
+                      <label><Lightning size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Bonus/Tambahan (Rp)</label>
+                      <input
+                        type="number"
+                        className={styles.input}
+                        value={extraPay}
+                        onChange={(e) => setExtraPay(e.target.value)}
+                        min="0"
+                      />
+                    </div>
 
-                  <button type="submit" className={styles.btnPrimary} disabled={submitting}>
-                    {submitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />}
-                    {existingRecordForSelectedDate ? "Update Absensi" : "Simpan Absensi"}
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
+                    {/* Catatan */}
+                    <div className={styles.formGroup}>
+                      <label><Notepad size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Catatan (Opsional)</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="Misal: Lembur bongkar muat..."
+                      />
+                    </div>
 
-          {/* =================== TAB: HISTORY =================== */}
+                    {/* Summary */}
+                    <div className={styles.summaryBox}>
+                      Total Gaji Hari Ini
+                      <strong>{showBalances ? formatRupiah(currentTotal) : 'Rp ••••••••'}</strong>
+                    </div>
+
+                    <button type="submit" className={styles.btnPrimary} disabled={submitting}>
+                      {submitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />}
+                      {existingRecordForSelectedDate ? "Update Absensi" : "Simpan Absensi"}
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                /* Form Kasbon */
+                <div className={styles.panel}>
+                  <h2 className={styles.panelTitle}>
+                    <Coins size={22} weight="fill" style={{ color: "#EF4444" }} />
+                    Input Kasbon Pekerja
+                  </h2>
+
+                  <form className={styles.form} onSubmit={handleCreateCashbon}>
+                    {/* Tanggal Kasbon */}
+                    <div className={styles.formGroup}>
+                      <label><CalendarBlank size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Pilih Tanggal Kasbon</label>
+                      <input
+                        type="date"
+                        className={styles.input}
+                        value={cashbonDate}
+                        onChange={(e) => setCashbonDate(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    {/* Nominal Kasbon */}
+                    <div className={styles.formGroup}>
+                      <label><Money size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "#EF4444" }} /> Nominal Kasbon (Rp)</label>
+                      <input
+                        type="number"
+                        className={styles.input}
+                        value={cashbonAmount}
+                        onChange={(e) => setCashbonAmount(e.target.value)}
+                        placeholder="Misal: 50000"
+                        min="1"
+                        required
+                      />
+                    </div>
+
+                    {/* Keperluan/Catatan */}
+                    <div className={styles.formGroup}>
+                      <label><Notepad size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Keperluan / Keterangan (Opsional)</label>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={cashbonReason}
+                        onChange={(e) => setCashbonReason(e.target.value)}
+                        placeholder="Misal: Beli bensin, keperluan mendadak..."
+                      />
+                    </div>
+
+                    {/* Summary Box Kasbon */}
+                    <div className={styles.summaryBoxCashbon}>
+                      Kasbon Ini Akan Memotong Saldo Periode Berjalan
+                      <strong>{showBalances ? (cashbonAmount ? formatRupiah(Number(cashbonAmount)) : 'Rp 0') : 'Rp ••••••••'}</strong>
+                    </div>
+
+                    <button type="submit" className={styles.btnDanger} disabled={cashbonSubmitting}>
+                      {cashbonSubmitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <Coins size={20} weight="fill" />}
+                      Simpan Kasbon �          {/* =================== TAB: HISTORY =================== */}
           {activeTab === "history" && (
             <div className={styles.tabContentWrapper}>
               <div style={{ marginBottom: '16px' }}>
                 <h1 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0F172A', margin: '0 0 4px', letterSpacing: '-0.5px' }}>
-                  Riwayat Absensi
+                  Riwayat Transaksi
                 </h1>
-                <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600 }}>Kelola dan pantau absensi Anda</div>
+                <div style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600 }}>Kelola absensi, kasbon, dan arsip gajian Anda</div>
               </div>
 
-              <div className={styles.tabSwitcher}>
+              {/* Sub Tab Navigation */}
+              <div className={styles.historySubNav}>
                 <button
-                  className={`${styles.tabSwitchBtn} ${historyTab === 'active' ? styles.tabSwitchBtnActive : ''}`}
-                  onClick={() => setHistoryTab('active')}
+                  type="button"
+                  className={`${styles.historySubBtn} ${historySubTab === 'attendance' ? styles.historySubBtnActive : ''}`}
+                  onClick={() => setHistorySubTab('attendance')}
                 >
-                  <BookBookmark size={18} weight="fill" style={{ marginRight: "6px", verticalAlign: "-4px" }} /> Buku Aktif
+                  <BookBookmark size={16} weight="fill" />
+                  <span>Absensi ({data?.activeAttendances?.length || 0})</span>
                 </button>
+
                 <button
-                  className={`${styles.tabSwitchBtn} ${historyTab === 'archive' ? styles.tabSwitchBtnActive : ''}`}
-                  onClick={() => setHistoryTab('archive')}
+                  type="button"
+                  className={`${styles.historySubBtn} ${historySubTab === 'cashbon' ? styles.historySubBtnActiveCashbon : ''}`}
+                  onClick={() => setHistorySubTab('cashbon')}
                 >
-                  <Archive size={18} weight="fill" style={{ marginRight: "6px", verticalAlign: "-4px" }} /> Arsip Gajian
+                  <Coins size={16} weight="fill" />
+                  <span>Kasbon ({data?.activeCashbons?.length || 0})</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={`${styles.historySubBtn} ${historySubTab === 'archive' ? styles.historySubBtnActive : ''}`}
+                  onClick={() => setHistorySubTab('archive')}
+                >
+                  <Archive size={16} weight="fill" />
+                  <span>Arsip Gajian</span>
                 </button>
               </div>
 
-              {/* Buku Aktif */}
-              {historyTab === "active" && (
-                <div className={styles.tabContentWrapper}>
-                  <button className={styles.btnCloseBook} onClick={handleCloseBook} style={{ marginBottom: '12px' }}>
-                    <Coins size={22} weight="fill" style={{ marginRight: "8px", verticalAlign: "-5px" }} /> Tutup Buku & Gajian Sekarang
-                  </button>
-                  <div className={styles.panel}>
-                    <h3 className={styles.listTitle}>Riwayat Berjalan ({data?.activeAttendances?.length || 0} data)</h3>
-                    {data?.activeAttendances?.length === 0 ? (
-                      <div className={styles.emptyStateContainer}>
-                        <div className={styles.emptyStateIcon}><Package size={36} weight="fill" /></div>
-                        <span className={styles.emptyStateText}>Buku absen Anda masih kosong.</span>
-                      </div>
-                    ) : (
-                      <div className={styles.historyList}>
-                        {data?.activeAttendances?.map(att => renderAttendanceCard(att, true))}
-                      </div>
-                    )}
-                  </div>
+              {/* Tutup Buku Button (on attendance and cashbon subtabs) */}
+              {historySubTab !== 'archive' && (
+                <button className={styles.btnCloseBook} onClick={handleCloseBook} style={{ marginBottom: '12px' }}>
+                  <Coins size={22} weight="fill" style={{ marginRight: "8px", verticalAlign: "-5px" }} /> Tutup Buku & Gajian Sekarang
+                </button>
+              )}
+
+              {/* Subtab: Absensi */}
+              {historySubTab === "attendance" && (
+                <div className={styles.panel}>
+                  <h3 className={styles.listTitle}>Riwayat Absensi Berjalan</h3>
+                  {data?.activeAttendances?.length === 0 ? (
+                    <div className={styles.emptyStateContainer}>
+                      <div className={styles.emptyStateIcon}><Package size={36} weight="fill" /></div>
+                      <span className={styles.emptyStateText}>Buku absen Anda masih kosong.</span>
+                    </div>
+                  ) : (
+                    <div className={styles.historyList}>
+                      {data?.activeAttendances?.map(att => renderAttendanceCard(att, true))}
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Arsip */}
+              {/* Subtab: Kasbon */}
+              {historySubTab === "cashbon" && (
+                <div className={styles.panel}>
+                  <h3 className={styles.listTitle}>Riwayat Kasbon Berjalan</h3>
+                  {data?.activeCashbons?.length === 0 ? (
+                    <div className={styles.emptyStateContainer}>
+                      <div className={styles.emptyStateIcon}><Coins size={36} weight="fill" style={{ color: "#EF4444" }} /></div>
+                      <span className={styles.emptyStateText}>Belum ada catatan kasbon di periode ini.</span>
+                    </div>
+                  ) : (
+                    <div className={styles.historyList}>
+                      {data?.activeCashbons?.map(cashbon => renderCashbonCard(cashbon, true))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Subtab: Arsip Gajian */}
+              {historySubTab === "archive" && (
+                <div className={`${styles.panel} ${styles.tabContentWrapper}`}>rsip */}
               {historyTab === "archive" && (
                 <div className={`${styles.panel} ${styles.tabContentWrapper}`}>
                   <h3 className={styles.listTitle}>Riwayat Faktur Gaji</h3>

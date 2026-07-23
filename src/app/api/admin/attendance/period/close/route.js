@@ -10,7 +10,8 @@ export async function POST(req) {
     const activePeriods = await prisma.workerPayrollPeriod.findMany({
       where: { isClosed: false },
       include: {
-        attendances: true
+        attendances: true,
+        cashbons: true
       }
     });
 
@@ -23,14 +24,16 @@ export async function POST(req) {
     // Transaction to safely close all periods
     await prisma.$transaction(async (tx) => {
       for (const period of activePeriods) {
-        const totalAmount = period.attendances.reduce((sum, att) => sum + att.totalPay, 0);
+        const totalGross = period.attendances.reduce((sum, att) => sum + att.totalPay, 0);
+        const totalCashbon = period.cashbons ? period.cashbons.reduce((sum, c) => sum + c.amount, 0) : 0;
+        const totalNet = totalGross - totalCashbon;
 
         const updated = await tx.workerPayrollPeriod.update({
           where: { id: period.id },
           data: {
             isClosed: true,
             endDate: new Date(),
-            totalAmount: totalAmount
+            totalAmount: totalNet
           }
         });
         closedPeriods.push(updated);

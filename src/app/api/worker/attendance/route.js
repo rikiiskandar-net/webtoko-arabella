@@ -113,12 +113,24 @@ export async function GET(req) {
       orderBy: { date: 'asc' }
     });
 
-    // Get closed periods and their attendances
+    // Get active cashbons
+    const activeCashbons = await prisma.workerCashbon.findMany({
+      where: {
+        payrollPeriodId: activePeriod.id,
+        workerId: session.id
+      },
+      orderBy: { date: 'asc' }
+    });
+
+    // Get closed periods and their attendances & cashbons
     const closedPeriods = await prisma.workerPayrollPeriod.findMany({
       where: { workerId: session.id, isClosed: true },
       orderBy: { endDate: 'desc' },
       include: {
         attendances: {
+          orderBy: { date: 'asc' }
+        },
+        cashbons: {
           orderBy: { date: 'asc' }
         }
       }
@@ -132,6 +144,7 @@ export async function GET(req) {
     return NextResponse.json({
       activePeriod,
       activeAttendances,
+      activeCashbons,
       closedPeriods,
       baseWage: worker?.baseWage || 0
     });

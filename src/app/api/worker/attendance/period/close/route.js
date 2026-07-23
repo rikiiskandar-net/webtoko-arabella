@@ -27,11 +27,17 @@ export async function POST(req) {
       return NextResponse.json({ error: "Period already closed" }, { status: 400 });
     }
 
-    // Calculate total amount from attendances
+    // Calculate total amount from attendances minus cashbons
     const attendances = await prisma.workerAttendance.findMany({
       where: { payrollPeriodId: periodId }
     });
-    const totalAmount = attendances.reduce((sum, att) => sum + att.totalPay, 0);
+    const cashbons = await prisma.workerCashbon.findMany({
+      where: { payrollPeriodId: periodId }
+    });
+
+    const totalGross = attendances.reduce((sum, att) => sum + att.totalPay, 0);
+    const totalCashbon = cashbons.reduce((sum, c) => sum + c.amount, 0);
+    const totalNet = totalGross - totalCashbon;
 
     // Update period to closed
     const updatedPeriod = await prisma.workerPayrollPeriod.update({
@@ -39,7 +45,7 @@ export async function POST(req) {
       data: {
         isClosed: true,
         endDate: new Date(),
-        totalAmount: totalAmount
+        totalAmount: totalNet
       }
     });
 
