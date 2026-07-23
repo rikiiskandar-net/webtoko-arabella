@@ -993,8 +993,6 @@ export default function WorkerDashboard() {
 
               {/* Subtab: Arsip Gajian */}
               {historySubTab === "archive" && (
-                <div className={`${styles.panel} ${styles.tabContentWrapper}`}>rsip */}
-              {historyTab === "archive" && (
                 <div className={`${styles.panel} ${styles.tabContentWrapper}`}>
                   <h3 className={styles.listTitle}>Riwayat Faktur Gaji</h3>
                   {data?.closedPeriods?.length === 0 ? (
