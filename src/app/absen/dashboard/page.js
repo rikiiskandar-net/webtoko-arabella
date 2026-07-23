@@ -381,28 +381,29 @@ export default function WorkerDashboard() {
     return (
       <div className={`${styles.historyCardWrapper} ${isExpanded ? styles.historyCardWrapperActive : ''}`} key={att.id}>
         <div className={styles.historyCardHeader} onClick={() => toggleCard(att.id)}>
-          <div className={styles.historyLeft}>
-            <span className={styles.historyDate}>
-              {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </span>
-            <span className={`${styles.historyBadge} ${badge.cls}`}>
-              {badge.emoji} {badge.label}
-            </span>
-          </div>
-          <div className={styles.historyRight}>
+          <span className={styles.historyDate}>
+            {new Date(att.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </span>
+
+          <span className={`${styles.historyBadge} ${badge.cls}`}>
+            {badge.emoji} {badge.label}
+          </span>
+
+          <div className={styles.historyRightGroup}>
             <span className={styles.historyPay}>{showBalances ? formatRupiah(att.totalPay) : 'Rp •••••'}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {isActiveBook && (
-                <button
-                  className={styles.deleteBtn}
-                  onClick={(e) => { e.stopPropagation(); handleDeleteAttendance(att.id); }}
-                  title="Hapus Absen"
-                >
-                  <Trash size={16} weight="fill" />
-                </button>
-              )}
+            {isActiveBook && (
+              <button
+                type="button"
+                className={styles.deleteBtn}
+                onClick={(e) => { e.stopPropagation(); handleDeleteAttendance(att.id); }}
+                title="Hapus Absen"
+              >
+                <Trash size={16} weight="fill" />
+              </button>
+            )}
+            <span className={styles.expandIcon}>
               {isExpanded ? <CaretUp size={16} color="#94a3b8" weight="fill" /> : <CaretDown size={16} color="#94a3b8" weight="fill" />}
-            </div>
+            </span>
           </div>
         </div>
 
