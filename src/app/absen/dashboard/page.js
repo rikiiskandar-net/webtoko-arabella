@@ -92,11 +92,16 @@ export default function WorkerDashboard() {
         role: meData.user.role || ""
       });
       setSettingsForm(prev => ({ ...prev, email: meData.user.email || "" }));
-      setWageForm({ baseWage: meData.user.baseWage || 100000 });
+      const currentWage = meData.user.baseWage !== undefined && meData.user.baseWage !== null ? meData.user.baseWage : 100000;
+      setWageForm({ baseWage: currentWage });
       if (attendRes.ok) {
         const attData = await attendRes.json();
         setData(attData);
-        if (attData.defaultWage) setBaseWage(attData.defaultWage);
+        if (attData.baseWage !== undefined && attData.baseWage !== null) {
+          setBaseWage(attData.baseWage);
+        } else {
+          setBaseWage(currentWage);
+        }
       }
     } catch {
       router.replace("/absen");
@@ -226,8 +231,10 @@ export default function WorkerDashboard() {
       });
       if (res.ok) {
         const result = await res.json();
+        const newWage = result.user.baseWage !== undefined && result.user.baseWage !== null ? result.user.baseWage : 100000;
         setUser(result.user);
-        setBaseWage(result.user.baseWage || 100000); // Sync to attendance form
+        setBaseWage(newWage);
+        setWageForm({ baseWage: newWage });
         setProfileViewMode("info");
         showToast("Gaji Harian berhasil diatur! 💰");
       } else {

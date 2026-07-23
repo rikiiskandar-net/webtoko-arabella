@@ -14,7 +14,7 @@ export async function GET() {
   try {
     const worker = await prisma.worker.findUnique({
       where: { id: session.id },
-      select: { id: true, email: true, name: true, role: true, phone: true, address: true }
+      select: { id: true, email: true, name: true, role: true, phone: true, address: true, baseWage: true }
     });
 
     if (!worker) {
