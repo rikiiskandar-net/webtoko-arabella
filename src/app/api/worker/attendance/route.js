@@ -28,7 +28,7 @@ export async function POST(req) {
     recordDate.setUTCHours(0, 0, 0, 0);
 
     const calcBaseWage = baseWage !== undefined ? Number(baseWage) : Number(worker.baseWage);
-    const calcMultiplier = multiplier !== undefined ? Number(multiplier) : (status === "Kerja Normal" || status === "Hadir" ? 1.0 : (status === "Setengah Hari" ? 0.5 : (status === "Lembur Penuh" ? 2.0 : 0.0)));
+    const calcMultiplier = multiplier !== undefined && multiplier !== null ? Number(multiplier) : (status === "Kerja Normal" || status === "Hadir" ? 1.0 : (status === "Kerja 1.5 Hari" ? 1.5 : (status === "Setengah Hari" ? 0.5 : (status === "Lembur Penuh" || status === "Kerja Lembur" ? 2.0 : 0.0))));
     const calcExtraPay = extraPay !== undefined ? Number(extraPay) : 0;
     
     const totalPay = Math.round(calcBaseWage * calcMultiplier) + calcExtraPay;

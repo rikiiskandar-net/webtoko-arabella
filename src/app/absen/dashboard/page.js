@@ -116,6 +116,35 @@ export default function WorkerDashboard() {
     return () => clearTimeout(splashTimer);
   }, []);
 
+  // Auto-sync form when selectedDate or activeAttendances changes
+  useEffect(() => {
+    if (!data?.activeAttendances) return;
+
+    const existing = data.activeAttendances.find(att => {
+      if (!att.date) return false;
+      const d = new Date(att.date);
+      const year = d.getUTCFullYear();
+      const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(d.getUTCDate()).padStart(2, '0');
+      const dStr = `${year}-${month}-${day}`;
+      return dStr === selectedDate;
+    });
+
+    if (existing) {
+      setStatus(existing.status || "Kerja Normal");
+      setBaseWage(existing.baseWage ?? (user?.baseWage ?? 100000));
+      setMultiplier(existing.multiplier ?? 1);
+      setExtraPay(existing.extraPay ?? 0);
+      setNotes(existing.notes || "");
+    } else {
+      setStatus("Kerja Normal");
+      setBaseWage(user?.baseWage ?? 100000);
+      setMultiplier(1);
+      setExtraPay(0);
+      setNotes("");
+    }
+  }, [selectedDate, data]);
+
   // Status config
   const STATUS_OPTIONS = [
     { value: "Kerja Normal",   emoji: <CheckCircle weight="fill" size={24} color="#059669" />, label: "Kerja Normal",  mult: "1x Gaji",   multiplierVal: 1,   activeClass: styles.statusPillNormalActive },
@@ -135,6 +164,7 @@ export default function WorkerDashboard() {
     e.preventDefault();
     setSubmitting(true);
     try {
+      const numWage = Number(baseWage);
       const res = await fetch("/api/worker/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -142,7 +172,7 @@ export default function WorkerDashboard() {
           periodId: data?.activePeriod?.id,
           date: selectedDate, 
           status, 
-          baseWage: Number(baseWage), 
+          baseWage: numWage, 
           multiplier: Number(multiplier), 
           extraPay: Number(extraPay), 
           notes 
@@ -150,10 +180,16 @@ export default function WorkerDashboard() {
       });
       const result = await res.json();
       if (res.ok) {
+        // If worker edited baseWage, also update default baseWage in profile
+        if (user && numWage > 0 && numWage !== user.baseWage) {
+          fetch("/api/worker/auth/settings", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ baseWage: numWage })
+          }).catch(() => {});
+        }
+
         showToast("Absensi berhasil disimpan! 🎉");
-        setNotes("");
-        setExtraPay(0);
-        setSelectedDate(getLocalToday());
         await fetchData();
       } else {
         showToast(result.error || "Gagal menyimpan absensi", "error");
@@ -430,6 +466,15 @@ export default function WorkerDashboard() {
   const totalHarian = data?.activeAttendances?.reduce((sum, item) => sum + (Number(item.multiplier) || 0), 0) || 0;
   const todayStr = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
 
+  const existingRecordForSelectedDate = data?.activeAttendances?.find(att => {
+    if (!att.date) return false;
+    const d = new Date(att.date);
+    const year = d.getUTCFullYear();
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}` === selectedDate;
+  });
+
   return (
     <>
       {/* Toast */}
@@ -553,17 +598,19 @@ export default function WorkerDashboard() {
                   <div className={styles.miniCardIcon}>
                     <CheckSquareOffset size={20} weight="fill" />
                   </div>
-                  <div className={styles.miniCardValue}>{totalHarian}</div>
-                  <div className={styles.miniCardLabel}>Total Harian</div>
+                  <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
+                    {data?.activeAttendances?.length || 0} Hari <span style={{ fontSize: '0.8rem', opacity: 0.85 }}>({totalHarian} HK)</span>
+                  </div>
+                  <div className={styles.miniCardLabel}>Total Kehadiran</div>
                 </div>
                 <div className={styles.miniCard + ' ' + styles.miniCardOrange}>
                   <div className={styles.miniCardIcon}>
                     <TrendUp size={20} weight="fill" />
                   </div>
                   <div className={styles.miniCardValue} style={{ fontSize: '1rem' }}>
-                    {showBalances ? formatRupiah(currentTotal).replace('Rp\u00a0', 'Rp') : 'Rp •••••'}
+                    {showBalances ? formatRupiah(periodPay).replace('Rp\u00a0', 'Rp') : 'Rp •••••'}
                   </div>
-                  <div className={styles.miniCardLabel}>Estimasi Hari Ini</div>
+                  <div className={styles.miniCardLabel}>Total Gaji Periode Ini</div>
                 </div>
               </div>
 
@@ -571,7 +618,7 @@ export default function WorkerDashboard() {
               <div className={styles.panel}>
                 <h2 className={styles.panelTitle}>
                   <Timer size={22} weight="fill" className={styles.iconBlue} />
-                  Catat Kehadiran
+                  {existingRecordForSelectedDate ? "Edit Absensi Kehadiran" : "Catat Kehadiran"}
                 </h2>
 
                 <form className={styles.form} onSubmit={handleCheckIn}>
@@ -607,6 +654,23 @@ export default function WorkerDashboard() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Custom Multiplier (Only shown when Custom is selected) */}
+                  {status === "Custom" && (
+                    <div className={styles.formGroup}>
+                      <label><Gear size={16} weight="fill" style={{ marginRight: "6px", verticalAlign: "-3px", color: "var(--primary)" }} /> Multiplier Pengali Gaji (x Gaji)</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        className={styles.input}
+                        value={multiplier}
+                        onChange={(e) => setMultiplier(Number(e.target.value))}
+                        placeholder="Misal: 1.25 atau 2.5"
+                        required
+                      />
+                    </div>
+                  )}
 
                   {/* Gaji Pokok */}
                   <div className={styles.formGroup}>
@@ -653,7 +717,7 @@ export default function WorkerDashboard() {
 
                   <button type="submit" className={styles.btnPrimary} disabled={submitting}>
                     {submitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <FloppyDisk size={20} weight="fill" />}
-                    Simpan Absensi
+                    {existingRecordForSelectedDate ? "Update Absensi" : "Simpan Absensi"}
                   </button>
                 </form>
               </div>
