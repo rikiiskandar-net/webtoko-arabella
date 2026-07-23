@@ -902,7 +902,15 @@ export default function WorkerDashboard() {
 
                     <button type="submit" className={styles.btnDanger} disabled={cashbonSubmitting}>
                       {cashbonSubmitting ? <Spinner size={20} className={styles.spinner} weight="fill" /> : <Coins size={20} weight="fill" />}
-                      Simpan Kasbon ð          {/* =================== TAB: HISTORY =================== */}
+                      Simpan Kasbon ðŸ’¸
+                    </button>
+                  </form>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* =================== TAB: HISTORY =================== */}
           {activeTab === "history" && (
             <div className={styles.tabContentWrapper}>
               <div style={{ marginBottom: '16px' }}>
