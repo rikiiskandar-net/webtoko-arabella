@@ -1,0 +1,62 @@
+.container {
+  min-height: 100vh;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: var(--font-app, system-ui, -apple-system, sans-serif);
+  padding: 40px 20px;
+}
+
+.header {
+  max-width: 900px;
+  margin: 0 auto 32px auto;
+  text-align: center;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #4F46E5;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.placeholderCard {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 40px;
+  border: 1.5px solid #E2E8F0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.placeholderCard h2 {
+  font-size: 1.5rem;
+  color: #1E293B;
+  margin-bottom: 12px;
+  font-weight: 800;
+}
+
+.placeholderCard p {
+  color: #64748B;
+  font-size: 0.95rem;
+  margin: 8px 0;
+}
+
+.placeholderCard code {
+  background: #EEF2FF;
+  color: #4F46E5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
