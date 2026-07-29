@@ -1116,39 +1116,57 @@ export default function CashbookClient() {
                     />
                   </div>
 
-                  {/* Quantity */}
+                  {/* Quantity & Unit */}
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>
                       {selectedCategory === "EMAS"
-                        ? "Berat (Gram)"
+                        ? "Berat & Satuan"
                         : selectedCategory === "SAPI"
                         ? "Jumlah (Ekor)"
                         : "Jumlah (Unit)"}
                     </label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0.1"
-                      className={styles.formInput}
-                      value={assetForm.quantity}
-                      onChange={(e) =>
-                        setAssetForm({ ...assetForm, quantity: e.target.value })
-                      }
-                      required
-                    />
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        className={styles.formInput}
+                        value={assetForm.quantity}
+                        onChange={(e) =>
+                          setAssetForm({ ...assetForm, quantity: e.target.value })
+                        }
+                        required
+                      />
+                      {selectedCategory === "EMAS" && (
+                        <select
+                          className={styles.sortSelect}
+                          style={{ minWidth: "95px", padding: "0.65rem 0.5rem" }}
+                          value={assetForm.unit || "gram"}
+                          onChange={(e) =>
+                            setAssetForm({ ...assetForm, unit: e.target.value })
+                          }
+                        >
+                          <option value="gram">Gram (g)</option>
+                          <option value="mg">Milligram (mg)</option>
+                          <option value="mili">Mili</option>
+                        </select>
+                      )}
+                    </div>
                   </div>
 
                   {/* Nominal (Rp) */}
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>
-                      {selectedCategory === "EMAS" || selectedCategory === "SAPI"
-                        ? "Harga per Unit/Gram (Rp)"
+                      {selectedCategory === "EMAS"
+                        ? "Harga Langsung / Total Nilai (Rp)"
+                        : selectedCategory === "SAPI"
+                        ? "Harga per Ekor (Rp)"
                         : "Nominal Rupiah (Rp)"}
                     </label>
                     <input
                       type="number"
                       className={styles.formInput}
-                      placeholder="Misal: 1300000"
+                      placeholder={selectedCategory === "EMAS" ? "Misal: 6500000" : "Misal: 1300000"}
                       value={assetForm.amount}
                       onChange={(e) =>
                         setAssetForm({ ...assetForm, amount: e.target.value })
@@ -1223,7 +1241,7 @@ export default function CashbookClient() {
                               </span>
                             </td>
                             <td className={styles.amountText}>
-                              {formatRp(item.amount)}
+                              {selectedCategory === "SAPI" ? formatRp(item.amount) : selectedCategory === "EMAS" ? "Harga Langsung" : formatRp(item.amount)}
                             </td>
                             <td>
                               <span
@@ -1233,7 +1251,7 @@ export default function CashbookClient() {
                                     : styles.amountIncome
                                 }`}
                               >
-                                {formatRp((item.amount || 0) * (item.quantity || 1))}
+                                {formatRp(selectedCategory === "SAPI" ? (item.amount || 0) * (item.quantity || 1) : item.amount || 0)}
                               </span>
                             </td>
                             <td>

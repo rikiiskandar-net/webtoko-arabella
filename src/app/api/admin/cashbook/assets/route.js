@@ -26,7 +26,8 @@ export async function GET(req) {
 
     assets.forEach((item) => {
       const cat = (item.category || "").toUpperCase();
-      const val = (Number(item.amount) || 0) * (Number(item.quantity) || 1);
+      const isMultiplied = cat === "SAPI";
+      const val = isMultiplied ? (Number(item.amount) || 0) * (Number(item.quantity) || 1) : Number(item.amount) || 0;
 
       if (cat === "EMAS") {
         totalEmasRp += val;
