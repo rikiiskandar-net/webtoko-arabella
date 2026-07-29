@@ -708,7 +708,10 @@ export default function CashbookClient() {
             </>
           )}
 
-          {/* ======================== MONTHLY TAB =============              {/* Month/Year Selector */}
+          {/* ======================== MONTHLY TAB ======================== */}
+          {activeTab === "monthly" && (
+            <>
+              {/* Month/Year Selector */}
               <div className={styles.monthSelectorRow} style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
                 <div className={styles.selectGroup} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <label className={styles.selectLabel} style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--foreground)" }}>Bulan:</label>
@@ -840,9 +843,6 @@ export default function CashbookClient() {
                         </tbody>
                       </table>
                     </div>
-                  )}
-                </>
-              )}          </div>
                   )}
                 </>
               ) : null}
