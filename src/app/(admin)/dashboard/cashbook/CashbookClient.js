@@ -488,7 +488,7 @@ export default function CashbookClient() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  justify.content: "center",
+                  justifyContent: "center",
                   gap: "0.5rem",
                 }}
               >
