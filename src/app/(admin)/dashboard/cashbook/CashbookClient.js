@@ -25,7 +25,9 @@ import {
   Landmark,
   HandCoins,
   Receipt,
-  Scale
+  Scale,
+  PlusCircle,
+  Check
 } from "lucide-react";
 import styles from "./Cashbook.module.css";
 
@@ -72,6 +74,8 @@ const toLocalDateTimeString = (d) => {
 export default function CashbookClient() {
   // Navigation View State
   const [activeView, setActiveView] = useState("cashbook"); // "cashbook" or "assets"
+  const [assetViewMode, setAssetViewMode] = useState("overview"); // "overview" (5 Grid Cards) or "category_detail" (Full Table)
+  const [selectedCategory, setSelectedCategory] = useState("EMAS"); // "EMAS", "SAPI", "TABUNGAN", "HUTANG", "PIUTANG"
 
   // Cashbook States
   const [activeTab, setActiveTab] = useState("daily");
@@ -103,7 +107,6 @@ export default function CashbookClient() {
   const [familyAssets, setFamilyAssets] = useState([]);
   const [assetSummary, setAssetSummary] = useState({});
   const [assetLoading, setAssetLoading] = useState(true);
-  const [assetModalCategory, setAssetModalCategory] = useState(null); // e.g. "EMAS", "SAPI", "TABUNGAN", "HUTANG", "PIUTANG"
   const [editingAssetItem, setEditingAssetItem] = useState(null);
   const [assetForm, setAssetForm] = useState({
     id: "",
@@ -285,9 +288,10 @@ export default function CashbookClient() {
   const yearOptions = [];
   for (let y = currentYear - 3; y <= currentYear + 1; y++) yearOptions.push(y);
 
-  // Asset Modal & CRUD Handlers
-  const openCategoryAssetModal = (categoryKey) => {
-    setAssetModalCategory(categoryKey);
+  // Asset Category Detail Handlers
+  const openCategoryDetailView = (categoryKey) => {
+    setSelectedCategory(categoryKey);
+    setAssetViewMode("category_detail");
     setEditingAssetItem(null);
 
     let defaultUnit = "unit";
@@ -317,6 +321,8 @@ export default function CashbookClient() {
       amount: String(item.amount || 0),
       notes: item.notes || "",
     });
+    // Smooth scroll to top form
+    window.scrollTo({ top: 200, behavior: "smooth" });
   };
 
   const handleSaveAssetItem = async (e) => {
@@ -332,7 +338,7 @@ export default function CashbookClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: assetForm.id || undefined,
-          category: assetForm.category || assetModalCategory,
+          category: selectedCategory,
           name: assetForm.name,
           quantity: Number(assetForm.quantity) || 1,
           unit: assetForm.unit || "unit",
@@ -343,14 +349,14 @@ export default function CashbookClient() {
 
       if (res.ok) {
         let defaultUnit = "unit";
-        if (assetModalCategory === "EMAS") defaultUnit = "gram";
-        else if (assetModalCategory === "SAPI") defaultUnit = "ekor";
+        if (selectedCategory === "EMAS") defaultUnit = "gram";
+        else if (selectedCategory === "SAPI") defaultUnit = "ekor";
 
         setAssetForm({
           id: "",
-          category: assetModalCategory,
+          category: selectedCategory,
           name: "",
-          quantity: "1",
+          quantity: selectedCategory === "TABUNGAN" || selectedCategory === "HUTANG" || selectedCategory === "PIUTANG" ? "1" : "1",
           unit: defaultUnit,
           amount: "",
           notes: "",
@@ -372,6 +378,9 @@ export default function CashbookClient() {
         method: "DELETE",
       });
       if (res.ok) {
+        if (editingAssetItem?.id === id) {
+          setEditingAssetItem(null);
+        }
         await fetchFamilyAssets();
       }
     } catch (err) {
@@ -379,28 +388,55 @@ export default function CashbookClient() {
     }
   };
 
-  // Filtered Assets for active modal category
+  // Filtered Assets for active category
   const categoryAssetsList = familyAssets.filter(
-    (a) => (a.category || "").toUpperCase() === (assetModalCategory || "").toUpperCase()
+    (a) => (a.category || "").toUpperCase() === (selectedCategory || "").toUpperCase()
   );
 
   return (
     <div>
       {/* Page Header */}
       <div className={styles.pageHeader}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <h2 className={styles.title}>
-            {activeView === "assets" ? "💎 Portofolio Aset Keluarga" : "📒 Buku Kas"}
+            {activeView === "assets"
+              ? assetViewMode === "category_detail"
+                ? `💎 Detail Kategori: ${
+                    selectedCategory === "EMAS"
+                      ? "Perhiasan Emas"
+                      : selectedCategory === "SAPI"
+                      ? "Ternak Sapi"
+                      : selectedCategory === "TABUNGAN"
+                      ? "Tabungan Bank"
+                      : selectedCategory === "HUTANG"
+                      ? "Hutang Kita"
+                      : "Piutang Orang"
+                  }`
+                : "💎 Portofolio Aset Keluarga"
+              : "📒 Buku Kas"}
           </h2>
         </div>
+
         {activeView === "assets" && (
-          <button
-            type="button"
-            className={styles.btnBackToCashbook}
-            onClick={() => setActiveView("cashbook")}
-          >
-            <ArrowLeft size={18} /> Kembali ke Buku Kas
-          </button>
+          <div>
+            {assetViewMode === "category_detail" ? (
+              <button
+                type="button"
+                className={styles.btnBackToCashbook}
+                onClick={() => setAssetViewMode("overview")}
+              >
+                <ArrowLeft size={18} /> Kembali ke Portofolio Aset
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.btnBackToCashbook}
+                onClick={() => setActiveView("cashbook")}
+              >
+                <ArrowLeft size={18} /> Kembali ke Buku Kas
+              </button>
+            )}
+          </div>
         )}
       </div>
 
@@ -428,7 +464,10 @@ export default function CashbookClient() {
       {activeView === "cashbook" && (
         <div
           className={styles.assetBannerCard}
-          onClick={() => setActiveView("assets")}
+          onClick={() => {
+            setActiveView("assets");
+            setAssetViewMode("overview");
+          }}
         >
           <div className={styles.assetBannerLeft}>
             <div className={styles.assetBannerIconWrapper}>
@@ -640,7 +679,10 @@ export default function CashbookClient() {
                             </span>
                           </td>
                           <td>
-                            <div className={styles.actionCell} style={{ justifyContent: "flex-end" }}>
+                            <div
+                              className={styles.actionCell}
+                              style={{ justifyContent: "flex-end" }}
+                            >
                               <button
                                 className={`${styles.iconBtn} ${styles.edit}`}
                                 onClick={() => openEditModal(entry)}
@@ -788,151 +830,429 @@ export default function CashbookClient() {
       )}
 
       {/* ========================================================================= */}
-      {/* VIEW 2: FAMILY ASSETS (HALAMAN ASET KELUARGA)                             */}
+      {/* VIEW 2: FAMILY ASSETS (OVERVIEW OR FULL-TABLE CATEGORY DETAIL)             */}
       {/* ========================================================================= */}
       {activeView === "assets" && (
         <div className={styles.assetsPageContainer}>
 
-          {/* Hero Net Worth Header Card */}
-          <div className={styles.assetNetWorthHero}>
-            <div className={styles.heroNetHeader}>
-              <div className={styles.heroNetBadge}>
-                <ShieldCheck size={16} /> ESTIMASI PORTOFOLIO KEUANGAN
-              </div>
-              <h3 className={styles.heroNetTitle}>Total Kekayaan Bersih Keluarga</h3>
-              <p className={styles.heroNetFormula}>
-                Formula: (Emas + Sapi + Tabungan + Piutang) &minus; Hutang Kita
-              </p>
-            </div>
-            <div className={styles.heroNetAmount}>
-              {formatRp(assetSummary?.netWorth || 0)}
-            </div>
-          </div>
-
-          {/* 5 Category Cards Grid */}
-          <div className={styles.assetCategoryGrid}>
-
-            {/* 1. PERHIASAN EMAS */}
-            <div
-              className={`${styles.assetCategoryCard} ${styles.cardEmas}`}
-              onClick={() => openCategoryAssetModal("EMAS")}
-            >
-              <div className={styles.catCardTop}>
-                <div className={styles.catCardIconBg}>
-                  <Gem size={26} color="#F59E0B" />
+          {/* ===== SUB-MODE A: OVERVIEW GRID (5 CATEGORY CARDS) ===== */}
+          {assetViewMode === "overview" && (
+            <>
+              {/* Hero Net Worth Header Card */}
+              <div className={styles.assetNetWorthHero}>
+                <div className={styles.heroNetHeader}>
+                  <div className={styles.heroNetBadge}>
+                    <ShieldCheck size={16} /> ESTIMASI PORTOFOLIO KEUANGAN
+                  </div>
+                  <h3 className={styles.heroNetTitle}>
+                    Total Kekayaan Bersih Keluarga
+                  </h3>
+                  <p className={styles.heroNetFormula}>
+                    Formula: (Emas + Sapi + Tabungan + Piutang) &minus; Hutang Kita
+                  </p>
                 </div>
-                <span className={styles.catCardBadge}>KATEGORI ASET</span>
-              </div>
-              <h4 className={styles.catCardTitle}>💎 Perhiasan Emas</h4>
-              <div className={styles.catCardQty}>
-                {assetSummary?.totalEmasGram || 0} Gram
-              </div>
-              <div className={styles.catCardValue}>
-                {formatRp(assetSummary?.totalEmasRp || 0)}
-              </div>
-              <div className={styles.catCardFooter}>
-                <span>Kelola & Detail</span>
-                <ChevronRight size={16} />
-              </div>
-            </div>
-
-            {/* 2. TERNAK SAPI */}
-            <div
-              className={`${styles.assetCategoryCard} ${styles.cardSapi}`}
-              onClick={() => openCategoryAssetModal("SAPI")}
-            >
-              <div className={styles.catCardTop}>
-                <div className={styles.catCardIconBg}>
-                  <Building size={26} color="#10B981" />
+                <div className={styles.heroNetAmount}>
+                  {formatRp(assetSummary?.netWorth || 0)}
                 </div>
-                <span className={styles.catCardBadge}>KATEGORI TERNAK</span>
               </div>
-              <h4 className={styles.catCardTitle}>🐄 Ternak Sapi</h4>
-              <div className={styles.catCardQty}>
-                {assetSummary?.totalSapiEkor || 0} Ekor
-              </div>
-              <div className={styles.catCardValue}>
-                {formatRp(assetSummary?.totalSapiRp || 0)}
-              </div>
-              <div className={styles.catCardFooter}>
-                <span>Kelola & Detail</span>
-                <ChevronRight size={16} />
-              </div>
-            </div>
 
-            {/* 3. TABUNGAN & SIMPANAN */}
-            <div
-              className={`${styles.assetCategoryCard} ${styles.cardTabungan}`}
-              onClick={() => openCategoryAssetModal("TABUNGAN")}
-            >
-              <div className={styles.catCardTop}>
-                <div className={styles.catCardIconBg}>
-                  <Landmark size={26} color="#3B82F6" />
+              {/* 5 Category Cards Grid */}
+              <div className={styles.assetCategoryGrid}>
+                {/* 1. PERHIASAN EMAS */}
+                <div
+                  className={`${styles.assetCategoryCard} ${styles.cardEmas}`}
+                  onClick={() => openCategoryDetailView("EMAS")}
+                >
+                  <div className={styles.catCardTop}>
+                    <div className={styles.catCardIconBg}>
+                      <Gem size={26} color="#F59E0B" />
+                    </div>
+                    <span className={styles.catCardBadge}>KATEGORI ASET</span>
+                  </div>
+                  <h4 className={styles.catCardTitle}>💎 Perhiasan Emas</h4>
+                  <div className={styles.catCardQty}>
+                    {assetSummary?.totalEmasGram || 0} Gram
+                  </div>
+                  <div className={styles.catCardValue}>
+                    {formatRp(assetSummary?.totalEmasRp || 0)}
+                  </div>
+                  <div className={styles.catCardFooter}>
+                    <span>Buka Halaman Data Tabel</span>
+                    <ChevronRight size={16} />
+                  </div>
                 </div>
-                <span className={styles.catCardBadge}>KATEGORI SIMPANAN</span>
-              </div>
-              <h4 className={styles.catCardTitle}>🏦 Tabungan & Bank</h4>
-              <div className={styles.catCardQty}>Tabungan Bank / Cash</div>
-              <div className={styles.catCardValue}>
-                {formatRp(assetSummary?.totalTabungan || 0)}
-              </div>
-              <div className={styles.catCardFooter}>
-                <span>Kelola & Detail</span>
-                <ChevronRight size={16} />
-              </div>
-            </div>
 
-            {/* 4. HUTANG KITA */}
-            <div
-              className={`${styles.assetCategoryCard} ${styles.cardHutang}`}
-              onClick={() => openCategoryAssetModal("HUTANG")}
-            >
-              <div className={styles.catCardTop}>
-                <div className={styles.catCardIconBg}>
-                  <Receipt size={26} color="#EF4444" />
+                {/* 2. TERNAK SAPI */}
+                <div
+                  className={`${styles.assetCategoryCard} ${styles.cardSapi}`}
+                  onClick={() => openCategoryDetailView("SAPI")}
+                >
+                  <div className={styles.catCardTop}>
+                    <div className={styles.catCardIconBg}>
+                      <Building size={26} color="#10B981" />
+                    </div>
+                    <span className={styles.catCardBadge}>KATEGORI TERNAK</span>
+                  </div>
+                  <h4 className={styles.catCardTitle}>🐄 Ternak Sapi</h4>
+                  <div className={styles.catCardQty}>
+                    {assetSummary?.totalSapiEkor || 0} Ekor
+                  </div>
+                  <div className={styles.catCardValue}>
+                    {formatRp(assetSummary?.totalSapiRp || 0)}
+                  </div>
+                  <div className={styles.catCardFooter}>
+                    <span>Buka Halaman Data Tabel</span>
+                    <ChevronRight size={16} />
+                  </div>
                 </div>
-                <span className={styles.catCardBadgeDanger}>KEWAJIBAN / UTANG</span>
-              </div>
-              <h4 className={styles.catCardTitle}>💸 Hutang Kita</h4>
-              <div className={styles.catCardQty}>Mengurangi Kekayaan</div>
-              <div className={styles.catCardValueDanger}>
-                {formatRp(assetSummary?.totalHutang || 0)}
-              </div>
-              <div className={styles.catCardFooter}>
-                <span>Kelola & Detail</span>
-                <ChevronRight size={16} />
-              </div>
-            </div>
 
-            {/* 5. PIUTANG (HUTANG ORANG) */}
-            <div
-              className={`${styles.assetCategoryCard} ${styles.cardPiutang}`}
-              onClick={() => openCategoryAssetModal("PIUTANG")}
-            >
-              <div className={styles.catCardTop}>
-                <div className={styles.catCardIconBg}>
-                  <HandCoins size={26} color="#8B5CF6" />
+                {/* 3. TABUNGAN & SIMPANAN */}
+                <div
+                  className={`${styles.assetCategoryCard} ${styles.cardTabungan}`}
+                  onClick={() => openCategoryDetailView("TABUNGAN")}
+                >
+                  <div className={styles.catCardTop}>
+                    <div className={styles.catCardIconBg}>
+                      <Landmark size={26} color="#3B82F6" />
+                    </div>
+                    <span className={styles.catCardBadge}>KATEGORI SIMPANAN</span>
+                  </div>
+                  <h4 className={styles.catCardTitle}>🏦 Tabungan & Bank</h4>
+                  <div className={styles.catCardQty}>Tabungan Bank / Cash</div>
+                  <div className={styles.catCardValue}>
+                    {formatRp(assetSummary?.totalTabungan || 0)}
+                  </div>
+                  <div className={styles.catCardFooter}>
+                    <span>Buka Halaman Data Tabel</span>
+                    <ChevronRight size={16} />
+                  </div>
                 </div>
-                <span className={styles.catCardBadge}>TAGIHAN PIUTANG</span>
-              </div>
-              <h4 className={styles.catCardTitle}>💰 Piutang (Hutang Orang)</h4>
-              <div className={styles.catCardQty}>Orang Utang Ke Kita</div>
-              <div className={styles.catCardValue}>
-                {formatRp(assetSummary?.totalPiutang || 0)}
-              </div>
-              <div className={styles.catCardFooter}>
-                <span>Kelola & Detail</span>
-                <ChevronRight size={16} />
-              </div>
-            </div>
 
-          </div>
+                {/* 4. HUTANG KITA */}
+                <div
+                  className={`${styles.assetCategoryCard} ${styles.cardHutang}`}
+                  onClick={() => openCategoryDetailView("HUTANG")}
+                >
+                  <div className={styles.catCardTop}>
+                    <div className={styles.catCardIconBg}>
+                      <Receipt size={26} color="#EF4444" />
+                    </div>
+                    <span className={styles.catCardBadgeDanger}>
+                      KEWAJIBAN / UTANG
+                    </span>
+                  </div>
+                  <h4 className={styles.catCardTitle}>💸 Hutang Kita</h4>
+                  <div className={styles.catCardQty}>Mengurangi Kekayaan</div>
+                  <div className={styles.catCardValueDanger}>
+                    {formatRp(assetSummary?.totalHutang || 0)}
+                  </div>
+                  <div className={styles.catCardFooter}>
+                    <span>Buka Halaman Data Tabel</span>
+                    <ChevronRight size={16} />
+                  </div>
+                </div>
+
+                {/* 5. PIUTANG (HUTANG ORANG) */}
+                <div
+                  className={`${styles.assetCategoryCard} ${styles.cardPiutang}`}
+                  onClick={() => openCategoryDetailView("PIUTANG")}
+                >
+                  <div className={styles.catCardTop}>
+                    <div className={styles.catCardIconBg}>
+                      <HandCoins size={26} color="#8B5CF6" />
+                    </div>
+                    <span className={styles.catCardBadge}>TAGIHAN PIUTANG</span>
+                  </div>
+                  <h4 className={styles.catCardTitle}>💰 Piutang (Hutang Orang)</h4>
+                  <div className={styles.catCardQty}>Orang Utang Ke Kita</div>
+                  <div className={styles.catCardValue}>
+                    {formatRp(assetSummary?.totalPiutang || 0)}
+                  </div>
+                  <div className={styles.catCardFooter}>
+                    <span>Buka Halaman Data Tabel</span>
+                    <ChevronRight size={16} />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ===== SUB-MODE B: FULL-TABLE CATEGORY DETAIL VIEW (NO MODAL POP-UP!) ===== */}
+          {assetViewMode === "category_detail" && (
+            <div className={styles.categoryDetailFullPage}>
+
+              {/* Category Summary Hero Banner */}
+              <div className={styles.assetCategorySummaryCard}>
+                <div className={styles.catHeroLeft}>
+                  <div className={styles.catHeroIconBg}>
+                    {selectedCategory === "EMAS" && <Gem size={32} color="#F59E0B" />}
+                    {selectedCategory === "SAPI" && <Building size={32} color="#10B981" />}
+                    {selectedCategory === "TABUNGAN" && <Landmark size={32} color="#3B82F6" />}
+                    {selectedCategory === "HUTANG" && <Receipt size={32} color="#EF4444" />}
+                    {selectedCategory === "PIUTANG" && <HandCoins size={32} color="#8B5CF6" />}
+                  </div>
+                  <div>
+                    <div className={styles.catHeroBadge}>KATEGORI ASET</div>
+                    <h3 className={styles.catHeroTitle}>
+                      {selectedCategory === "EMAS"
+                        ? "💎 Perhiasan Emas"
+                        : selectedCategory === "SAPI"
+                        ? "🐄 Ternak Sapi"
+                        : selectedCategory === "TABUNGAN"
+                        ? "🏦 Tabungan & Bank"
+                        : selectedCategory === "HUTANG"
+                        ? "💸 Hutang Kita (Kewajiban)"
+                        : "💰 Piutang (Hutang Orang Ke Kita)"}
+                    </h3>
+                    <div className={styles.catHeroSubtitle}>
+                      {selectedCategory === "EMAS"
+                        ? `Total Berat: ${assetSummary?.totalEmasGram || 0} Gram`
+                        : selectedCategory === "SAPI"
+                        ? `Total Jumlah: ${assetSummary?.totalSapiEkor || 0} Ekor`
+                        : `Total Item: ${categoryAssetsList.length} Item`}
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.catHeroRight}>
+                  <div className={styles.catHeroValueLabel}>Total Estimasi Nilai</div>
+                  <div
+                    className={
+                      selectedCategory === "HUTANG"
+                        ? styles.catHeroValueDanger
+                        : styles.catHeroValue
+                    }
+                  >
+                    {formatRp(
+                      selectedCategory === "EMAS"
+                        ? assetSummary?.totalEmasRp
+                        : selectedCategory === "SAPI"
+                        ? assetSummary?.totalSapiRp
+                        : selectedCategory === "TABUNGAN"
+                        ? assetSummary?.totalTabungan
+                        : selectedCategory === "HUTANG"
+                        ? assetSummary?.totalHutang
+                        : assetSummary?.totalPiutang
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Form Box (Selalu Siap di Atas Tabel) */}
+              <div className={styles.assetFormBoxTop}>
+                <div className={styles.assetFormBoxHeader}>
+                  <h4 className={styles.assetFormBoxTitle}>
+                    {editingAssetItem ? "✏️ Edit Item Aset" : "➕ Tambah Item Aset Baru"}
+                  </h4>
+                  {editingAssetItem && (
+                    <button
+                      type="button"
+                      className={styles.btnCancelEdit}
+                      onClick={() => {
+                        setEditingAssetItem(null);
+                        let defaultUnit = "unit";
+                        if (selectedCategory === "EMAS") defaultUnit = "gram";
+                        else if (selectedCategory === "SAPI") defaultUnit = "ekor";
+                        setAssetForm({
+                          id: "",
+                          category: selectedCategory,
+                          name: "",
+                          quantity: selectedCategory === "TABUNGAN" || selectedCategory === "HUTANG" || selectedCategory === "PIUTANG" ? "1" : "1",
+                          unit: defaultUnit,
+                          amount: "",
+                          notes: "",
+                        });
+                      }}
+                    >
+                      <X size={14} /> Batal Edit
+                    </button>
+                  )}
+                </div>
+
+                <form onSubmit={handleSaveAssetItem} className={styles.assetFormGridRow}>
+                  {/* Nama Item */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Nama Item / Deskripsi</label>
+                    <input
+                      type="text"
+                      className={styles.formInput}
+                      placeholder={
+                        selectedCategory === "EMAS"
+                          ? "Misal: Kalung Emas 24K, Cincin Kawin"
+                          : selectedCategory === "SAPI"
+                          ? "Misal: Sapi Limosin Jantan 1"
+                          : selectedCategory === "TABUNGAN"
+                          ? "Misal: Tabungan BCA, Deposito Bank"
+                          : selectedCategory === "HUTANG"
+                          ? "Misal: Utang KPR Bank, Pinjaman Usaha"
+                          : "Misal: Piutang Pak Budi"
+                      }
+                      value={assetForm.name}
+                      onChange={(e) =>
+                        setAssetForm({ ...assetForm, name: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/* Quantity */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>
+                      {selectedCategory === "EMAS"
+                        ? "Berat (Gram)"
+                        : selectedCategory === "SAPI"
+                        ? "Jumlah (Ekor)"
+                        : "Jumlah (Unit)"}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      className={styles.formInput}
+                      value={assetForm.quantity}
+                      onChange={(e) =>
+                        setAssetForm({ ...assetForm, quantity: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/* Nominal (Rp) */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>
+                      {selectedCategory === "EMAS" || selectedCategory === "SAPI"
+                        ? "Harga per Unit/Gram (Rp)"
+                        : "Nominal Rupiah (Rp)"}
+                    </label>
+                    <input
+                      type="number"
+                      className={styles.formInput}
+                      placeholder="Misal: 1300000"
+                      value={assetForm.amount}
+                      onChange={(e) =>
+                        setAssetForm({ ...assetForm, amount: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className={styles.formGroupBtn}>
+                    <button
+                      type="submit"
+                      className={styles.btnPrimarySubmit}
+                      disabled={assetSaving || !assetForm.name || !assetForm.amount}
+                    >
+                      {assetSaving ? (
+                        <Loader2 className={styles.spinner} size={18} />
+                      ) : editingAssetItem ? (
+                        <>
+                          <Check size={18} /> Simpan Perubahan
+                        </>
+                      ) : (
+                        <>
+                          <PlusCircle size={18} /> Tambah Ke Tabel
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Full Table Data Aset */}
+              <div className={styles.assetTableCard}>
+                <div className={styles.tableCardHeader}>
+                  <h4 className={styles.tableCardTitle}>
+                    📊 Tabel Data Aset ({categoryAssetsList.length} Item)
+                  </h4>
+                </div>
+
+                {assetLoading ? (
+                  <div className={styles.loadingContainer}>
+                    <Loader2 className={styles.spinner} size={32} />
+                    <p>Memuat data tabel aset...</p>
+                  </div>
+                ) : categoryAssetsList.length === 0 ? (
+                  <div className={styles.emptyState}>
+                    <Gem size={48} className={styles.emptyIcon} />
+                    <p className={styles.emptyTitle}>Tabel Masih Kosong</p>
+                    <p className={styles.emptySubtitle}>
+                      Gunakan form di atas untuk menambahkan catatan item aset pertama Anda.
+                    </p>
+                  </div>
+                ) : (
+                  <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>NAMA ITEM</th>
+                          <th>JUMLAH / SATUAN</th>
+                          <th>HARGA PER UNIT</th>
+                          <th>TOTAL NILAI (RP)</th>
+                          <th style={{ textAlign: "right" }}>AKSI</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {categoryAssetsList.map((item) => (
+                          <tr key={item.id}>
+                            <td style={{ fontWeight: 700 }}>{item.name}</td>
+                            <td>
+                              <span className={styles.typeBadge} style={{ background: "rgba(59, 130, 246, 0.1)", color: "#3B82F6", borderColor: "rgba(59, 130, 246, 0.2)" }}>
+                                {item.quantity} {item.unit || "unit"}
+                              </span>
+                            </td>
+                            <td className={styles.amountText}>
+                              {formatRp(item.amount)}
+                            </td>
+                            <td>
+                              <span
+                                className={`${styles.amountText} ${
+                                  selectedCategory === "HUTANG"
+                                    ? styles.amountExpense
+                                    : styles.amountIncome
+                                }`}
+                              >
+                                {formatRp((item.amount || 0) * (item.quantity || 1))}
+                              </span>
+                            </td>
+                            <td>
+                              <div
+                                className={styles.actionCell}
+                                style={{ justifyContent: "flex-end" }}
+                              >
+                                <button
+                                  type="button"
+                                  className={`${styles.iconBtn} ${styles.edit}`}
+                                  onClick={() => openEditAssetItem(item)}
+                                  title="Edit Item Ini"
+                                >
+                                  <Pencil size={15} />
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`${styles.iconBtn} ${styles.delete}`}
+                                  onClick={() => handleDeleteAssetItem(item.id)}
+                                  title="Hapus Item Ini"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
 
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL 1: ADD / EDIT CASHBOOK TRANSACTION                                  */}
+      {/* MODAL 1: ADD / EDIT CASHBOOK TRANSACTION (FOR CASHBOOK ONLY)             */}
       {/* ========================================================================= */}
       {showModal && (
         <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
@@ -1058,198 +1378,6 @@ export default function CashbookClient() {
                   "Simpan Transaksi"
                 )}
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODAL 2: CATEGORY DETAIL & CRUD FOR FAMILY ASSETS                         */}
-      {/* ========================================================================= */}
-      {assetModalCategory && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => setAssetModalCategory(null)}
-        >
-          <div
-            className={`${styles.modalContent} ${styles.modalContentLarge}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className={styles.modalHeader}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                {assetModalCategory === "EMAS" && <Gem size={24} color="#F59E0B" />}
-                {assetModalCategory === "SAPI" && <Building size={24} color="#10B981" />}
-                {assetModalCategory === "TABUNGAN" && <Landmark size={24} color="#3B82F6" />}
-                {assetModalCategory === "HUTANG" && <Receipt size={24} color="#EF4444" />}
-                {assetModalCategory === "PIUTANG" && <HandCoins size={24} color="#8B5CF6" />}
-                <h3 className={styles.modalTitle}>
-                  Kelola Detail:{" "}
-                  {assetModalCategory === "EMAS"
-                    ? "Perhiasan Emas"
-                    : assetModalCategory === "SAPI"
-                    ? "Ternak Sapi"
-                    : assetModalCategory === "TABUNGAN"
-                    ? "Tabungan & Simpanan Bank"
-                    : assetModalCategory === "HUTANG"
-                    ? "Hutang Kita (Kewajiban)"
-                    : "Piutang (Hutang Orang)"}
-                </h3>
-              </div>
-              <button
-                className={styles.modalClose}
-                onClick={() => setAssetModalCategory(null)}
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className={styles.modalBody}>
-              {/* Existing Items Table / List */}
-              <div className={styles.assetItemListHeader}>
-                <h4 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 700 }}>
-                  Daftar Item ({categoryAssetsList.length})
-                </h4>
-              </div>
-
-              {categoryAssetsList.length === 0 ? (
-                <div className={styles.emptyAssetList}>
-                  Belum ada catatan {assetModalCategory.toLowerCase()} tersimpan.
-                  Isi form di bawah untuk menambah.
-                </div>
-              ) : (
-                <div className={styles.assetItemList}>
-                  {categoryAssetsList.map((item) => (
-                    <div key={item.id} className={styles.assetItemRow}>
-                      <div className={styles.assetItemLeft}>
-                        <div className={styles.assetItemName}>{item.name}</div>
-                        <div className={styles.assetItemMeta}>
-                          {assetModalCategory === "EMAS" || assetModalCategory === "SAPI"
-                            ? `${item.quantity} ${item.unit || "unit"} @ ${formatRp(item.amount)}`
-                            : item.notes || "Tanpa catatan"}
-                        </div>
-                      </div>
-                      <div className={styles.assetItemRight}>
-                        <div className={styles.assetItemTotal}>
-                          {formatRp((item.amount || 0) * (item.quantity || 1))}
-                        </div>
-                        <div className={styles.entryActions}>
-                          <button
-                            type="button"
-                            className={styles.btnIcon}
-                            onClick={() => openEditAssetItem(item)}
-                            title="Edit Item"
-                          >
-                            <Pencil size={15} />
-                          </button>
-                          <button
-                            type="button"
-                            className={`${styles.btnIcon} ${styles.btnDelete}`}
-                            onClick={() => handleDeleteAssetItem(item.id)}
-                            title="Hapus Item"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Form Input Item Barunya */}
-              <form onSubmit={handleSaveAssetItem} className={styles.assetInputForm}>
-                <h4 style={{ margin: "16px 0 10px 0", fontSize: "0.95rem", fontWeight: 800, color: "var(--foreground)" }}>
-                  {editingAssetItem ? "✏️ Edit Item" : "➕ Tambah Item Baru"}
-                </h4>
-
-                <div className={styles.assetFormGrid}>
-                  {/* Nama Item */}
-                  <div className={styles.formGroup} style={{ gridColumn: "span 2" }}>
-                    <label className={styles.formLabel}>Nama Item / Deskripsi</label>
-                    <input
-                      type="text"
-                      className={styles.formInput}
-                      placeholder={
-                        assetModalCategory === "EMAS"
-                          ? "Misal: Kalung Emas 24K, Cincin Kawin"
-                          : assetModalCategory === "SAPI"
-                          ? "Misal: Sapi Limosin Jantan, Sapi Betina 2"
-                          : assetModalCategory === "TABUNGAN"
-                          ? "Misal: Tabungan Bank BCA, Deposito"
-                          : assetModalCategory === "HUTANG"
-                          ? "Misal: Utang KPR Bank, Pinjaman Usaha"
-                          : "Misal: Piutang Pak Budi, Utang Mas Dimas"
-                      }
-                      value={assetForm.name}
-                      onChange={(e) => setAssetForm({ ...assetForm, name: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  {/* Quantity (Except Tabungan/Hutang/Piutang usually 1) */}
-                  {(assetModalCategory === "EMAS" || assetModalCategory === "SAPI") && (
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>
-                        {assetModalCategory === "EMAS" ? "Jumlah Gram" : "Jumlah Ekor"}
-                      </label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        className={styles.formInput}
-                        value={assetForm.quantity}
-                        onChange={(e) => setAssetForm({ ...assetForm, quantity: e.target.value })}
-                        required
-                      />
-                    </div>
-                  )}
-
-                  {/* Nominal (Rp) */}
-                  <div className={styles.formGroup} style={assetModalCategory !== "EMAS" && assetModalCategory !== "SAPI" ? { gridColumn: "span 2" } : {}}>
-                    <label className={styles.formLabel}>
-                      {assetModalCategory === "EMAS" || assetModalCategory === "SAPI"
-                        ? "Harga per Unit/Gram (Rp)"
-                        : "Nominal Rupiah (Rp)"}
-                    </label>
-                    <input
-                      type="number"
-                      className={styles.formInput}
-                      placeholder="Misal: 1300000"
-                      value={assetForm.amount}
-                      onChange={(e) => setAssetForm({ ...assetForm, amount: e.target.value })}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.modalFooter} style={{ padding: 0, marginTop: "16px" }}>
-                  {editingAssetItem && (
-                    <button
-                      type="button"
-                      className={styles.btnSecondary}
-                      onClick={() => {
-                        setEditingAssetItem(null);
-                        setAssetForm({ id: "", category: assetModalCategory, name: "", quantity: "1", unit: assetModalCategory === "EMAS" ? "gram" : assetModalCategory === "SAPI" ? "ekor" : "unit", amount: "", notes: "" });
-                      }}
-                    >
-                      Batal Edit
-                    </button>
-                  )}
-                  <button
-                    type="submit"
-                    className={styles.btnPrimaryModal}
-                    disabled={assetSaving || !assetForm.name || !assetForm.amount}
-                  >
-                    {assetSaving ? (
-                      <Loader2 className={styles.spinner} size={18} />
-                    ) : editingAssetItem ? (
-                      "Update Item Aset"
-                    ) : (
-                      "➕ Tambah Item Aset"
-                    )}
-                  </button>
-                </div>
-              </form>
             </div>
           </div>
         </div>

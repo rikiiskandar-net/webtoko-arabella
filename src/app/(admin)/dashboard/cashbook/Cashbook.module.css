@@ -1267,3 +1267,229 @@
   }
 }
 
+/* =============================================
+   FULL-TABLE CATEGORY DETAIL VIEW
+   ============================================= */
+
+.categoryDetailFullPage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.assetCategorySummaryCard {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  color: #FFFFFF;
+}
+
+.catHeroLeft {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.catHeroIconBg {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.catHeroBadge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #94A3B8;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.catHeroTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 2px 0 0 0;
+  letter-spacing: -0.4px;
+  color: #FFFFFF;
+}
+
+.catHeroSubtitle {
+  font-size: 0.85rem;
+  color: #CBD5E1;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.catHeroRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.catHeroValueLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94A3B8;
+}
+
+.catHeroValue {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #34D399;
+  letter-spacing: -0.5px;
+  text-shadow: 0 4px 14px rgba(52, 211, 153, 0.3);
+}
+
+.catHeroValueDanger {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #F87171;
+  letter-spacing: -0.5px;
+  text-shadow: 0 4px 14px rgba(248, 113, 113, 0.3);
+}
+
+/* Top Form Box */
+.assetFormBoxTop {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+[data-theme="dark"] .assetFormBoxTop {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.assetFormBoxHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.assetFormBoxTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.btnCancelEdit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #EF4444;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnCancelEdit:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+}
+
+.assetFormGridRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1.2fr;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+.formGroupBtn {
+  margin-bottom: 1.4rem;
+}
+
+.btnPrimarySubmit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.75rem 1.2rem;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: #FFFFFF;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+  font-family: inherit;
+}
+
+.btnPrimarySubmit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5);
+}
+
+/* Full Table Card */
+.assetTableCard {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .assetTableCard {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tableCardHeader {
+  margin-bottom: 16px;
+}
+
+.tableCardTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .assetFormGridRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .assetCategorySummaryCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .catHeroRight {
+    align-items: flex-start;
+  }
+  .assetFormGridRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+
