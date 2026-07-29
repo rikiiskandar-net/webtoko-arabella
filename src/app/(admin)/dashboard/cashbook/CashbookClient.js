@@ -150,6 +150,23 @@ export default function CashbookClient() {
     fetchFamilyAssets();
   }, []);
 
+  // Auto-reload if Vercel deploys a new build while page is open (ChunkLoadError fix)
+  useEffect(() => {
+    const handleChunkError = (event) => {
+      const msg = event?.message || event?.reason?.message || "";
+      if (msg.includes("Failed to load chunk") || msg.includes("Loading chunk")) {
+        console.warn("Versi baru terdeteksi. Memuat ulang halaman...");
+        window.location.reload();
+      }
+    };
+    window.addEventListener("error", handleChunkError);
+    window.addEventListener("unhandledrejection", handleChunkError);
+    return () => {
+      window.removeEventListener("error", handleChunkError);
+      window.removeEventListener("unhandledrejection", handleChunkError);
+    };
+  }, []);
+
   const fetchDaily = async () => {
     setLoading(true);
     try {
