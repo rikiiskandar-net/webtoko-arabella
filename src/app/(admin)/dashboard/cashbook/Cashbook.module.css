@@ -841,3 +841,421 @@
     font-size: 1.3rem;
   }
 }
+
+/* =============================================
+   ASET KELUARGA — GOD-TIER FLAT GLASSMORPHISM UI
+   ============================================= */
+
+.assetBannerCard {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%);
+  border: 1.5px solid rgba(99, 102, 241, 0.25);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 18px 24px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.08);
+}
+
+.assetBannerCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 12px 36px rgba(99, 102, 241, 0.18);
+}
+
+.assetBannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.assetBannerIconWrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.3);
+  flex-shrink: 0;
+}
+
+.assetBannerIcon {
+  color: #FFFFFF;
+}
+
+.assetBannerBadge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #6366F1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.assetBannerTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--foreground);
+  letter-spacing: -0.3px;
+  margin: 2px 0;
+}
+
+.assetBannerSubtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.assetBannerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.assetBannerNetLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.assetBannerNetValue {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #10B981;
+  letter-spacing: -0.3px;
+}
+
+.assetBannerBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6366F1;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-top: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.assetBannerCard:hover .assetBannerBtn {
+  background: #6366F1;
+  color: #FFFFFF;
+}
+
+.btnBackToCashbook {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--foreground);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .btnBackToCashbook {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.btnBackToCashbook:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366F1;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Assets Page View */
+.assetsPageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Hero Net Worth Card */
+.assetNetWorthHero {
+  background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+  color: #FFFFFF;
+  border-radius: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 12px 36px rgba(49, 46, 129, 0.35);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroNetHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heroNetBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #A5B4FC;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.heroNetTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: -0.4px;
+}
+
+.heroNetFormula {
+  font-size: 0.82rem;
+  color: #C7D2FE;
+  margin: 0;
+}
+
+.heroNetAmount {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #34D399;
+  letter-spacing: -0.6px;
+  text-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+}
+
+/* Category Cards Grid */
+.assetCategoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.assetCategoryCard {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .assetCategoryCard {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.assetCategoryCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.cardEmas:hover { border-color: #F59E0B; }
+.cardSapi:hover { border-color: #10B981; }
+.cardTabungan:hover { border-color: #3B82F6; }
+.cardHutang:hover { border-color: #EF4444; }
+.cardPiutang:hover { border-color: #8B5CF6; }
+
+.catCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.catCardIconBg {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-theme="dark"] .catCardIconBg {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.catCardBadge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.catCardBadgeDanger {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #EF4444;
+  letter-spacing: 0.04em;
+}
+
+.catCardTitle {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.catCardQty {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.catCardValue {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #10B981;
+  letter-spacing: -0.3px;
+  margin-top: 4px;
+}
+
+.catCardValueDanger {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #EF4444;
+  letter-spacing: -0.3px;
+  margin-top: 4px;
+}
+
+.catCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6366F1;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+  margin-top: 6px;
+}
+
+[data-theme="dark"] .catCardFooter {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal Content Large */
+.modalContentLarge {
+  max-width: 620px !important;
+  width: 92% !important;
+}
+
+.assetItemList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-top: 10px;
+}
+
+.emptyAssetList {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.assetItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .assetItemRow {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.assetItemName {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--foreground);
+}
+
+.assetItemMeta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.assetItemRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assetItemTotal {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #10B981;
+}
+
+.assetInputForm {
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+  padding-top: 12px;
+  margin-top: 16px;
+}
+
+[data-theme="dark"] .assetInputForm {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.assetFormGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .assetBannerCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .assetBannerRight {
+    align-items: flex-start;
+    width: 100%;
+  }
+  .assetBannerBtn {
+    width: 100%;
+    justify-content: center;
+  }
+  .assetNetWorthHero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .heroNetAmount {
+    font-size: 1.7rem;
+  }
+  .assetFormGrid {
+    grid-template-columns: 1fr;
+  }
+}
+

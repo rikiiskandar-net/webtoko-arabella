@@ -370,3 +370,21 @@ model AccountCredential {
 
   @@index([categoryId])
 }
+
+// ==========================================
+// FAMILY ASSETS (ASET KELUARGA)
+// ==========================================
+
+model FamilyAsset {
+  id        String   @id @default(uuid())
+  category  String   // "EMAS", "SAPI", "TABUNGAN", "HUTANG", "PIUTANG"
+  name      String   // Misal: "Kalung Emas 24K", "Sapi Limosin 1", "Utang KPR"
+  quantity  Float    @default(1.0)
+  unit      String   @default("unit") // "gram", "ekor", "unit", "rupiah"
+  amount    Int      // Nilai rupiah per unit atau total rupiah
+  notes     String?  @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+}
