@@ -482,7 +482,7 @@ export default function CashbookClient() {
             </div>
           </div>
           <div className={styles.assetBannerRight}>
-            <div className={styles.assetBannerNetLabel}>Total Kekayaan Bersih</div>
+            <div className={styles.assetBannerNetLabel}>Total Aset Keluarga</div>
             <div className={styles.assetBannerNetValue}>
               {formatRp(assetSummary?.netWorth || 0)}
             </div>
@@ -867,7 +867,7 @@ export default function CashbookClient() {
                     <ShieldCheck size={16} /> ESTIMASI PORTOFOLIO KEUANGAN
                   </div>
                   <h3 className={styles.heroNetTitle}>
-                    Total Kekayaan Bersih Keluarga
+                    Total Aset Keluarga
                   </h3>
                   <p className={styles.heroNetFormula}>
                     Formula: (Emas + Sapi + Tabungan + Piutang) &minus; Hutang Kita
