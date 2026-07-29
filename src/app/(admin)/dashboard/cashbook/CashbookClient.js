@@ -541,40 +541,36 @@ export default function CashbookClient() {
 
                 <div className={styles.rightControls}>
                   {/* Filter by Type */}
-                  <div className={styles.selectWrapper}>
-                    <select
-                      className={styles.filterSelect}
-                      value={filterType}
-                      onChange={(e) => setFilterType(e.target.value)}
-                    >
-                      <option value="all">Semua Transaksi</option>
-                      <option value="income">🟢 Pemasukan</option>
-                      <option value="expense">🔴 Pengeluaran</option>
-                    </select>
-                  </div>
+                  <select
+                    className={styles.sortSelect}
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                  >
+                    <option value="all">Semua Transaksi</option>
+                    <option value="income">🟢 Pemasukan</option>
+                    <option value="expense">🔴 Pengeluaran</option>
+                  </select>
 
                   {/* Sort by */}
-                  <div className={styles.selectWrapper}>
-                    <select
-                      className={styles.filterSelect}
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                    >
-                      <option value="newest">🕒 Terbaru</option>
-                      <option value="oldest">⌛ Terlama</option>
-                      <option value="highest">💰 Terbesar</option>
-                      <option value="lowest">🪙 Terkecil</option>
-                    </select>
-                  </div>
+                  <select
+                    className={styles.sortSelect}
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="newest">🕒 Terbaru</option>
+                    <option value="oldest">⌛ Terlama</option>
+                    <option value="highest">💰 Terbesar</option>
+                    <option value="lowest">🪙 Terkecil</option>
+                  </select>
 
                   {/* Add Button */}
-                  <button className={styles.btnAdd} onClick={openAddModal}>
+                  <button className={styles.addBtn} onClick={openAddModal}>
                     <Plus size={18} /> Tambah
                   </button>
                 </div>
               </div>
 
-              {/* Entry List */}
+              {/* Entry Table */}
               {loading ? (
                 <div className={styles.loadingContainer}>
                   <Loader2 className={styles.spinner} size={32} />
@@ -591,73 +587,80 @@ export default function CashbookClient() {
                   </p>
                 </div>
               ) : (
-                <div className={styles.entryList}>
-                  {filteredEntries.map((entry) => (
-                    <div
-                      key={entry.id}
-                      className={`${styles.entryCard} ${
-                        entry.type === "income"
-                          ? styles.entryIncome
-                          : styles.entryExpense
-                      }`}
-                    >
-                      <div className={styles.entryLeft}>
-                        <div
-                          className={`${styles.entryIcon} ${
-                            entry.type === "income"
-                              ? styles.iconIncome
-                              : styles.iconExpense
-                          }`}
-                        >
-                          {entry.type === "income" ? (
-                            <ArrowDownCircle size={22} />
-                          ) : (
-                            <ArrowUpCircle size={22} />
-                          )}
-                        </div>
-                        <div>
-                          <div className={styles.entryDesc}>
-                            {entry.description}
-                          </div>
-                          <div className={styles.entryTime}>
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>WAKTU</th>
+                        <th>TIPE</th>
+                        <th>KETERANGAN</th>
+                        <th>NOMINAL</th>
+                        <th style={{ textAlign: "right" }}>AKSI</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEntries.map((entry) => (
+                        <tr key={entry.id}>
+                          <td style={{ whiteSpace: "nowrap" }}>
                             {new Date(entry.date).toLocaleTimeString("id-ID", {
                               hour: "2-digit",
                               minute: "2-digit",
                             })}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className={styles.entryRight}>
-                        <div
-                          className={`${styles.entryAmount} ${
-                            entry.type === "income"
-                              ? styles.amountIncome
-                              : styles.amountExpense
-                          }`}
-                        >
-                          {entry.type === "income" ? "+" : "-"}
-                          {formatRp(entry.amount)}
-                        </div>
-                        <div className={styles.entryActions}>
-                          <button
-                            className={styles.btnIcon}
-                            onClick={() => openEditModal(entry)}
-                            title="Edit"
-                          >
-                            <Pencil size={15} />
-                          </button>
-                          <button
-                            className={`${styles.btnIcon} ${styles.btnDelete}`}
-                            onClick={() => handleDelete(entry.id)}
-                            title="Hapus"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                          </td>
+                          <td>
+                            <span
+                              className={`${styles.typeBadge} ${
+                                entry.type === "income"
+                                  ? styles.typeIncome
+                                  : styles.typeExpense
+                              }`}
+                            >
+                              {entry.type === "income" ? (
+                                <>
+                                  <ArrowDownCircle size={14} /> Pemasukan
+                                </>
+                              ) : (
+                                <>
+                                  <ArrowUpCircle size={14} /> Pengeluaran
+                                </>
+                              )}
+                            </span>
+                          </td>
+                          <td style={{ fontWeight: 600 }}>{entry.description}</td>
+                          <td>
+                            <span
+                              className={`${styles.amountText} ${
+                                entry.type === "income"
+                                  ? styles.amountIncome
+                                  : styles.amountExpense
+                              }`}
+                            >
+                              {entry.type === "income" ? "+" : "-"}
+                              {formatRp(entry.amount)}
+                            </span>
+                          </td>
+                          <td>
+                            <div className={styles.actionCell} style={{ justifyContent: "flex-end" }}>
+                              <button
+                                className={`${styles.iconBtn} ${styles.edit}`}
+                                onClick={() => openEditModal(entry)}
+                                title="Edit"
+                              >
+                                <Pencil size={15} />
+                              </button>
+                              <button
+                                className={`${styles.iconBtn} ${styles.delete}`}
+                                onClick={() => handleDelete(entry.id)}
+                                title="Hapus"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </>
