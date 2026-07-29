@@ -1522,17 +1522,96 @@
 }
 
 @media (max-width: 640px) {
+  .assetBannerCard {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 20px;
+  }
+  .assetBannerRight {
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .assetBannerBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 14px;
+  }
+  .assetNetWorthHero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 22px;
+  }
+  .heroNetAmount {
+    font-size: 1.6rem;
+  }
+  .assetCategoryGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
   .assetCategorySummaryCard {
     flex-direction: column;
     align-items: flex-start;
+    padding: 18px 20px;
+    gap: 14px;
+  }
+  .catHeroLeft {
+    gap: 14px;
+  }
+  .catHeroIconBg {
+    width: 50px;
+    height: 50px;
+  }
+  .catHeroTitle {
+    font-size: 1.25rem;
   }
   .catHeroRight {
     align-items: flex-start;
+    width: 100%;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.15);
+  }
+  .catHeroValue, .catHeroValueDanger {
+    font-size: 1.5rem;
+  }
+  .assetFormBoxTop {
+    padding: 18px 16px;
   }
   .assetFormGridRow {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .btnPrimarySubmit {
+    min-height: 44px;
+  }
+  .assetTableCard {
+    padding: 16px 14px;
   }
 }
+
+@media (max-width: 480px) {
+  .btnBackToCashbook {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 14px;
+  }
+  .table th, .table td {
+    padding: 0.6rem 0.6rem;
+    font-size: 0.78rem;
+  }
+  .typeBadge {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+  }
+  .actionCell {
+    gap: 0.25rem;
+  }
+  .iconBtn {
+    padding: 0.45rem;
+  }
+}
+
 
 
 
