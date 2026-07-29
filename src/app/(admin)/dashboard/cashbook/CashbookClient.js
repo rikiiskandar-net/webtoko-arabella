@@ -708,15 +708,12 @@ export default function CashbookClient() {
             </>
           )}
 
-          {/* ======================== MONTHLY TAB ======================== */}
-          {activeTab === "monthly" && (
-            <>
-              {/* Month/Year Selector */}
-              <div className={styles.monthSelectorRow}>
-                <div className={styles.selectGroup}>
-                  <label className={styles.selectLabel}>Bulan</label>
+          {/* ======================== MONTHLY TAB =============              {/* Month/Year Selector */}
+              <div className={styles.monthSelectorRow} style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+                <div className={styles.selectGroup} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <label className={styles.selectLabel} style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--foreground)" }}>Bulan:</label>
                   <select
-                    className={styles.filterSelect}
+                    className={styles.sortSelect}
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
                   >
@@ -727,10 +724,10 @@ export default function CashbookClient() {
                     ))}
                   </select>
                 </div>
-                <div className={styles.selectGroup}>
-                  <label className={styles.selectLabel}>Tahun</label>
+                <div className={styles.selectGroup} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <label className={styles.selectLabel} style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--foreground)" }}>Tahun:</label>
                   <select
-                    className={styles.filterSelect}
+                    className={styles.sortSelect}
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(parseInt(e.target.value))}
                   >
@@ -782,10 +779,10 @@ export default function CashbookClient() {
                     </div>
                   </div>
 
-                  {/* Daily breakdown list */}
-                  <div className={styles.monthlyListHeader}>
-                    <h3 className={styles.monthlyListTitle}>
-                      Rincian Per Hari — {MONTHS[selectedMonth - 1]} {selectedYear}
+                  {/* Daily breakdown table */}
+                  <div className={styles.monthlyListHeader} style={{ margin: "1.5rem 0 1rem 0" }}>
+                    <h3 className={styles.monthlyListTitle} style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--foreground)" }}>
+                      📊 Rekap Rincian Transaksi Per Hari — {MONTHS[selectedMonth - 1]} {selectedYear}
                     </h3>
                   </div>
 
@@ -797,30 +794,55 @@ export default function CashbookClient() {
                       </p>
                     </div>
                   ) : (
-                    <div className={styles.monthlyDaysList}>
-                      {monthlySummary.days.map((day) => (
-                        <div key={day.date} className={styles.monthlyDayCard}>
-                          <div className={styles.monthlyDayDate}>
-                            {new Date(day.date).toLocaleDateString("id-ID", {
-                              weekday: "short",
-                              day: "numeric",
-                              month: "short",
-                            })}
-                          </div>
-                          <div className={styles.monthlyDayRight}>
-                            <span className={styles.monthlyDayIncome}>
-                              +{formatRp(day.income)}
-                            </span>
-                            <span className={styles.monthlyDayExpense}>
-                              -{formatRp(day.expense)}
-                            </span>
-                            <span className={styles.monthlyDayNet}>
-                              {formatRp(day.net)}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                    <div className={styles.tableContainer}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>TANGGAL</th>
+                            <th>PEMASUKAN</th>
+                            <th>PENGELUARAN</th>
+                            <th style={{ textAlign: "right" }}>SALDO BERSIH</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {monthlySummary.days.map((day) => (
+                            <tr key={day.date}>
+                              <td style={{ fontWeight: 700, whiteSpace: "nowrap" }}>
+                                {new Date(day.date).toLocaleDateString("id-ID", {
+                                  weekday: "long",
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                })}
+                              </td>
+                              <td>
+                                <span className={`${styles.amountText} ${styles.amountIncome}`}>
+                                  +{formatRp(day.income)}
+                                </span>
+                              </td>
+                              <td>
+                                <span className={`${styles.amountText} ${styles.amountExpense}`}>
+                                  -{formatRp(day.expense)}
+                                </span>
+                              </td>
+                              <td style={{ textAlign: "right" }}>
+                                <span
+                                  className={`${styles.amountText} ${
+                                    day.net >= 0 ? styles.amountIncome : styles.amountExpense
+                                  }`}
+                                  style={{ fontWeight: 800 }}
+                                >
+                                  {formatRp(day.net)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
+                  )}
+                </>
+              )}          </div>
                   )}
                 </>
               ) : null}
