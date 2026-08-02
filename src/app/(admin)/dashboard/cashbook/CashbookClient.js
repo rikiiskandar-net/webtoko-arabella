@@ -794,7 +794,7 @@ export default function CashbookClient() {
                         <Wallet size={16} /> Saldo Bersih Bulanan
                       </div>
                       <div className={styles.summaryValue}>
-                        {formatRp(monthlySummary.netBalance)}
+                        {formatRp(monthlySummary.netBalance ?? monthlySummary.balance ?? 0)}
                       </div>
                     </div>
                   </div>
