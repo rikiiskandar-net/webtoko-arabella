@@ -28,7 +28,10 @@ import {
   Receipt,
   Scale,
   PlusCircle,
-  Check
+  Check,
+  Award,
+  Sparkles,
+  Percent
 } from "lucide-react";
 import styles from "./Cashbook.module.css";
 
@@ -852,6 +855,86 @@ export default function CashbookClient() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Monthly Analytics & Insight Cards (Above Table) */}
+                  {(() => {
+                    const daysList = monthlySummary.days || [];
+                    const activeDays = daysList.length;
+                    const avgDailyIncome = activeDays > 0 ? Math.round(monthlySummary.totalIncome / activeDays) : 0;
+                    const peakDay = daysList.reduce((max, d) => (d.income > (max?.income || 0) ? d : max), null);
+                    const netVal = monthlySummary.netBalance ?? monthlySummary.balance ?? 0;
+                    const profitMargin = monthlySummary.totalIncome > 0 ? Math.round((netVal / monthlySummary.totalIncome) * 100) : 0;
+
+                    return (
+                      <div className={styles.monthlyInsightSection}>
+                        <div className={styles.monthlyInsightSectionTitle}>
+                          <Sparkles size={16} color="#6366F1" /> Ringkasan Analisis — {MONTHS[selectedMonth - 1]} {selectedYear}
+                        </div>
+                        <div className={styles.monthlyInsightGrid}>
+                          {/* 1. Rata-rata / Hari */}
+                          <div className={styles.monthlyInsightCard}>
+                            <div className={styles.insightCardLabel}>
+                              <TrendingUp size={15} color="#10B981" /> Rata-rata Omset / Hari
+                            </div>
+                            <div className={styles.insightCardValue}>
+                              {formatRp(avgDailyIncome)}
+                            </div>
+                            <div className={styles.insightCardSubtext}>
+                              Dari {activeDays} hari aktif transaksi
+                            </div>
+                          </div>
+
+                          {/* 2. Hari Omset Tertinggi */}
+                          <div className={styles.monthlyInsightCard}>
+                            <div className={styles.insightCardLabel}>
+                              <Award size={15} color="#F59E0B" /> Omset Puncak (Tertinggi)
+                            </div>
+                            <div className={styles.insightCardValue}>
+                              {peakDay && peakDay.income > 0 ? formatRp(peakDay.income) : "Rp 0"}
+                            </div>
+                            <div className={styles.insightCardSubtext}>
+                              {peakDay && peakDay.income > 0
+                                ? new Date(peakDay.date).toLocaleDateString("id-ID", {
+                                    weekday: "short",
+                                    day: "numeric",
+                                    month: "short",
+                                  })
+                                : "Belum ada penjualan"}
+                            </div>
+                          </div>
+
+                          {/* 3. Margin Keuntungan */}
+                          <div className={styles.monthlyInsightCard}>
+                            <div className={styles.insightCardLabel}>
+                              <Percent size={15} color="#3B82F6" /> Rasio Margin Keuntungan
+                            </div>
+                            <div
+                              className={styles.insightCardValue}
+                              style={{ color: profitMargin >= 0 ? "#10B981" : "#EF4444" }}
+                            >
+                              {profitMargin >= 0 ? `+${profitMargin}%` : `${profitMargin}%`}
+                            </div>
+                            <div className={styles.insightCardSubtext}>
+                              Efisiensi Saldo vs Omset
+                            </div>
+                          </div>
+
+                          {/* 4. Total Hari Aktif */}
+                          <div className={styles.monthlyInsightCard}>
+                            <div className={styles.insightCardLabel}>
+                              <Calendar size={15} color="#8B5CF6" /> Total Hari Aktif
+                            </div>
+                            <div className={styles.insightCardValue}>
+                              {activeDays} Hari
+                            </div>
+                            <div className={styles.insightCardSubtext}>
+                              Tercatat transaksi di database
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Daily breakdown table */}
                   <div className={styles.monthlyListHeader} style={{ margin: "1.5rem 0 1rem 0" }}>
