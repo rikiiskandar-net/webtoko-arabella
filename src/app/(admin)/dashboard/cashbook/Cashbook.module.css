@@ -1801,6 +1801,97 @@
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5);
 }
 
+/* =============================================
+   MONTH QUICK NAVIGATION BAR
+   ============================================= */
+
+.monthSelectorNavRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.monthQuickNavGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 5px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .monthQuickNavGroup {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.monthNavBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.monthNavBtn:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366F1;
+}
+
+[data-theme="dark"] .monthNavBtn:hover {
+  background: rgba(99, 102, 241, 0.25);
+  color: #818CF8;
+}
+
+.monthNavCurrent {
+  background: rgba(99, 102, 241, 0.18) !important;
+  color: #6366F1 !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+}
+
+[data-theme="dark"] .monthNavCurrent {
+  color: #818CF8 !important;
+  border-color: rgba(129, 140, 248, 0.4) !important;
+}
+
+.monthDropdownGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .monthSelectorNavRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .monthQuickNavGroup {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .monthNavBtn {
+    flex: 1;
+    justify-content: center;
+  }
+  .monthDropdownGroup {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+
 
 
 

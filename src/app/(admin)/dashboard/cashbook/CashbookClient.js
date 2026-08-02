@@ -18,6 +18,7 @@ import {
   BarChart3,
   Gem,
   Coins,
+  ChevronLeft,
   ChevronRight,
   ArrowLeft,
   ShieldCheck,
@@ -197,6 +198,30 @@ export default function CashbookClient() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePrevMonth = () => {
+    if (selectedMonth === 1) {
+      setSelectedMonth(12);
+      setSelectedYear((prev) => prev - 1);
+    } else {
+      setSelectedMonth((prev) => prev - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (selectedMonth === 12) {
+      setSelectedMonth(1);
+      setSelectedYear((prev) => prev + 1);
+    } else {
+      setSelectedMonth((prev) => prev + 1);
+    }
+  };
+
+  const handleCurrentMonth = () => {
+    const now = new Date();
+    setSelectedMonth(now.getMonth() + 1);
+    setSelectedYear(now.getFullYear());
   };
 
   // Cashbook Handlers
@@ -728,35 +753,64 @@ export default function CashbookClient() {
           {/* ======================== MONTHLY TAB ======================== */}
           {activeTab === "monthly" && (
             <>
-              {/* Month/Year Selector */}
-              <div className={styles.monthSelectorRow} style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-                <div className={styles.selectGroup} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <label className={styles.selectLabel} style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--foreground)" }}>Bulan:</label>
-                  <select
-                    className={styles.sortSelect}
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+              {/* Month/Year Selector & Quick Navigation Bar */}
+              <div className={styles.monthSelectorNavRow}>
+                <div className={styles.monthQuickNavGroup}>
+                  <button
+                    type="button"
+                    className={styles.monthNavBtn}
+                    onClick={handlePrevMonth}
+                    title="Bulan Sebelumnya"
                   >
-                    {MONTHS.map((m, i) => (
-                      <option key={i} value={i + 1}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
+                    <ChevronLeft size={15} /> Bulan Lalu
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.monthNavBtn} ${styles.monthNavCurrent}`}
+                    onClick={handleCurrentMonth}
+                    title="Kembali Ke Bulan Ini"
+                  >
+                    Bulan Ini
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.monthNavBtn}
+                    onClick={handleNextMonth}
+                    title="Bulan Berikutnya"
+                  >
+                    Bulan Depan <ChevronRight size={15} />
+                  </button>
                 </div>
-                <div className={styles.selectGroup} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <label className={styles.selectLabel} style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--foreground)" }}>Tahun:</label>
-                  <select
-                    className={styles.sortSelect}
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  >
-                    {yearOptions.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  </select>
+
+                <div className={styles.monthDropdownGroup}>
+                  <div className={styles.selectGroup} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <label className={styles.selectLabel} style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--foreground)" }}>Bulan:</label>
+                    <select
+                      className={styles.sortSelect}
+                      value={selectedMonth}
+                      onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                    >
+                      {MONTHS.map((m, i) => (
+                        <option key={i} value={i + 1}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={styles.selectGroup} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <label className={styles.selectLabel} style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--foreground)" }}>Tahun:</label>
+                    <select
+                      className={styles.sortSelect}
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                    >
+                      {yearOptions.map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
 
